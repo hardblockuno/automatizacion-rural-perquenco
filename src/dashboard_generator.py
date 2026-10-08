@@ -66,6 +66,10 @@ def generate_interactive_html_dashboard(
 
     subtipos_counts = Counter()
 
+    t6_3d_count = 0
+    t6_recinto_count = 0
+    t6_3d_motivos = Counter()
+
     hogares_rows = []
 
     for p in postulantes:
@@ -153,6 +157,17 @@ def generate_interactive_html_dashboard(
         aisl = str(p.get("factor_aislamiento") or "1.2").strip()
         aislamiento_counts[f"Factor {aisl}"] += 1
 
+        # Tabla 6: Modalidad Vivienda Nueva
+        t6_val = c.get("tabla_6", {})
+        ch_val = t6_val.get("conjunto_habitacional", {})
+        is_3d = ch_val.get("tercer_dormitorio") == "X"
+        motivo_3d = ch_val.get("motivo_tercer_dormitorio") or "Vivienda base 2 dormitorios"
+        if is_3d:
+            t6_3d_count += 1
+            t6_3d_motivos[motivo_3d] += 1
+        if ch_val.get("recinto_complementario") == "X":
+            t6_recinto_count += 1
+
         # Registro para tabla general
         hogares_rows.append({
             "id": p["nro_orden"],
@@ -165,7 +180,9 @@ def generate_interactive_html_dashboard(
             "tiene_am": "Sí" if has_am else "No",
             "actividad": t5.get("actividad_fuente", "") or "(Sin actividad)",
             "recinto_cat": tr,
-            "recinto_sug": sug if tr in ["Habitable", "No Habitable"] else "No Aplica"
+            "recinto_sug": sug if tr in ["Habitable", "No Habitable"] else "No Aplica",
+            "tercer_dormitorio": "Sí" if is_3d else "No",
+            "motivo_3d": motivo_3d if is_3d else "2 Dormitorios"
         })
 
     tot_adultos = tot_hab - tot_menores - tot_mayores
@@ -631,12 +648,76 @@ def generate_interactive_html_dashboard(
             </div>
         </section>
 
-        <!-- SECCIÓN 6: EXPLORADOR GENERAL DE LAS 155 FAMILIAS -->
+        <!-- SECCIÓN 7: TABLA 6 - REQUERIMIENTOS DE HABITABILIDAD (MODALIDAD VIVIENDA NUEVA) -->
+        <section class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <span>🏗️</span> 7. Requerimientos de Habitabilidad - Modalidad Vivienda Nueva (Tabla 6 D.S. N°10)
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Marcación oficial consolidada para los 155 formularios Word según la base de datos más actualizada.</p>
+                </div>
+                <span class="text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-3 py-1 rounded-full">100% Conjunto Habitacional</span>
+            </div>
+
+            <!-- Tarjetas de Balance Tabla 6 -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="bg-indigo-50/60 p-4 rounded-xl border border-indigo-200">
+                    <div class="text-xs font-semibold text-indigo-800 uppercase">Conjunto Habitacional</div>
+                    <div class="text-2xl font-extrabold text-indigo-700 mt-1">{total_post} familias</div>
+                    <div class="text-xs text-indigo-700 mt-1">100.0% Terreno Común (Hijuela El Molino)</div>
+                </div>
+                <div class="bg-purple-50/60 p-4 rounded-xl border border-purple-200">
+                    <div class="text-xs font-semibold text-purple-800 uppercase">Tercer Dormitorio [X]</div>
+                    <div class="text-2xl font-extrabold text-purple-700 mt-1">{t6_3d_count} familias</div>
+                    <div class="text-xs text-purple-700 mt-1">{round((t6_3d_count/total_post)*100, 1)}% bajo 4 criterios oficiales</div>
+                </div>
+                <div class="bg-emerald-50/60 p-4 rounded-xl border border-emerald-200">
+                    <div class="text-xs font-semibold text-emerald-800 uppercase">Recinto Complementario [X]</div>
+                    <div class="text-2xl font-extrabold text-emerald-700 mt-1">{t6_recinto_count} familias</div>
+                    <div class="text-xs text-emerald-700 mt-1">{round((t6_recinto_count/total_post)*100, 1)}% (12 habitables + 20 no habitables)</div>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div class="text-xs font-semibold text-slate-600 uppercase">Vivienda Base 2 Dormitorios</div>
+                    <div class="text-2xl font-extrabold text-slate-700 mt-1">{total_post - t6_3d_count} familias</div>
+                    <div class="text-xs text-slate-500 mt-1">{round(((total_post - t6_3d_count)/total_post)*100, 1)}% del padrón</div>
+                </div>
+            </div>
+
+            <!-- Desglose de los 4 Criterios de Tercer Dormitorio -->
+            <div>
+                <h3 class="font-bold text-slate-800 text-sm mb-3">Desglose Factual de Tercer Dormitorio ({t6_3d_count} familias):</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                    <div class="p-3 bg-purple-50 border border-purple-200 rounded-xl">
+                        <div class="text-purple-800 font-bold text-sm">3° Dormitorio con Ahorro</div>
+                        <div class="text-xl font-extrabold text-purple-900 mt-1">{t6_3d_motivos['3° dormitorio con ahorro']} familias</div>
+                        <div class="text-purple-700 text-[11px] mt-0.5">Ahorro adicional acreditado para ampliación</div>
+                    </div>
+                    <div class="p-3 bg-purple-50 border border-purple-200 rounded-xl">
+                        <div class="text-purple-800 font-bold text-sm">Grupo Familiar sin Ahorro</div>
+                        <div class="text-xl font-extrabold text-purple-900 mt-1">{t6_3d_motivos['Grupo Familiar sin ahorro']} familias</div>
+                        <div class="text-purple-700 text-[11px] mt-0.5">Familias numerosas (≥5 integrantes) exentas de ahorro</div>
+                    </div>
+                    <div class="p-3 bg-purple-50 border border-purple-200 rounded-xl">
+                        <div class="text-purple-800 font-bold text-sm">Movilidad Reducida / 3° Dorm</div>
+                        <div class="text-xl font-extrabold text-purple-900 mt-1">{t6_3d_motivos['Movilidad reducida / 3° dormitorio']} familias</div>
+                        <div class="text-purple-700 text-[11px] mt-0.5">Adaptabilidad por discapacidad acreditada</div>
+                    </div>
+                    <div class="p-3 bg-purple-50 border border-purple-200 rounded-xl">
+                        <div class="text-purple-800 font-bold text-sm">Mov. Reducida Cónyuge + Hija</div>
+                        <div class="text-xl font-extrabold text-purple-900 mt-1">{t6_3d_motivos['Mov reducida conyuge + hija grup fam sin ahorro']} familia</div>
+                        <div class="text-purple-700 text-[11px] mt-0.5">Familia vulnerable con doble condición</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 8: EXPLORADOR GENERAL DE LAS 155 FAMILIAS -->
         <section class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-100 pb-4">
                 <div>
                     <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                        <span>📋</span> 7. Padrón General de Postulantes (155 Familias)
+                        <span>📋</span> 8. Padrón General de Postulantes (155 Familias)
                     </h2>
                     <p class="text-xs text-slate-500 mt-0.5">Buscador y filtros dinámicos en vivo para consultar cualquier ficha individual.</p>
                 </div>
@@ -651,6 +732,12 @@ def generate_interactive_html_dashboard(
                         <option value="Nuclear Biparental sin Hijos">Nuclear sin Hijos (11)</option>
                         <option value="Monoparental Masculino">Monoparental Masculino (5)</option>
                         <option value="Familia Extensa">Familia Extensa (4)</option>
+                    </select>
+
+                    <select id="filterDormType" onchange="renderHogaresTable()" class="px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                        <option value="Todos">Dormitorios: Todos</option>
+                        <option value="3D">3° Dormitorio ({t6_3d_count})</option>
+                        <option value="2D">2 Dormitorios ({total_post - t6_3d_count})</option>
                     </select>
 
                     <select id="filterRecintoType" onchange="renderHogaresTable()" class="px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
@@ -672,6 +759,7 @@ def generate_interactive_html_dashboard(
                             <th class="py-2.5 px-3 text-center">Edad / Sexo</th>
                             <th class="py-2.5 px-3 text-center">Habitantes</th>
                             <th class="py-2.5 px-3 text-left">Tipología Familiar</th>
+                            <th class="py-2.5 px-3 text-center">Dormitorios (T6)</th>
                             <th class="py-2.5 px-3 text-center">Adulto Mayor</th>
                             <th class="py-2.5 px-3 text-left">Actividad Declarada</th>
                             <th class="py-2.5 px-3 text-left">Recinto Complementario</th>
@@ -826,6 +914,7 @@ def generate_interactive_html_dashboard(
         function renderHogaresTable() {{
             const search = document.getElementById('searchInput').value.toLowerCase().trim();
             const famFilter = document.getElementById('filterFamType').value;
+            const dormFilter = document.getElementById('filterDormType').value;
             const recFilter = document.getElementById('filterRecintoType').value;
 
             const tbody = document.getElementById('hogaresTableBody');
@@ -835,9 +924,10 @@ def generate_interactive_html_dashboard(
             hogaresData.forEach(h => {{
                 const matchSearch = h.nombre.toLowerCase().includes(search) || h.rut.toLowerCase().includes(search);
                 const matchFam = (famFilter === 'Todos') || (h.tipo_familia === famFilter);
+                const matchDorm = (dormFilter === 'Todos') || (dormFilter === '3D' && h.tercer_dormitorio === 'Sí') || (dormFilter === '2D' && h.tercer_dormitorio === 'No');
                 const matchRec = (recFilter === 'Todos') || (h.recinto_cat === recFilter);
 
-                if (matchSearch && matchFam && matchRec) {{
+                if (matchSearch && matchFam && matchRec && matchDorm) {{
                     count++;
                     const tr = document.createElement('tr');
                     tr.className = 'hover:bg-slate-50 transition';
@@ -848,6 +938,10 @@ def generate_interactive_html_dashboard(
                     }} else if (h.recinto_cat === 'No Habitable') {{
                         recBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-300">No Habitable (${{h.recinto_sug}})</span>`;
                     }}
+
+                    const dormBadge = h.tercer_dormitorio === 'Sí'
+                        ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-300" title="${{h.motivo_3d}}">3° Dorm</span>`
+                        : '<span class="text-slate-400 font-medium">2 Dorm</span>';
 
                     const amBadge = h.tiene_am === 'Sí'
                         ? '<span class="font-bold text-amber-600">Sí</span>'
@@ -860,6 +954,7 @@ def generate_interactive_html_dashboard(
                         <td class="py-2 px-3 text-center text-slate-600">${{h.edad}} (${{h.sexo}})</td>
                         <td class="py-2 px-3 text-center font-bold text-slate-800">${{h.habitantes}}</td>
                         <td class="py-2 px-3 text-slate-800">${{h.tipo_familia}}</td>
+                        <td class="py-2 px-3 text-center">${{dormBadge}}</td>
                         <td class="py-2 px-3 text-center">${{amBadge}}</td>
                         <td class="py-2 px-3 text-slate-600">${{h.actividad}}</td>
                         <td class="py-2 px-3">${{recBadge}}</td>

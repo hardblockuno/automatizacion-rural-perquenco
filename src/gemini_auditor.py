@@ -452,6 +452,38 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
     }
 
 
+def evaluate_tercer_dormitorio(postulante: Dict[str, Any]) -> tuple:
+    """
+    Determina si a la familia le corresponde marcar 'Tercer Dormitorio' en la Tabla 6.
+    Criterios oficiales basados en la columna 'TIPO DE VIVIENDA' de la base más actualizada:
+    1. 3° dormitorio con ahorro (52 familias)
+    2. Movilidad reducida / 3° dormitorio (3 familias)
+    3. Grupo Familiar sin ahorro (7 familias)
+    4. Mov reducida conyuge + hija grup fam sin ahorro (1 familia)
+    Retorna (aplica: bool, motivo: str).
+    """
+    tv_raw = str(postulante.get("tipo_vivienda") or "").upper()
+    if not tv_raw:
+        tv_raw = str(postulante.get("tipologia_propuesta") or "").upper()
+    if not tv_raw:
+        return False, ""
+
+    # Normalizar caracteres ordinales, grados y espacios
+    s = tv_raw.replace('º', ' ').replace('°', ' ').replace('\xba', ' ').replace('\xb0', ' ')
+    s = re.sub(r'\s+', ' ', s).strip()
+
+    if "3" in s and "DORMITORIO" in s and "AHORRO" in s and "SIN AHORRO" not in s:
+        return True, "3° dormitorio con ahorro"
+    if "MOVILIDAD REDUCIDA" in s and "3" in s and "DORMITORIO" in s:
+        return True, "Movilidad reducida / 3° dormitorio"
+    if "MOV REDUCIDA CONYUGE" in s and "SIN AHORRO" in s:
+        return True, "Mov reducida conyuge + hija grup fam sin ahorro"
+    if "SIN AHORRO" in s:
+        return True, "Grupo Familiar sin ahorro"
+
+    return False, ""
+
+
 TERRENO_PROYECTO_CONSOLIDADO: Dict[str, str] = {
     "calle": "Hijuela El Molino",
     "lote": "Lote 3 Foja 1169 N°722",
@@ -747,6 +779,24 @@ def consolidate_postulante_local(
             }
         },
         "tabla_5": tabla_5,
+        "tabla_6": {
+            "conjunto_habitacional": {
+                "vivienda_nueva": "X",
+                "tercer_dormitorio": "X" if evaluate_tercer_dormitorio(postulante)[0] else "",
+                "recinto_complementario": "X" if evaluate_recinto_complementario(postulante).get("tipo_recinto") in ["Habitable", "No Habitable"] else "",
+                "motivo_tercer_dormitorio": evaluate_tercer_dormitorio(postulante)[1],
+                "motivo_recinto": evaluate_recinto_complementario(postulante).get("recinto_sugerido", "") if evaluate_recinto_complementario(postulante).get("tipo_recinto") in ["Habitable", "No Habitable"] else ""
+            },
+            "sitio_residente": {
+                "vivienda_nueva": "",
+                "tercer_dormitorio": "",
+                "recinto_complementario": ""
+            }
+        },
+        "tercer_dormitorio": {
+            "aplica": evaluate_tercer_dormitorio(postulante)[0],
+            "motivo": evaluate_tercer_dormitorio(postulante)[1]
+        },
         "tipo_familia": classify_family_nucleus(postulante),
         "recinto_complementario": evaluate_recinto_complementario(postulante)
     }
@@ -823,6 +873,8 @@ Responde ÚNICAMENTE con el objeto JSON que complete los campos de tabla_1, tabl
             if "tabla_1" in gemini_json and "tabla_4" in gemini_json:
                 gemini_json["tabla_3"] = base_data["tabla_3"]  # Preservar el terreno consolidado del proyecto
                 gemini_json["tabla_5"] = base_data["tabla_5"]  # Preservar la clasificación fidedigna de Tabla 5
+                gemini_json["tabla_6"] = base_data["tabla_6"]  # Preservar la marcación de Modalidad Vivienda Nueva
+                gemini_json["tercer_dormitorio"] = base_data.get("tercer_dormitorio")
                 gemini_json["tipo_familia"] = base_data.get("tipo_familia")
                 gemini_json["recinto_complementario"] = base_data.get("recinto_complementario")
                 return gemini_json

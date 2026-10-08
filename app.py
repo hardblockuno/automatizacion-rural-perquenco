@@ -436,6 +436,44 @@ with tab_preview:
     if recinto.get("justificacion"):
         st.caption(f"📋 **Justificación Técnica Normativa:** {recinto.get('justificacion')}")
 
+    # Tabla 6: Modalidad Vivienda Nueva
+    st.markdown("---")
+    st.markdown("#### 🏗️ Tabla 6: Requerimientos de Habitabilidad - Modalidad Vivienda Nueva")
+    t6_preview = consolidated.get("tabla_6", {})
+    ch_prev = t6_preview.get("conjunto_habitacional", {})
+    m_3d = ch_prev.get("motivo_tercer_dormitorio", "")
+    m_rec = ch_prev.get("motivo_recinto", "")
+
+    df_t6 = [
+        {
+            "Tipología de Proyecto": "Conjunto Habitacional",
+            "Vivienda Nueva": ch_prev.get("vivienda_nueva", "X"),
+            "Tercer Dormitorio": ch_prev.get("tercer_dormitorio", "") or "—",
+            "Recinto Complementario": ch_prev.get("recinto_complementario", "") or "—"
+        },
+        {
+            "Tipología de Proyecto": "Sitio del Residente",
+            "Vivienda Nueva": "—",
+            "Tercer Dormitorio": "—",
+            "Recinto Complementario": "—"
+        }
+    ]
+    st.dataframe(pd.DataFrame(df_t6), hide_index=True, use_container_width=True)
+
+    col_t6_1, col_t6_2, col_t6_3 = st.columns(3)
+    with col_t6_1:
+        st.success("✅ **Conjunto Habitacional:** Marcado con 'X' (proyecto común Hijuela El Molino).")
+    with col_t6_2:
+        if ch_prev.get("tercer_dormitorio") == "X":
+            st.success(f"🛏️ **Tercer Dormitorio [X]:** Procede\n\n*{m_3d}*")
+        else:
+            st.info("⚪ **Tercer Dormitorio:** No aplica (Vivienda base 2 dormitorios)")
+    with col_t6_3:
+        if ch_prev.get("recinto_complementario") == "X":
+            st.success(f"🏠 **Recinto Complementario [X]:** Procede\n\n*{m_rec}*")
+        else:
+            st.info("⚪ **Recinto Complementario:** No aplica")
+
     # Botón para generar DOCX individual de prueba
     st.markdown("---")
     test_clean_name = "".join(x for x in current_postulante["nombre"] if x.isalnum() or x in " _-").strip().replace(" ", "_")
@@ -497,6 +535,12 @@ with tab_metrics:
     microemprendimientos = []
     tipologias_counts = Counter()
     aislamiento_counts = Counter()
+
+    t6_conjunto_count = 0
+    t6_3d_count = 0
+    t6_recinto_count = 0
+    t6_3d_motivos = Counter()
+    t6_3d_list = []
 
     for p in postulantes:
         c = consolidate_postulante_local(p, datos_terreno_proyecto=datos_terreno_proyecto)
@@ -626,6 +670,26 @@ with tab_metrics:
         aisl = str(p.get("factor_aislamiento") or "").strip()
         if aisl:
             aislamiento_counts[f"Factor {aisl}"] += 1
+
+        # Tabla 6: Modalidad Vivienda Nueva
+        t6_val = c.get("tabla_6", {})
+        ch_val = t6_val.get("conjunto_habitacional", {})
+        if ch_val.get("vivienda_nueva") == "X":
+            t6_conjunto_count += 1
+        if ch_val.get("tercer_dormitorio") == "X":
+            t6_3d_count += 1
+            m_3d_val = ch_val.get("motivo_tercer_dormitorio") or "3° Dormitorio"
+            t6_3d_motivos[m_3d_val] += 1
+            t6_3d_list.append({
+                "N°": p["nro_orden"],
+                "Postulante": p["nombre"],
+                "RUT": p["rut"],
+                "Habitantes": gf,
+                "Criterio 3° Dormitorio": m_3d_val,
+                "Tipo Vivienda Base": p.get("tipo_vivienda", "")
+            })
+        if ch_val.get("recinto_complementario") == "X":
+            t6_recinto_count += 1
 
     prom_hab = round(tot_habitantes / total_post, 2) if total_post else 0
     pct_f = round((jefas_f / total_post) * 100, 1) if total_post else 0
@@ -860,9 +924,41 @@ with tab_metrics:
     st.markdown("---")
 
     # -------------------------------------------------------------------------
+    # SECCIÓN 6: TABLA 6 - REQUERIMIENTOS DE HABITABILIDAD (MODALIDAD VIVIENDA NUEVA)
+    # -------------------------------------------------------------------------
+    st.markdown("#### 🏗️ 6. Requerimientos de Habitabilidad - Modalidad Vivienda Nueva (Tabla 6)")
+    st.caption("Consolidación oficial de marcación en el formulario Word (Ficha PHR 6.1) según la base de datos más actualizada:")
+
+    col_t6_k1, col_t6_k2, col_t6_k3, col_t6_k4 = st.columns(4)
+    col_t6_k1.metric("Conjunto Habitacional", f"{t6_conjunto_count} familias", "100.0% del proyecto", help="Todos los postulantes en terreno común Hijuela El Molino")
+    col_t6_k2.metric("Tercer Dormitorio", f"{t6_3d_count} familias", f"{round((t6_3d_count/total_post)*100, 1)}% del padrón", help="Postulantes que cumplen los 4 criterios normativos")
+    col_t6_k3.metric("Recinto Complementario", f"{t6_recinto_count} familias", f"{round((t6_recinto_count/total_post)*100, 1)}% del padrón", help="32 familias acreditadas con recinto (12 habitables + 20 no habitables)")
+    col_t6_k4.metric("Vivienda Base (2 Dorm)", f"{total_post - t6_3d_count} familias", f"{round(((total_post - t6_3d_count)/total_post)*100, 1)}% del padrón", help="Familias sin justificación de 3° dormitorio")
+
+    tab_3d_1, tab_3d_2 = st.tabs([
+        "📊 Desglose de Criterios para Tercer Dormitorio",
+        f"📋 Nómina de Familias con 3° Dormitorio ({t6_3d_count} familias)"
+    ])
+
+    with tab_3d_1:
+        st.markdown("**Desglose Factual según Columna 'TIPO DE VIVIENDA':**")
+        df_3d_motivos = pd.DataFrame([
+            {"Criterio Oficial": k, "Familias": v, "Porcentaje": f"{round((v/total_post)*100, 1)}%"}
+            for k, v in t6_3d_motivos.items()
+        ]).sort_values("Familias", ascending=False)
+        st.dataframe(df_3d_motivos, hide_index=True, use_container_width=True)
+
+    with tab_3d_2:
+        st.markdown(f"**Nómina Completa de las {t6_3d_count} Familias con Tercer Dormitorio Acreditado:**")
+        if t6_3d_list:
+            st.dataframe(pd.DataFrame(t6_3d_list), hide_index=True, use_container_width=True, height=280)
+
+    st.markdown("---")
+
+    # -------------------------------------------------------------------------
     # SECCIÓN 7: TIPOLOGÍAS Y FACTOR DE AISLAMIENTO
     # -------------------------------------------------------------------------
-    st.markdown("#### 🏡 6. Tipologías Habitacionales y Territorialidad")
+    st.markdown("#### 🏡 7. Tipologías Habitacionales y Territorialidad")
     col_t1, col_t2 = st.columns(2)
 
     with col_t1:

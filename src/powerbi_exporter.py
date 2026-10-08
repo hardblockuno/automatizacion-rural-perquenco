@@ -114,6 +114,10 @@ def build_powerbi_dataset(postulantes: List[Dict[str, Any]], datos_terreno: Opti
             "Categoria_Recinto": tipo_recinto,
             "Subtipo_Recinto": subtipo_recinto,
             "Justificacion_Normativa_DS10": justif_recinto,
+            "Modalidad_Proyecto": "Conjunto Habitacional",
+            "Requiere_3er_Dormitorio": "Sí" if c.get("tabla_6", {}).get("conjunto_habitacional", {}).get("tercer_dormitorio") == "X" else "No",
+            "Criterio_3er_Dormitorio": c.get("tabla_6", {}).get("conjunto_habitacional", {}).get("motivo_tercer_dormitorio") or "Vivienda base 2 dormitorios",
+            "Tipo_Vivienda_Base": p.get("tipo_vivienda", ""),
             "Terreno_Proyecto_Calle": t3.get("calle", ""),
             "Terreno_Proyecto_Lote": t3.get("lote", ""),
             "Terreno_Proyecto_RolSII": t3.get("rol_sii", "")

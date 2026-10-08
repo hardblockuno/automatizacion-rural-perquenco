@@ -266,6 +266,7 @@ def read_all_postulantes(excel_path: str, sheet_name: Optional[str] = None) -> L
     col_disc = get_col(col_map, ["DISCAPACIDAD"], 24)
     col_comuna = get_col(col_map, ["COMUNA"], 36)
     col_gf_cant = get_col(col_map, ["GRUPO FAMILIAR", "TOTAL HABITANTES"], 37)
+    col_tipo_viv = get_col(col_map, ["TIPO VIVIENDA", "TIPO DE VIVIENDA"], 48)
     col_factor = get_col(col_map, ["FACTOR AISLAMIENTO", "AISLAMIENTO"], 59)
     col_tipologia = get_col(col_map, ["TIPOLOGÍA PROPUESTA", "TIPOLOGIA"], 103)
     col_fundamento = get_col(col_map, ["FUNDAMENTO / OBSERVACIÓN", "FUNDAMENTO", "OBSERVACION"], 104)
@@ -297,6 +298,7 @@ def read_all_postulantes(excel_path: str, sheet_name: Optional[str] = None) -> L
         discapacidad = sheet.cell(r, col_disc).value
         comuna = sheet.cell(r, col_comuna).value
         grupo_fam_cant = sheet.cell(r, col_gf_cant).value
+        raw_tipo_viv = sheet.cell(r, col_tipo_viv).value
         factor_aislamiento = sheet.cell(r, col_factor).value
         tipologia = sheet.cell(r, col_tipologia).value
         fundamento = sheet.cell(r, col_fundamento).value
@@ -384,6 +386,7 @@ def read_all_postulantes(excel_path: str, sheet_name: Optional[str] = None) -> L
             },
             "parientes": parientes,
             "actividad_economica": act_info,
+            "tipo_vivienda": clean_s(raw_tipo_viv),
             "tipologia_propuesta": clean_s(tipologia),
             "fundamento": clean_s(fundamento)
         })

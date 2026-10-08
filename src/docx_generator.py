@@ -196,6 +196,28 @@ def fill_formulario_phr(
             for c_idx in range(1, 7):
                 set_cell_value(t5.cell(r_idx, c_idx), "", center=True)
 
+    # =========================================================================
+    # TABLA 6: REQUERIMIENTOS DE HABITABILIDAD - MODALIDAD VIVIENDA NUEVA
+    # =========================================================================
+    if len(doc.tables) > 6:
+        t6 = doc.tables[6]
+        t6_data = data.get("tabla_6", {})
+        ch_data = t6_data.get("conjunto_habitacional", {})
+        sr_data = t6_data.get("sitio_residente", {})
+
+        # Fila 1: Conjunto Habitacional
+        # Columna 1: Vivienda Nueva (100% de los casos en este proyecto colectivo)
+        set_cell_value(t6.cell(1, 1), ch_data.get("vivienda_nueva", "X"), font_size_pt=10.0, bold=True, center=True)
+        # Columna 2: Tercer Dormitorio (solo personas bajo criterios específicos)
+        set_cell_value(t6.cell(1, 2), ch_data.get("tercer_dormitorio", ""), font_size_pt=10.0, bold=True, center=True)
+        # Columna 3: Recinto Complementario (solo los 32 casos que efectivamente lo requieren)
+        set_cell_value(t6.cell(1, 3), ch_data.get("recinto_complementario", ""), font_size_pt=10.0, bold=True, center=True)
+
+        # Fila 2: Sitio del Residente (permanece en blanco en este proyecto)
+        set_cell_value(t6.cell(2, 1), sr_data.get("vivienda_nueva", ""), font_size_pt=10.0, bold=True, center=True)
+        set_cell_value(t6.cell(2, 2), sr_data.get("tercer_dormitorio", ""), font_size_pt=10.0, bold=True, center=True)
+        set_cell_value(t6.cell(2, 3), sr_data.get("recinto_complementario", ""), font_size_pt=10.0, bold=True, center=True)
+
     # Crear carpeta destino si no existe
     dir_name = os.path.dirname(output_path)
     if dir_name:
