@@ -20,6 +20,9 @@ def set_cell_value(
     center: bool = False
 ) -> None:
     """Escribe un valor en una celda preservando el formato y estilo."""
+    while len(cell.paragraphs) > 1:
+        p_extra = cell.paragraphs[-1]._p
+        p_extra.getparent().remove(p_extra)
     if not cell.paragraphs:
         cell.add_paragraph()
     p = cell.paragraphs[0]
@@ -217,6 +220,49 @@ def fill_formulario_phr(
         set_cell_value(t6.cell(2, 1), sr_data.get("vivienda_nueva", ""), font_size_pt=10.0, bold=True, center=True)
         set_cell_value(t6.cell(2, 2), sr_data.get("tercer_dormitorio", ""), font_size_pt=10.0, bold=True, center=True)
         set_cell_value(t6.cell(2, 3), sr_data.get("recinto_complementario", ""), font_size_pt=10.0, bold=True, center=True)
+
+    # =========================================================================
+    # TABLA 8: JUSTIFICACIÓN DE RECINTO(S) COMPLEMENTARIO(S), SI PROCEDE
+    # =========================================================================
+    if len(doc.tables) > 8:
+        t8 = doc.tables[8]
+        t8_data = data.get("tabla_8")
+        if not t8_data:
+            from src.gemini_auditor import build_tabla_8
+            t8_data = build_tabla_8({}, data.get("recinto_complementario", {}))
+
+        # Mapeo oficial de filas en Tabla 8 de la plantilla DTS:
+        # Fila 1: Bodega
+        # Fila 2: Recinto para realizar actividades productivas
+        # Fila 3: Otros Recintos Techados Adosados a la Vivienda
+        # Fila 4: Leñera
+        # Fila 5: Otros (especificar)
+        row_keys = [
+            (1, "bodega"),
+            (2, "actividades_productivas"),
+            (3, "otros_adosados"),
+            (4, "lenera"),
+            (5, "otros_especificar")
+        ]
+
+        for r_idx, r_key in row_keys:
+            r_info = t8_data.get(r_key, {})
+            val_si_no = r_info.get("si_no", "No") if r_info else "No"
+            just_text = r_info.get("justificacion", "") if r_info else ""
+
+            # Columna 1: Marcar 'Sí' o 'No' (centrado, Gadugi 9.5pt, negrita si 'Sí')
+            set_cell_value(t8.cell(r_idx, 1), val_si_no, font_size_pt=9.5, bold=(val_si_no == "Sí"), center=True)
+
+            # Columna 2: Explicar actividad previa y justificación técnica (Gadugi 8.5pt)
+            set_cell_value(t8.cell(r_idx, 2), just_text, font_size_pt=8.5, bold=False, center=False)
+
+            # Fila 5: Columna 0 especificar si aplica
+            if r_idx == 5:
+                esp = r_info.get("especificacion", "")
+                if esp and val_si_no == "Sí":
+                    set_cell_value(t8.cell(5, 0), f"Otros (especificar: {esp})", font_size_pt=9.0, bold=False, center=False)
+                else:
+                    set_cell_value(t8.cell(5, 0), "Otros (especificar)", font_size_pt=9.0, bold=False, center=False)
 
     # Crear carpeta destino si no existe
     dir_name = os.path.dirname(output_path)

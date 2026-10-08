@@ -87,12 +87,27 @@ def generate_interactive_html_dashboard(
         sug = rec.get("recinto_sugerido", "No Aplica")
         if tr in ["Habitable", "No Habitable"]:
             subtipos_counts[sug] += 1
+            t8 = c.get("tabla_8", {})
+            fila_t8 = "No Aplica"
+            if t8.get("aplica_recinto"):
+                tr_num = t8.get("target_row")
+                if tr_num == 1:
+                    fila_t8 = "Fila 1: Bodega"
+                elif tr_num == 2:
+                    fila_t8 = "Fila 2: Recinto productivo"
+                elif tr_num == 4:
+                    fila_t8 = "Fila 4: Leñera"
+                elif tr_num == 5:
+                    esp_t8 = t8.get("otros_especificar", {}).get("especificacion", "")
+                    fila_t8 = f"Fila 5: Otros ({esp_t8})" if esp_t8 else "Fila 5: Otros (especificar)"
+
             item_r = {
                 "id": p["nro_orden"],
                 "nombre": p["nombre"],
                 "rut": p["rut"],
                 "categoria": tr,
                 "subtipo": sug,
+                "fila_t8": fila_t8,
                 "actividad": rec.get("detalle_actividad", ""),
                 "justificacion": rec.get("justificacion", "")
             }
@@ -634,6 +649,7 @@ def generate_interactive_html_dashboard(
                                 <th class="py-2.5 px-3 text-left">N°</th>
                                 <th class="py-2.5 px-3 text-left">Postulante</th>
                                 <th class="py-2.5 px-3 text-left">RUT</th>
+                                <th class="py-2.5 px-3 text-left">Fila Tabla 8 (Word)</th>
                                 <th class="py-2.5 px-3 text-left">Categoría</th>
                                 <th class="py-2.5 px-3 text-left">Subtipo Recinto</th>
                                 <th class="py-2.5 px-3 text-left">Actividad Factual</th>
@@ -889,6 +905,7 @@ def generate_interactive_html_dashboard(
                     <td class="py-2 px-3 font-semibold text-slate-500">${{r.id}}</td>
                     <td class="py-2 px-3 font-bold text-slate-900">${{r.nombre}}</td>
                     <td class="py-2 px-3 font-mono text-slate-500">${{r.rut}}</td>
+                    <td class="py-2 px-3 font-semibold text-blue-700 whitespace-nowrap">${{r.fila_t8}}</td>
                     <td class="py-2 px-3">${{badge}}</td>
                     <td class="py-2 px-3 font-semibold text-slate-800">${{r.subtipo}}</td>
                     <td class="py-2 px-3 text-slate-600">${{r.actividad}}</td>

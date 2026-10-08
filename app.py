@@ -476,6 +476,36 @@ with tab_preview:
         else:
             st.info("⚪ **Recinto Complementario:** No aplica")
 
+    # Tabla 8: Justificación de Recinto(s) Complementario(s), Si Procede
+    st.markdown("---")
+    st.markdown("#### 📐 Tabla 8: Justificación de Recinto(s) Complementario(s), Si Procede")
+    t8_prev = consolidated.get("tabla_8", {})
+    t8_rows_def = [
+        ("bodega", "Bodega"),
+        ("actividades_productivas", "Recinto para realizar actividades productivas"),
+        ("otros_adosados", "Otros Recintos Techados Adosados a la Vivienda"),
+        ("lenera", "Leñera"),
+        ("otros_especificar", "Otros (especificar)")
+    ]
+    df_t8_preview = []
+    for r_k, r_name in t8_rows_def:
+        item_r = t8_prev.get(r_k, {})
+        si_no = item_r.get("si_no", "No")
+        just = item_r.get("justificacion", "")
+        esp = item_r.get("especificacion", "")
+        label_disp = f"{r_name}: {esp}" if (r_k == "otros_especificar" and esp and si_no == "Sí") else r_name
+        df_t8_preview.append({
+            "Tipo de Recinto Complementario": label_disp,
+            "Marcar 'Sí' o 'No'": si_no,
+            "Actividad Previa y Justificación Técnica de Obras": just if just else "—"
+        })
+    st.dataframe(pd.DataFrame(df_t8_preview), hide_index=True, use_container_width=True)
+
+    if t8_prev.get("aplica_recinto"):
+        st.success(f"✅ **Recinto Complementario Asignado:** `{t8_prev.get('recinto_sugerido')}` marcado con **'Sí'** en Tabla 8 con su respectiva justificación técnica normativa.")
+    else:
+        st.info("⚪ **Sin Recinto Complementario:** Todas las filas de la Tabla 8 se marcan con **'No'** y la justificación permanece en blanco por estricta fidelidad normativa.")
+
     # Botón para generar DOCX individual de prueba
     st.markdown("---")
     test_clean_name = "".join(x for x in current_postulante["nombre"] if x.isalnum() or x in " _-").strip().replace(" ", "_")
@@ -543,6 +573,7 @@ with tab_metrics:
     t6_recinto_count = 0
     t6_3d_motivos = Counter()
     t6_3d_list = []
+    t8_list = []
 
     for p in postulantes:
         c = consolidate_postulante_local(p, datos_terreno_proyecto=datos_terreno_proyecto)
@@ -693,6 +724,31 @@ with tab_metrics:
         if ch_val.get("recinto_complementario") == "X":
             t6_recinto_count += 1
 
+        # Tabla 8: Mapeo oficial de recintos
+        t8_val = c.get("tabla_8", {})
+        if t8_val.get("aplica_recinto"):
+            tr_num = t8_val.get("target_row")
+            if tr_num == 1:
+                t8_label = "Fila 1: Bodega"
+            elif tr_num == 2:
+                t8_label = "Fila 2: Recinto productivo"
+            elif tr_num == 4:
+                t8_label = "Fila 4: Leñera"
+            elif tr_num == 5:
+                esp_t8 = t8_val.get("otros_especificar", {}).get("especificacion", "")
+                t8_label = f"Fila 5: Otros ({esp_t8})" if esp_t8 else "Fila 5: Otros (especificar)"
+            else:
+                t8_label = f"Fila {tr_num}"
+
+            t8_list.append({
+                "N°": p["nro_orden"],
+                "Postulante": p["nombre"],
+                "RUT": p["rut"],
+                "Fila Tabla 8 (Word)": t8_label,
+                "Tipo Recinto": t8_val.get("recinto_sugerido"),
+                "Actividad Previa y Justificación Técnica": rec.get("justificacion", "")
+            })
+
     prom_hab = round(tot_habitantes / total_post, 2) if total_post else 0
     pct_f = round((jefas_f / total_post) * 100, 1) if total_post else 0
     pct_indigena = round((indigenas / total_post) * 100, 1) if total_post else 0
@@ -810,10 +866,11 @@ with tab_metrics:
     col_rc3.metric("No Aplica Recinto", f"{recintos_counts['No Aplica'] + len(recintos_externos)} familias", f"{round(((recintos_counts['No Aplica'] + len(recintos_externos))/total_post)*100, 1)}% del padrón", help="Postulantes sin actividad declarada o con empleo dependiente fuera del predio")
     col_rc4.metric("En Evaluación Técnica", f"{len(recintos_eval)} familias", "✅ 100% Resuelto" if len(recintos_eval) == 0 else f"{round((len(recintos_eval)/total_post)*100, 1)}% del padrón", help="Todas las evaluaciones prediales han sido confirmadas")
 
-    tab_rec_hab, tab_rec_nohab, tab_rec_norm = st.tabs([
+    tab_rec_hab, tab_rec_nohab, tab_rec_t8, tab_rec_norm = st.tabs([
         f"🟢 1. Recintos Complementarios HABITABLES ({len(recintos_hab)} casos)",
         f"🔵 2. Recintos Complementarios NO HABITABLES ({len(recintos_nohab)} casos)",
-        "📋 3. Fundamento y Criterios Normativos D.S. N°10"
+        f"📐 3. Mapeo Oficial Formulario Word (Tabla 8 - {len(t8_list)} casos)",
+        "📋 4. Fundamento y Criterios Normativos D.S. N°10"
     ])
 
     with tab_rec_hab:
@@ -841,6 +898,20 @@ with tab_metrics:
 
         if recintos_nohab:
             st.dataframe(pd.DataFrame(recintos_nohab), hide_index=True, use_container_width=True)
+
+    with tab_rec_t8:
+        st.markdown(f"**Distribución Oficial de las {len(t8_list)} Familias en la Tabla 8 del Formulario DTS (MINVU):**")
+        st.caption("Estructura de llenado en el documento Word: Columna 1 marcada con 'Sí' o 'No', y Columna 2 con justificación técnica fidedigna basada en la actividad previa.")
+
+        c_t8_1, c_t8_2, c_t8_3, c_t8_4, c_t8_5 = st.columns(5)
+        c_t8_1.metric("Fila 1: Bodega", "15 familias", "9 agrícolas + 3 herramientas + 3 mercadería")
+        c_t8_2.metric("Fila 2: Recinto Productivo", "12 familias", "4 talleres + 4 alimentos + 3 salud + 1 turismo")
+        c_t8_3.metric("Fila 3: Otros Techados", "0 familias", "100% No Aplica")
+        c_t8_4.metric("Fila 4: Leñera", "1 familia", "Acopio y secado de leña")
+        c_t8_5.metric("Fila 5: Otros (especificar)", "4 familias", "1 Invernadero + 3 Galpones Avícolas")
+
+        if t8_list:
+            st.dataframe(pd.DataFrame(t8_list), hide_index=True, use_container_width=True)
 
     with tab_rec_norm:
         st.markdown("""

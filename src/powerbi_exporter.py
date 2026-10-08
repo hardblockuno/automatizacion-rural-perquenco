@@ -82,6 +82,22 @@ def build_powerbi_dataset(postulantes: List[Dict[str, Any]], datos_terreno: Opti
         subtipo_recinto = rec.get("recinto_sugerido", "No Aplica")
         justif_recinto = rec.get("justificacion", "")
 
+        t8 = c.get("tabla_8", {})
+        fila_t8 = "No Aplica"
+        if t8.get("aplica_recinto"):
+            tr = t8.get("target_row")
+            if tr == 1:
+                fila_t8 = "Fila 1: Bodega"
+            elif tr == 2:
+                fila_t8 = "Fila 2: Recinto para realizar actividades productivas"
+            elif tr == 3:
+                fila_t8 = "Fila 3: Otros Recintos Techados Adosados"
+            elif tr == 4:
+                fila_t8 = "Fila 4: Leñera"
+            elif tr == 5:
+                esp_t8 = t8.get("otros_especificar", {}).get("especificacion", "")
+                fila_t8 = f"Fila 5: Otros (especificar: {esp_t8})" if esp_t8 else "Fila 5: Otros (especificar)"
+
         # Terreno
         t3 = c.get("tabla_3", {})
 
@@ -113,6 +129,7 @@ def build_powerbi_dataset(postulantes: List[Dict[str, Any]], datos_terreno: Opti
             "Procede_Recinto": procede_recinto,
             "Categoria_Recinto": tipo_recinto,
             "Subtipo_Recinto": subtipo_recinto,
+            "Fila_Formulario_Tabla8": fila_t8,
             "Justificacion_Normativa_DS10": justif_recinto,
             "Modalidad_Proyecto": "Conjunto Habitacional",
             "Requiere_3er_Dormitorio": "Sí" if c.get("tabla_6", {}).get("conjunto_habitacional", {}).get("tercer_dormitorio") == "X" else "No",
@@ -183,6 +200,7 @@ def build_powerbi_dataset(postulantes: List[Dict[str, Any]], datos_terreno: Opti
                 "ID_Postulante": id_post,
                 "Nombre_Postulante": nom_titular,
                 "RUT_Postulante": rut_titular,
+                "Fila_Formulario_Tabla8": fila_t8,
                 "Categoria_Recinto": tipo_recinto,
                 "Subtipo_Recinto": subtipo_recinto,
                 "Actividad_Productiva": rec.get("detalle_actividad", act_nombre),
@@ -214,6 +232,10 @@ def build_powerbi_dataset(postulantes: List[Dict[str, Any]], datos_terreno: Opti
         {"Indicador": "Total Recintos Complementarios", "Valor": tot_rec_hab + tot_rec_nohab, "Categoria": "Infraestructura"},
         {"Indicador": "Recintos Complementarios HABITABLES", "Valor": tot_rec_hab, "Categoria": "Infraestructura"},
         {"Indicador": "Recintos Complementarios NO HABITABLES", "Valor": tot_rec_nohab, "Categoria": "Infraestructura"},
+        {"Indicador": "Tabla 8: Fila 1 - Bodega", "Valor": sum(1 for r in recintos_rows if "Fila 1" in r["Fila_Formulario_Tabla8"]), "Categoria": "Tabla 8 MINVU"},
+        {"Indicador": "Tabla 8: Fila 2 - Recinto Productivo", "Valor": sum(1 for r in recintos_rows if "Fila 2" in r["Fila_Formulario_Tabla8"]), "Categoria": "Tabla 8 MINVU"},
+        {"Indicador": "Tabla 8: Fila 4 - Leñera", "Valor": sum(1 for r in recintos_rows if "Fila 4" in r["Fila_Formulario_Tabla8"]), "Categoria": "Tabla 8 MINVU"},
+        {"Indicador": "Tabla 8: Fila 5 - Otros (Invernadero/Galpón)", "Valor": sum(1 for r in recintos_rows if "Fila 5" in r["Fila_Formulario_Tabla8"]), "Categoria": "Tabla 8 MINVU"},
         {"Indicador": "No Aplica Recinto Complementario", "Valor": tot_post - (tot_rec_hab + tot_rec_nohab), "Categoria": "Infraestructura"},
     ]
     df_kpi = pd.DataFrame(kpi_rows)

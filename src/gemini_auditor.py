@@ -320,11 +320,23 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
         return RESOLUCIONES_TECNICAS_CONFIRMADAS[rut_clean]
 
     act_data = postulante.get("actividad_economica") or {}
-    act = (act_data.get("actividad_principal") or "").strip().upper()
-    desc = (act_data.get("descripcion") or "").strip().upper()
+    act = (act_data.get("actividad_principal") or "").strip()
+    desc = (act_data.get("descripcion") or "").strip()
     tiene_act = act_data.get("tiene_actividad", False)
 
-    full = f"{act} {desc}".strip()
+    act_u = act.upper()
+    desc_u = desc.upper()
+    full = f"{act_u} {desc_u}".strip()
+
+    # Formateo amigable y legible para justificación técnica y Tabla 8
+    if act_u == "INDEPENDIENTE" and desc:
+        act_display = desc.title()
+    elif desc and desc_u != act_u:
+        act_display = f"{act.title()} ({desc.title()})"
+    elif act:
+        act_display = act.title()
+    else:
+        act_display = desc.title()
 
     # 1. Sin actividad económica registrada
     if not tiene_act or not full:
@@ -347,8 +359,8 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
             "procede": False,
             "tipo_recinto": "No Aplica (Laboral Externa)",
             "recinto_sugerido": "Ninguno",
-            "justificacion": f"Actividad laboral dependiente desarrollada fuera del predio ({act}). No requiere infraestructura productiva predial.",
-            "detalle_actividad": act
+            "justificacion": f"Actividad laboral dependiente desarrollada fuera del predio ({act_display}). No requiere infraestructura productiva predial.",
+            "detalle_actividad": act_display
         }
 
     # 3. Recintos Complementarios HABITABLES (requieren condiciones de habitabilidad térmica, higiene o atención interior)
@@ -357,8 +369,8 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
             "procede": True,
             "tipo_recinto": "Habitable",
             "recinto_sugerido": "Taller Artesanal / Espacio Productivo Interior",
-            "justificacion": f"Actividad artesanal y de manufactura delicada ({act}). Requiere recinto cerrado, protegido del clima y con condiciones de habitabilidad para resguardo de máquinas, materiales y trabajo manual continuo.",
-            "detalle_actividad": full
+            "justificacion": f"Actividad artesanal y de manufactura ({act_display}). Requiere recinto cerrado, protegido del clima y con condiciones de habitabilidad para resguardo de máquinas, herramientas y trabajo manual continuo.",
+            "detalle_actividad": act_display
         }
 
     if any(k in full for k in ["PASTEL", "REPOSTER", "MERMELADA"]):
@@ -366,8 +378,8 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
             "procede": True,
             "tipo_recinto": "Habitable",
             "recinto_sugerido": "Sala de Elaboración de Alimentos / Cocina Taller",
-            "justificacion": f"Elaboración de alimentos ({act}). Requiere recinto con terminaciones lavables, higiene, ventilación y habitabilidad para manipulación de alimentos.",
-            "detalle_actividad": full
+            "justificacion": f"Elaboración de alimentos ({act_display}). Requiere recinto habitable con terminaciones lavables, higiene, ventilación y habitabilidad para manipulación sanitaria de alimentos.",
+            "detalle_actividad": act_display
         }
 
     if any(k in full for k in ["UÑA", "UÑAS", "MANICURE", "PELUQUERIA", "PODOLOGA"]):
@@ -375,8 +387,8 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
             "procede": True,
             "tipo_recinto": "Habitable",
             "recinto_sugerido": "Espacio de Atención / Gabinete de Servicios Personales",
-            "justificacion": f"Prestación de servicios personales y estética ({act}). Requiere confort térmico, iluminación y ventilación adecuada para atención de público.",
-            "detalle_actividad": full
+            "justificacion": f"Prestación de servicios personales y estética ({act_display}). Requiere confort térmico, iluminación y ventilación adecuada para atención de público en condiciones sanitarias óptimas.",
+            "detalle_actividad": act_display
         }
 
     if any(k in full for k in ["TURISMO", "GRANJA EDUCATIVA"]):
@@ -384,8 +396,8 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
             "procede": True,
             "tipo_recinto": "Habitable",
             "recinto_sugerido": "Espacio de Recepción / Hospedaje Rural",
-            "justificacion": f"Actividad de turismo rural ({act}). Requiere recinto habitable para recepción de visitantes y actividades educativas.",
-            "detalle_actividad": full
+            "justificacion": f"Actividad de turismo rural y recreación ({act_display}). Requiere recinto habitable para recepción de visitantes y actividades formativas.",
+            "detalle_actividad": act_display
         }
 
     # 4. Recintos Complementarios NO HABITABLES (almacenamiento, acopio, animales, herramientas)
@@ -394,8 +406,8 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
             "procede": True,
             "tipo_recinto": "No Habitable",
             "recinto_sugerido": "Leñera Techada / Cobertizo de Acopio",
-            "justificacion": f"Comercialización de leña ({act}). Requiere leñera techada y ventilada para acopio y secado de madera previo a la venta.",
-            "detalle_actividad": full
+            "justificacion": f"Comercialización y acopio de leña ({act_display}). Requiere leñera techada y ventilada para acopio, secado y protección de humedad previo a la distribución.",
+            "detalle_actividad": act_display
         }
 
     if any(k in full for k in ["AGRICULTURA", "HUERTA", "HORTALIZA", "SIEMBRA", "TRIGO", "SEMILLA", "VACUNO"]):
@@ -403,8 +415,8 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
             "procede": True,
             "tipo_recinto": "No Habitable",
             "recinto_sugerido": "Bodega de Insumos y Aperos Agrícolas",
-            "justificacion": f"Explotación agropecuaria ({act}). Requiere bodega para almacenamiento seguro de herramientas, fertilizantes, semillas y cosechas.",
-            "detalle_actividad": full
+            "justificacion": f"Explotación agropecuaria y cultivo ({act_display}). Requiere bodega techada para almacenamiento seguro de herramientas de labranza, fertilizantes, semillas y cosechas.",
+            "detalle_actividad": act_display
         }
 
     if any(k in full for k in ["HUEVO", "GALLINA"]):
@@ -412,8 +424,8 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
             "procede": True,
             "tipo_recinto": "No Habitable",
             "recinto_sugerido": "Bodega / Galpón Avícola",
-            "justificacion": f"Producción avícola y venta de huevos ({act}). Requiere recinto productivo no habitable para resguardo de alimentos, cajones y aves.",
-            "detalle_actividad": full
+            "justificacion": f"Producción avícola y venta de huevos ({act_display}). Requiere recinto productivo no habitable para resguardo de alimentos, cajones y aves.",
+            "detalle_actividad": act_display
         }
 
     if any(k in full for k in ["PLANTA", "PLANTAS"]):
@@ -421,8 +433,8 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
             "procede": True,
             "tipo_recinto": "No Habitable",
             "recinto_sugerido": "Invernadero / Bodega de Plantas",
-            "justificacion": f"Venta y cultivo de plantas ({act}). Requiere recinto para resguardo de plantas y sustratos.",
-            "detalle_actividad": full
+            "justificacion": f"Venta y cultivo de plantas ({act_display}). Requiere recinto complementario tipo invernadero para resguardo de especies vegetales frente a heladas y almacenamiento de sustratos.",
+            "detalle_actividad": act_display
         }
 
     if any(k in full for k in ["GASFITER", "CONSTRUCCION", "CHANCADOR"]):
@@ -430,8 +442,8 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
             "procede": True,
             "tipo_recinto": "No Habitable",
             "recinto_sugerido": "Bodega de Herramientas y Equipos",
-            "justificacion": f"Oficio técnico independiente ({act}). Requiere espacio techado para almacenaje de herramientas, repuestos y maquinarias de trabajo.",
-            "detalle_actividad": full
+            "justificacion": f"Oficio técnico independiente ({act_display}). Requiere espacio techado para almacenaje seguro de herramientas, repuestos y maquinarias de trabajo.",
+            "detalle_actividad": act_display
         }
 
     if any(k in full for k in ["CATALOGO", "ROPA", "COMERCIANTE"]):
@@ -439,16 +451,90 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
             "procede": True,
             "tipo_recinto": "No Habitable",
             "recinto_sugerido": "Bodega de Mercadería",
-            "justificacion": f"Venta de productos ({act}). Requiere espacio para almacenamiento seco de mercadería.",
-            "detalle_actividad": full
+            "justificacion": f"Venta y comercio de productos ({act_display}). Requiere espacio seco y seguro para almacenamiento de mercadería e inventario comercial.",
+            "detalle_actividad": act_display
         }
 
     return {
         "procede": False,
         "tipo_recinto": "En Evaluación",
         "recinto_sugerido": "A determinar según visita técnica",
-        "justificacion": f"Actividad registrada ({act}). Requiere inspección en terreno para validar procedencia de recinto.",
-        "detalle_actividad": full
+        "justificacion": f"Actividad registrada ({act_display}). Requiere inspección en terreno para validar procedencia de recinto.",
+        "detalle_actividad": act_display
+    }
+
+
+def build_tabla_8(
+    postulante: Dict[str, Any],
+    recinto_info: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
+    """
+    Construye la estructura de datos oficial para la Tabla 8 del Formulario PHR N°6.1 DTS:
+    'JUSTIFICACIÓN DE RECINTO(S) COMPLEMENTARIO(S), SI PROCEDE'
+
+    Filas en la plantilla Word:
+    1: Bodega
+    2: Recinto para realizar actividades productivas
+    3: Otros Recintos Techados Adosados a la Vivienda
+    4: Leñera
+    5: Otros (especificar)
+
+    Reglas de marcación:
+    - Columna 1: Marcar 'Sí' o 'No' según corresponda (solo 'Sí' en la fila asignada si califica).
+    - Columna 2: Explicar la actividad previa y justificación técnica (solo si tiene 'Sí').
+    - Si no procede recinto complementario, las 5 filas se marcan con 'No' y Columna 2 vacía.
+    """
+    if recinto_info is None:
+        recinto_info = evaluate_recinto_complementario(postulante)
+
+    procede = bool(recinto_info.get("procede"))
+    sug = recinto_info.get("recinto_sugerido", "")
+    tipo = recinto_info.get("tipo_recinto", "")
+    just = recinto_info.get("justificacion", "")
+
+    target_row = None
+    esp_label = ""
+
+    if procede:
+        if "Leñera" in sug or "Leera" in sug:
+            target_row = 4
+        elif "Invernadero" in sug:
+            target_row = 5
+            esp_label = "Invernadero"
+        elif "Avícola" in sug or "Avcola" in sug or "Gallin" in sug:
+            target_row = 5
+            esp_label = "Galpón / Gallinero Avícola"
+        elif tipo == "Habitable":
+            target_row = 2
+        else:
+            target_row = 1
+
+    return {
+        "bodega": {
+            "si_no": "Sí" if target_row == 1 else "No",
+            "justificacion": just if target_row == 1 else ""
+        },
+        "actividades_productivas": {
+            "si_no": "Sí" if target_row == 2 else "No",
+            "justificacion": just if target_row == 2 else ""
+        },
+        "otros_adosados": {
+            "si_no": "No",
+            "justificacion": ""
+        },
+        "lenera": {
+            "si_no": "Sí" if target_row == 4 else "No",
+            "justificacion": just if target_row == 4 else ""
+        },
+        "otros_especificar": {
+            "si_no": "Sí" if target_row == 5 else "No",
+            "especificacion": esp_label if target_row == 5 else "",
+            "justificacion": just if target_row == 5 else ""
+        },
+        "aplica_recinto": procede,
+        "target_row": target_row,
+        "recinto_sugerido": sug,
+        "tipo_recinto": tipo
     }
 
 
@@ -793,6 +879,7 @@ def consolidate_postulante_local(
                 "recinto_complementario": ""
             }
         },
+        "tabla_8": build_tabla_8(postulante, evaluate_recinto_complementario(postulante)),
         "tercer_dormitorio": {
             "aplica": evaluate_tercer_dormitorio(postulante)[0],
             "motivo": evaluate_tercer_dormitorio(postulante)[1]
@@ -874,6 +961,7 @@ Responde ÚNICAMENTE con el objeto JSON que complete los campos de tabla_1, tabl
                 gemini_json["tabla_3"] = base_data["tabla_3"]  # Preservar el terreno consolidado del proyecto
                 gemini_json["tabla_5"] = base_data["tabla_5"]  # Preservar la clasificación fidedigna de Tabla 5
                 gemini_json["tabla_6"] = base_data["tabla_6"]  # Preservar la marcación de Modalidad Vivienda Nueva
+                gemini_json["tabla_8"] = base_data["tabla_8"]  # Preservar la marcación y justificación técnica de Tabla 8
                 gemini_json["tercer_dormitorio"] = base_data.get("tercer_dormitorio")
                 gemini_json["tipo_familia"] = base_data.get("tipo_familia")
                 gemini_json["recinto_complementario"] = base_data.get("recinto_complementario")
