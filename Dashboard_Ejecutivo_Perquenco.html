@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Ejecutivo: Habitabilidad Rural Perquenco (MINVU D.S. N°10)</title>
+    <!-- Tailwind CSS y Chart.js vía CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- HEADER EJECUTIVO -->
+    <header class="bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 text-white shadow-xl border-b border-blue-900/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">🏡</span>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Comité de Habitabilidad Rural Perquenco</h1>
+                    </div>
+                    <p class="text-blue-200 text-sm sm:text-base mt-1">
+                        Consolidación Estadística y Diagnóstico Técnico-Social | Programa D.S. N°10 MINVU
+                    </p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 no-print">
+                    <button onclick="window.print()" class="inline-flex items-center gap-2 bg-blue-700/60 hover:bg-blue-600 text-white text-xs sm:text-sm font-medium px-4 py-2 rounded-lg transition border border-blue-500/30 shadow-sm">
+                        🖨️ Imprimir / Guardar PDF
+                    </button>
+                    <a href="Modelo_PowerBI_Perquenco.xlsx" download class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-medium px-4 py-2 rounded-lg transition shadow-sm">
+                        📥 Modelo Power BI (.xlsx)
+                    </a>
+                </div>
+            </div>
+
+            <!-- Ficha Técnica Resumida -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-6 pt-5 border-t border-slate-800 text-xs sm:text-sm text-slate-300">
+                <div>
+                    <span class="font-semibold text-white">EGR Responsable:</span> Consultora Plan Social Limitada
+                </div>
+                <div>
+                    <span class="font-semibold text-white">Terreno Proyecto:</span> Hijuela El Molino, Lote 3 Foja 1169 N°722
+                </div>
+                <div>
+                    <span class="font-semibold text-white">Comuna / Rol SII:</span> Perquenco | Rol 202-43 (Región de La Araucanía)
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- CUERPO PRINCIPAL -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
+
+        <!-- SECCIÓN 1: TARJETAS DE INDICADORES CLAVE (CUADRADOS CON RSH) -->
+        <section>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <span>📌</span> 1. Indicadores Clave del Padrón (155 Familias / 393 Habitantes)
+                </h2>
+                <span class="text-xs bg-emerald-100 text-emerald-800 font-semibold px-3 py-1 rounded-full border border-emerald-300">Datos 100% Cuadrados y Verificados</span>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow transition">
+                    <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Postulantes</div>
+                    <div class="text-2xl font-extrabold text-blue-700 mt-1">155</div>
+                    <div class="text-xs text-slate-500 mt-1">100% Fichas activas</div>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow transition">
+                    <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Población Total</div>
+                    <div class="text-2xl font-extrabold text-slate-800 mt-1">393</div>
+                    <div class="text-xs text-emerald-600 font-semibold mt-1">Prom: 2.54 pers/hogar</div>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow transition">
+                    <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Jefatura Femenina</div>
+                    <div class="text-2xl font-extrabold text-indigo-700 mt-1">83.2%</div>
+                    <div class="text-xs text-slate-500 mt-1">129 mujeres jefas</div>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow transition">
+                    <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Monoparental F.</div>
+                    <div class="text-2xl font-extrabold text-purple-700 mt-1">51.0%</div>
+                    <div class="text-xs text-purple-600 font-semibold mt-1">79 madres solas</div>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow transition">
+                    <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pueblo Mapuche</div>
+                    <div class="text-2xl font-extrabold text-teal-700 mt-1">29.7%</div>
+                    <div class="text-xs text-slate-500 mt-1">46 familias acreditadas</div>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow transition">
+                    <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Discapacidad</div>
+                    <div class="text-2xl font-extrabold text-rose-700 mt-1">11.6%</div>
+                    <div class="text-xs text-slate-500 mt-1">18 familias con condición</div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: NÚCLEOS FAMILIARES Y VULNERABILIDAD SOCIAL -->
+        <section class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 border-b border-slate-100 pb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <span>👨‍👩‍👧‍👦</span> 2. Segmentación de Núcleos Familiares (Estándar CASEN / MINVU)
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Clasificación según jefatura, cónyuges, hijos dependientes y familias extensas.</p>
+                </div>
+                <span class="text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-3 py-1 rounded-full">Total: 155 Hogares</span>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <!-- Gráfico de Donas -->
+                <div class="lg:col-span-5 relative h-72">
+                    <canvas id="chartFamilias"></canvas>
+                </div>
+
+                <!-- Tabla Resumen -->
+                <div class="lg:col-span-7 overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200 text-xs sm:text-sm">
+                        <thead class="bg-slate-50 font-bold text-slate-600">
+                            <tr>
+                                <th class="py-2.5 px-3 text-left">Tipología Familiar</th>
+                                <th class="py-2.5 px-3 text-center">N° Hogares</th>
+                                <th class="py-2.5 px-3 text-center">% Padrón</th>
+                                <th class="py-2.5 px-3 text-left">Definición Operativa</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-700">
+                            <tr class="bg-purple-50/40 font-semibold">
+                                <td class="py-2.5 px-3 text-purple-900">Monoparental Jefatura Femenina</td>
+                                <td class="py-2.5 px-3 text-center text-purple-700 font-bold">79</td>
+                                <td class="py-2.5 px-3 text-center text-purple-700 font-bold">51.0%</td>
+                                <td class="py-2.5 px-3 text-slate-600">Madres solas con hijos (principal grupo de vulnerabilidad)</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2.5 px-3 font-medium">Nuclear Biparental con Hijos</td>
+                                <td class="py-2.5 px-3 text-center font-bold">33</td>
+                                <td class="py-2.5 px-3 text-center font-bold">21.3%</td>
+                                <td class="py-2.5 px-3 text-slate-600">Pareja (casados o convivientes) con hijos en común</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2.5 px-3 font-medium">Unipersonal</td>
+                                <td class="py-2.5 px-3 text-center font-bold">23</td>
+                                <td class="py-2.5 px-3 text-center font-bold">14.8%</td>
+                                <td class="py-2.5 px-3 text-slate-600">Personas que viven solas (adultos mayores y jóvenes)</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2.5 px-3 font-medium">Nuclear Biparental sin Hijos</td>
+                                <td class="py-2.5 px-3 text-center font-bold">11</td>
+                                <td class="py-2.5 px-3 text-center font-bold">7.1%</td>
+                                <td class="py-2.5 px-3 text-slate-600">Pareja sin hijos residentes en el hogar</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2.5 px-3 font-medium">Monoparental Jefatura Masculina</td>
+                                <td class="py-2.5 px-3 text-center font-bold">5</td>
+                                <td class="py-2.5 px-3 text-center font-bold">3.2%</td>
+                                <td class="py-2.5 px-3 text-slate-600">Padres solos con hijos a su cuidado</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2.5 px-3 font-medium">Familia Extensa</td>
+                                <td class="py-2.5 px-3 text-center font-bold">4</td>
+                                <td class="py-2.5 px-3 text-center font-bold">2.6%</td>
+                                <td class="py-2.5 px-3 text-slate-600">Hogares con presencia de abuelos, nietos u otros parientes</td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="bg-slate-50 font-bold border-t border-slate-300">
+                            <tr>
+                                <td class="py-2 px-3">Total General</td>
+                                <td class="py-2 px-3 text-center text-blue-700">155</td>
+                                <td class="py-2 px-3 text-center text-blue-700">100.0%</td>
+                                <td class="py-2 px-3 text-slate-500">155 familias auditadas</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: ANÁLISIS DE ADULTOS MAYORES (≥60 AÑOS) -->
+        <section class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <span>👴</span> 3. Caracterización y Nómina de Adultos Mayores (≥60 Años)
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Identificación de todos los miembros de la tercera edad y su densidad en el padrón.</p>
+                </div>
+                <span class="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">22 Adultos Mayores</span>
+            </div>
+
+            <!-- KPIs de Adultos Mayores -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="bg-amber-50/50 p-4 rounded-xl border border-amber-200">
+                    <div class="text-xs font-semibold text-amber-700 uppercase">Edad Promedio</div>
+                    <div class="text-2xl font-extrabold text-amber-900 mt-1">66.9 años</div>
+                    <div class="text-xs text-amber-700 mt-1">Rango: 61 a 75 años</div>
+                </div>
+                <div class="bg-amber-50/50 p-4 rounded-xl border border-amber-200">
+                    <div class="text-xs font-semibold text-amber-700 uppercase">Total Adultos Mayores</div>
+                    <div class="text-2xl font-extrabold text-amber-900 mt-1">22</div>
+                    <div class="text-xs text-amber-700 mt-1">18 titulares + 4 parientes</div>
+                </div>
+                <div class="bg-amber-50/50 p-4 rounded-xl border border-amber-200">
+                    <div class="text-xs font-semibold text-amber-700 uppercase">Hogares con AM</div>
+                    <div class="text-2xl font-extrabold text-amber-900 mt-1">11.6%</div>
+                    <div class="text-xs text-amber-700 mt-1">18 de 155 familias</div>
+                </div>
+                <div class="bg-amber-50/50 p-4 rounded-xl border border-amber-200">
+                    <div class="text-xs font-semibold text-amber-700 uppercase">Densidad en Hogar</div>
+                    <div class="text-2xl font-extrabold text-amber-900 mt-1">1.22 AM/hogar</div>
+                    <div class="text-xs text-amber-700 mt-1">Global: 0.14 por hogar</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <!-- Gráfico de Tramos -->
+                <div class="lg:col-span-5 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h3 class="font-bold text-slate-800 text-sm mb-3">Distribución por Tramos de Edad</h3>
+                    <div class="relative h-56">
+                        <canvas id="chartTramosAM"></canvas>
+                    </div>
+                </div>
+
+                <!-- Nómina Completa de los 22 Adultos Mayores -->
+                <div class="lg:col-span-7 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h3 class="font-bold text-slate-800 text-sm mb-3">Nómina de Adultos Mayores (22 Personas)</h3>
+                    <div class="overflow-y-auto max-h-56 border border-slate-200 rounded-lg bg-white">
+                        <table class="min-w-full divide-y divide-slate-200 text-xs">
+                            <thead class="bg-slate-100 font-semibold text-slate-700 sticky top-0">
+                                <tr>
+                                    <th class="py-2 px-2.5 text-left">N°</th>
+                                    <th class="py-2 px-2.5 text-left">Nombre</th>
+                                    <th class="py-2 px-2.5 text-left">RUT</th>
+                                    <th class="py-2 px-2.5 text-center">Edad</th>
+                                    <th class="py-2 px-2.5 text-left">Rol en el Hogar</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-slate-700">
+                                <tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">20</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">CANIUMIL CHEUQUEPAN LIDIA</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">7.143.131-2</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">75 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">Titular (Jefe/a)</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">71</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">HERRERA TIZNADO JOSE OMAR</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">7.555.776-0</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">75 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">Titular (Jefe/a)</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">67</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">GONZALEZ GARRIDO SIGIFREDO SEGUNDO</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">6.857.852-3</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">75 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">Titular (Jefe/a)</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">139</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">SILVA HERNANDEZ SARA ELIANA</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">7.618.420-8</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">74 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">Titular (Jefe/a)</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">144</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">GONZÁLEZ GARRIDO JOSÉ ERMAN</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">6.917.135-4</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">73 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">CÓNYUGE</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">135</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">SEPULVEDA CRISOSTO ZENOBIA SEBASTIANA</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">7.210.402-1</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">71 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">Titular (Jefe/a)</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">51</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">FERNANDEZ CARVAJAL JORGE HERNAN</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">8.673.286-6</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">68 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">Titular (Jefe/a)</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">68</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">GONZALEZ SAN MARTIN JOSE ANDRES</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">8.557.558-9</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">68 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">Titular (Jefe/a)</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">68</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">LAGOS HENRÍQUEZ EUFEMIA DEL CARMEN</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">8.271.480-4</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">68 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">CÓNYUGE</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">70</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">GUTIERREZ ULLOA JUAN SEGUNDO</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">7.978.414-1</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">67 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">Titular (Jefe/a)</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">54</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">FIGUEROA HUECHO ELIANA ISABEL</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">9.168.804-2</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">66 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">Titular (Jefe/a)</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">126</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">ROMO PUENTES ANA LUISA</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">9.032.738-0</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">66 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">Titular (Jefe/a)</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">64</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">GARRIDO ARELLANO JUAN HERIBERTO</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">7.913.179-2</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">66 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">Titular (Jefe/a)</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">80</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">LEYTON PACHECO MARIA ELIZABETH</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">8.855.161-3</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">65 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">Titular (Jefe/a)</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">90</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">MEZA BUSTOS MARLENE DEL CARMEN</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">10.922.226-7</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">63 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">Titular (Jefe/a)</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">65</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">GARRIDO ARELLANO RAMÓN ANTONIO</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">9.809.472-5</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">63 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">Titular (Jefe/a)</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">81</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">LINCO LINCO MARIA ISABEL</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">12.081.035-9</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">62 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">Titular (Jefe/a)</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">114</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">PEDRAZA GUTIÉRREZ LUISA ANGÉLICA</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">12.012.855-8</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">62 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">Titular (Jefe/a)</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">70</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">REYES CIFUENTES ALICIA ELIZABETH</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">10.048.985-6</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">62 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">CONYUGE</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">144</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">TRONCOSO DIAZ ZOILA DEL CARMEN</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">10.807.865-0</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">61 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">Titular (Jefe/a)</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">54</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">MUÑOZ NAVARRETE GASPAR</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">10.505.104-2</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">61 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">CÓNYUGE</td>
+                                </tr><tr class="hover:bg-amber-50/50">
+                                    <td class="py-1.5 px-2.5 text-slate-500 font-semibold">30</td>
+                                    <td class="py-1.5 px-2.5 font-bold text-slate-900">CASTRO BARRIGA VIVIANA BERTA</td>
+                                    <td class="py-1.5 px-2.5 font-mono text-slate-500">10.829.542-2</td>
+                                    <td class="py-1.5 px-2.5 text-center font-bold text-amber-700">61 años</td>
+                                    <td class="py-1.5 px-2.5 text-slate-600">Titular (Jefe/a)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: GRUPOS ETARIOS GLOBALES Y ESTADO CIVIL -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- Grupos Etarios (393 habitantes exactos) -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+                    <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                        <span>🎂</span> 4. Composición Etaria de la Población (393 Habitantes)
+                    </h3>
+                    <span class="text-xs bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full font-semibold">100% Cuadrado</span>
+                </div>
+                <div class="relative h-60">
+                    <canvas id="chartEtarios"></canvas>
+                </div>
+                <div class="grid grid-cols-3 gap-2 mt-4 text-center text-xs">
+                    <div class="p-2 bg-emerald-50 border border-emerald-200 rounded-lg">
+                        <div class="text-emerald-700 font-semibold">Menores (&lt;18)</div>
+                        <div class="text-lg font-bold text-emerald-900 mt-0.5">174 (44.3%)</div>
+                    </div>
+                    <div class="p-2 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div class="text-blue-700 font-semibold">Adultos (18-59)</div>
+                        <div class="text-lg font-bold text-blue-900 mt-0.5">197 (50.1%)</div>
+                    </div>
+                    <div class="p-2 bg-amber-50 border border-amber-200 rounded-lg">
+                        <div class="text-amber-700 font-semibold">Mayores (≥60)</div>
+                        <div class="text-lg font-bold text-amber-900 mt-0.5">22 (5.6%)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estado Civil -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+                    <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                        <span>💍</span> 5. Estado Civil de los Titulares (155 Postulantes)
+                    </h3>
+                    <span class="text-xs bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full font-semibold">RSH Oficial</span>
+                </div>
+                <div class="relative h-60">
+                    <canvas id="chartCivil"></canvas>
+                </div>
+                <div class="grid grid-cols-4 gap-2 mt-4 text-center text-xs">
+                    <div class="p-2 bg-slate-50 border border-slate-200 rounded-lg">
+                        <div class="text-slate-600 font-semibold">Solteros/as</div>
+                        <div class="text-base font-bold text-slate-800 mt-0.5">113 (72.9%)</div>
+                    </div>
+                    <div class="p-2 bg-slate-50 border border-slate-200 rounded-lg">
+                        <div class="text-slate-600 font-semibold">Casados/as</div>
+                        <div class="text-base font-bold text-slate-800 mt-0.5">27 (17.4%)</div>
+                    </div>
+                    <div class="p-2 bg-slate-50 border border-slate-200 rounded-lg">
+                        <div class="text-slate-600 font-semibold">Divorciados/as</div>
+                        <div class="text-base font-bold text-slate-800 mt-0.5">11 (7.1%)</div>
+                    </div>
+                    <div class="p-2 bg-slate-50 border border-slate-200 rounded-lg">
+                        <div class="text-slate-600 font-semibold">Viudos/as</div>
+                        <div class="text-base font-bold text-slate-800 mt-0.5">4 (2.6%)</div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- SECCIÓN 5: RECINTOS COMPLEMENTARIOS D.S. N°10 (DESGLOSE FINO: 32 CASOS) -->
+        <section class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <span>🏭</span> 6. Recintos Complementarios (D.S. N°10 MINVU - Desglose Fino: 32 Casos)
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Auditoría normativa 100% cerrada y resuelta según actividad económica desarrollada en el predio.</p>
+                </div>
+                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">32 Recintos Aprobados</span>
+            </div>
+
+            <!-- Tarjetas de Balance -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="bg-emerald-50/60 p-4 rounded-xl border border-emerald-200">
+                    <div class="text-xs font-semibold text-emerald-800 uppercase">Recintos HABITABLES</div>
+                    <div class="text-2xl font-extrabold text-emerald-700 mt-1">12 familias</div>
+                    <div class="text-xs text-emerald-700 mt-1">7.7% del padrón (37.5% de recintos)</div>
+                </div>
+                <div class="bg-blue-50/60 p-4 rounded-xl border border-blue-200">
+                    <div class="text-xs font-semibold text-blue-800 uppercase">Recintos NO HABITABLES</div>
+                    <div class="text-2xl font-extrabold text-blue-700 mt-1">20 familias</div>
+                    <div class="text-xs text-blue-700 mt-1">12.9% del padrón (62.5% de recintos)</div>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div class="text-xs font-semibold text-slate-600 uppercase">No Aplica Recinto</div>
+                    <div class="text-2xl font-extrabold text-slate-700 mt-1">123 familias</div>
+                    <div class="text-xs text-slate-500 mt-1">99 sin actividad + 24 laboral externa</div>
+                </div>
+                <div class="bg-purple-50/60 p-4 rounded-xl border border-purple-200">
+                    <div class="text-xs font-semibold text-purple-800 uppercase">En Evaluación</div>
+                    <div class="text-2xl font-extrabold text-purple-700 mt-1">0 familias</div>
+                    <div class="text-xs text-purple-700 font-bold mt-1">✅ 100% Resuelto y Cerrado</div>
+                </div>
+            </div>
+
+            <!-- Subtotales por Tipo Fino -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 text-center text-xs">
+                <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl">
+                    <div class="text-blue-700 font-semibold">Bodegas Agrícolas</div>
+                    <div class="text-lg font-bold text-blue-900 mt-0.5">9</div>
+                    <div class="text-[10px] text-blue-600">No Habitable</div>
+                </div>
+                <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl">
+                    <div class="text-blue-700 font-semibold">Bod. Herramientas</div>
+                    <div class="text-lg font-bold text-blue-900 mt-0.5">3</div>
+                    <div class="text-[10px] text-blue-600">No Habitable</div>
+                </div>
+                <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl">
+                    <div class="text-blue-700 font-semibold">Bod. Mercadería</div>
+                    <div class="text-lg font-bold text-blue-900 mt-0.5">3</div>
+                    <div class="text-[10px] text-blue-600">No Habitable</div>
+                </div>
+                <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl">
+                    <div class="text-blue-700 font-semibold">Gallineros Avícolas</div>
+                    <div class="text-lg font-bold text-blue-900 mt-0.5">3</div>
+                    <div class="text-[10px] text-blue-600">No Habitable</div>
+                </div>
+                <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl">
+                    <div class="text-blue-700 font-semibold">Leñera Techada</div>
+                    <div class="text-lg font-bold text-blue-900 mt-0.5">1</div>
+                    <div class="text-[10px] text-blue-600">No Habitable</div>
+                </div>
+                <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl">
+                    <div class="text-blue-700 font-semibold">Invernadero</div>
+                    <div class="text-lg font-bold text-blue-900 mt-0.5">1</div>
+                    <div class="text-[10px] text-blue-600">No Habitable</div>
+                </div>
+                <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl">
+                    <div class="text-emerald-700 font-semibold">Talleres / Alimentos</div>
+                    <div class="text-lg font-bold text-emerald-900 mt-0.5">8</div>
+                    <div class="text-[10px] text-emerald-600">Habitable</div>
+                </div>
+                <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl">
+                    <div class="text-emerald-700 font-semibold">Estética / Turismo</div>
+                    <div class="text-lg font-bold text-emerald-900 mt-0.5">4</div>
+                    <div class="text-[10px] text-emerald-600">Habitable</div>
+                </div>
+            </div>
+
+            <!-- Tabla de los 32 Casos -->
+            <div>
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
+                    <h3 class="font-bold text-slate-800 text-sm">Nómina Detallada de los 32 Recintos Aprobados:</h3>
+                    <div class="flex items-center gap-2 text-xs">
+                        <button onclick="filterRecintos('Todos')" class="btn-rec-pill px-3 py-1 rounded-lg bg-blue-600 text-white font-medium" data-cat="Todos">Todos (32)</button>
+                        <button onclick="filterRecintos('Habitable')" class="btn-rec-pill px-3 py-1 rounded-lg bg-slate-200 text-slate-700 font-medium hover:bg-slate-300" data-cat="Habitable">Habitables (12)</button>
+                        <button onclick="filterRecintos('No Habitable')" class="btn-rec-pill px-3 py-1 rounded-lg bg-slate-200 text-slate-700 font-medium hover:bg-slate-300" data-cat="No Habitable">No Habitables (20)</button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto max-h-80 border border-slate-200 rounded-xl">
+                    <table class="min-w-full divide-y divide-slate-200 text-xs">
+                        <thead class="bg-slate-50 font-semibold text-slate-700 sticky top-0 shadow-sm">
+                            <tr>
+                                <th class="py-2.5 px-3 text-left">N°</th>
+                                <th class="py-2.5 px-3 text-left">Postulante</th>
+                                <th class="py-2.5 px-3 text-left">RUT</th>
+                                <th class="py-2.5 px-3 text-left">Categoría</th>
+                                <th class="py-2.5 px-3 text-left">Subtipo Recinto</th>
+                                <th class="py-2.5 px-3 text-left">Actividad Factual</th>
+                                <th class="py-2.5 px-3 text-left">Justificación Normativa (D.S. N°10)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recintosTableBody" class="divide-y divide-slate-100 text-slate-700">
+                            <!-- Generado dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 6: EXPLORADOR GENERAL DE LAS 155 FAMILIAS -->
+        <section class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-100 pb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <span>📋</span> 7. Padrón General de Postulantes (155 Familias)
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Buscador y filtros dinámicos en vivo para consultar cualquier ficha individual.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 no-print">
+                    <input type="text" id="searchInput" placeholder="Buscar por Nombre o RUT..." onkeyup="renderHogaresTable()" class="px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-52 sm:w-64">
+                    
+                    <select id="filterFamType" onchange="renderHogaresTable()" class="px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                        <option value="Todos">Todas las Familias</option>
+                        <option value="Monoparental Femenino">Monoparental Femenino (79)</option>
+                        <option value="Nuclear Biparental con Hijos">Nuclear con Hijos (33)</option>
+                        <option value="Unipersonal">Unipersonal (23)</option>
+                        <option value="Nuclear Biparental sin Hijos">Nuclear sin Hijos (11)</option>
+                        <option value="Monoparental Masculino">Monoparental Masculino (5)</option>
+                        <option value="Familia Extensa">Familia Extensa (4)</option>
+                    </select>
+
+                    <select id="filterRecintoType" onchange="renderHogaresTable()" class="px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                        <option value="Todos">Todos los Recintos</option>
+                        <option value="Habitable">Habitables (12)</option>
+                        <option value="No Habitable">No Habitables (20)</option>
+                        <option value="No Aplica">No Aplica (123)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto max-h-[500px] border border-slate-200 rounded-xl">
+                <table class="min-w-full divide-y divide-slate-200 text-xs">
+                    <thead class="bg-slate-50 text-slate-700 font-semibold sticky top-0 shadow-sm">
+                        <tr>
+                            <th class="py-2.5 px-3 text-left">N°</th>
+                            <th class="py-2.5 px-3 text-left">Postulante</th>
+                            <th class="py-2.5 px-3 text-left">RUT</th>
+                            <th class="py-2.5 px-3 text-center">Edad / Sexo</th>
+                            <th class="py-2.5 px-3 text-center">Habitantes</th>
+                            <th class="py-2.5 px-3 text-left">Tipología Familiar</th>
+                            <th class="py-2.5 px-3 text-center">Adulto Mayor</th>
+                            <th class="py-2.5 px-3 text-left">Actividad Declarada</th>
+                            <th class="py-2.5 px-3 text-left">Recinto Complementario</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hogaresTableBody" class="divide-y divide-slate-100 text-slate-700">
+                        <!-- Generado dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="tableCounter" class="text-xs text-slate-500 text-right">Mostrando 155 de 155 postulantes</div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 text-center py-4 text-xs text-slate-500 no-print">
+        <p>Informe Consolidado Habitabilidad Rural Perquenco | Entidad de Gestión Rural: <strong>Consultora Plan Social Limitada</strong></p>
+    </footer>
+
+    <!-- SCRIPT DE DATOS Y RENDERIZADO INTERACTIVO -->
+    <script>
+        const hogaresData = [{"id": 16, "nombre": "CAMPOS VILLA MARIA JOSE", "rut": "20.709.181-2", "sexo": "F", "edad": 25, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 109, "nombre": "OSORIO LARA ABIGAIL YASMÍN", "rut": "20.393.800-4", "sexo": "F", "edad": 26, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 140, "nombre": "SOLIS VILLA YOSELIN ALEJANDRA", "rut": "18.486.142-9", "sexo": "F", "edad": 34, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "PERSONAL A CONTRATA", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 154, "nombre": "VILLEGAS PAILAHUEQUE JOHANA ANDREA", "rut": "16.184.688-0", "sexo": "F", "edad": 41, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 2, "nombre": "ACEITON ESPINOZA LUCIA MARGARITA", "rut": "11.113.280-1", "sexo": "F", "edad": 59, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "No", "actividad": "ASESORA DE HOGAR", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 104, "nombre": "NIEFERGOLT CORDOVA KAREN PATRICIA", "rut": "17.263.639-K", "sexo": "F", "edad": 37, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 57, "nombre": "FUENZALIDA DELGADILLO YURY NOEMI", "rut": "15.678.080-4", "sexo": "F", "edad": 43, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "PERSONAL A CONTRATA", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 96, "nombre": "MONRROY MONRROY CAROLINA ESTER", "rut": "16.185.442-5", "sexo": "F", "edad": 40, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 28, "nombre": "CASTILLO AGUILERA LUIS GUILLERMO", "rut": "18.486.639-0", "sexo": "M", "edad": 33, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "No", "actividad": "PARTICULAR", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 120, "nombre": "QUIÑINAO ÑANCO HARLEY KENY", "rut": "17.739.880-2", "sexo": "F", "edad": 35, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 112, "nombre": "PALACIOS LARA MARIBEL DEL CARMEN", "rut": "12.737.798-7", "sexo": "F", "edad": 53, "habitantes": 2, "tipo_familia": "Nuclear Biparental sin Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 36, "nombre": "CHAVEZ CURIN JOSELYN ZULEMA", "rut": "16.529.703-2", "sexo": "F", "edad": 40, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 72, "nombre": "HERRERA VALDEBENITO JEANNETTE JACQUELINE", "rut": "10.919.168-K", "sexo": "F", "edad": 58, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 51, "nombre": "FERNANDEZ CARVAJAL JORGE HERNAN", "rut": "8.673.286-6", "sexo": "M", "edad": 68, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "Sí", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 153, "nombre": "VILLEGAS PAILAHUEQUE ALEJANDRINA GUADALUPE", "rut": "17.551.415-5", "sexo": "F", "edad": 36, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 128, "nombre": "SALAS OPAZO DANIELA ALEXANDRA", "rut": "20.094.833-5", "sexo": "F", "edad": 27, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "PERSONAL A CONTRATA", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 152, "nombre": "VILLALEN VILLALEN JOSEFINA ANDREA", "rut": "19.462.417-4", "sexo": "F", "edad": 31, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "PERSONAL A CONTRATA", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 88, "nombre": "MEDINA TORRES VALERIA ALEJANDRA", "rut": "18.587.042-1", "sexo": "F", "edad": 33, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "GARZONA", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 1, "nombre": "ABURTO YAUPE ALEJANDRO MIGUEL", "rut": "14.903.212-6", "sexo": "M", "edad": 46, "habitantes": 3, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 3, "nombre": "ALARCÓN QUIÑENAO YESSENIA LEONOR", "rut": "18.775.104-7", "sexo": "F", "edad": 31, "habitantes": 3, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "TENS", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 127, "nombre": "SAAVEDRA TOLEDO YOSELYN MARLEN", "rut": "18.181.987-1", "sexo": "F", "edad": 34, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 135, "nombre": "SEPULVEDA CRISOSTO ZENOBIA SEBASTIANA", "rut": "7.210.402-1", "sexo": "F", "edad": 71, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "Sí", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 59, "nombre": "GALLARDO LABRA JOSE RAMON", "rut": "14.610.843-1", "sexo": "M", "edad": 48, "habitantes": 2, "tipo_familia": "Nuclear Biparental sin Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 20, "nombre": "CANIUMIL CHEUQUEPAN LIDIA", "rut": "7.143.131-2", "sexo": "F", "edad": 75, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "Sí", "actividad": "AGRICULTURA", "recinto_cat": "No Habitable", "recinto_sug": "Bodega de Insumos y Aperos Agrícolas"}, {"id": 81, "nombre": "LINCO LINCO MARIA ISABEL", "rut": "12.081.035-9", "sexo": "F", "edad": 62, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "Sí", "actividad": "HUERTA", "recinto_cat": "No Habitable", "recinto_sug": "Bodega de Insumos y Aperos Agrícolas"}, {"id": 106, "nombre": "OÑATE CONTRERAS DANIELA ANALIS", "rut": "19.126.606-4", "sexo": "F", "edad": 31, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 122, "nombre": "RAÑINAO LLANCAQUEO LILIANA LORETO", "rut": "15.231.792-1", "sexo": "F", "edad": 44, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "PERSONAL A CONTRATA", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 77, "nombre": "LARA ORTEGA JAVIERA ARACELY", "rut": "19.476.315-8", "sexo": "F", "edad": 30, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 113, "nombre": "PAREDES RETAMAL NAYADETH DANIELA ALEJANDRA", "rut": "17.551.357-4", "sexo": "F", "edad": 36, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 17, "nombre": "CANIO ALVEAL HERMAN RODRIGO", "rut": "15.646.677-8", "sexo": "M", "edad": 43, "habitantes": 2, "tipo_familia": "Monoparental Masculino", "tiene_am": "No", "actividad": "GASFITER", "recinto_cat": "No Habitable", "recinto_sug": "Bodega de Herramientas y Equipos"}, {"id": 4, "nombre": "ANINAO LINCONAO YESSENIA DEL CARMEN", "rut": "17.508.327-8", "sexo": "F", "edad": 36, "habitantes": 4, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 75, "nombre": "JEREZ LLANCAO JUAN ALEXIS", "rut": "17.990.906-5", "sexo": "M", "edad": 34, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "No", "actividad": "AGRICULTURA", "recinto_cat": "No Habitable", "recinto_sug": "Bodega de Insumos y Aperos Agrícolas"}, {"id": 12, "nombre": "BARRA PEREZ DE TUDELA BERNARDITA ISABEL", "rut": "11.694.980-6", "sexo": "F", "edad": 56, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 139, "nombre": "SILVA HERNANDEZ SARA ELIANA", "rut": "7.618.420-8", "sexo": "F", "edad": 74, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "Sí", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 103, "nombre": "NAVARRETE SEPULVEDA SOLANGE VIVIANA", "rut": "18.867.599-9", "sexo": "F", "edad": 31, "habitantes": 4, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "UÑAS", "recinto_cat": "Habitable", "recinto_sug": "Espacio de Atención / Gabinete de Servicios Personales"}, {"id": 148, "nombre": "VALENZUELA ALARCON MARISEL MARIA", "rut": "17.551.685-9", "sexo": "F", "edad": 36, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 144, "nombre": "TRONCOSO DIAZ ZOILA DEL CARMEN", "rut": "10.807.865-0", "sexo": "F", "edad": 61, "habitantes": 2, "tipo_familia": "Nuclear Biparental sin Hijos", "tiene_am": "Sí", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 71, "nombre": "HERRERA TIZNADO JOSE OMAR", "rut": "7.555.776-0", "sexo": "M", "edad": 75, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "Sí", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 54, "nombre": "FIGUEROA HUECHO ELIANA ISABEL", "rut": "9.168.804-2", "sexo": "F", "edad": 66, "habitantes": 2, "tipo_familia": "Nuclear Biparental sin Hijos", "tiene_am": "Sí", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 76, "nombre": "LABRA PAREDES VERONICA ESTEFANIA", "rut": "18.403.159-0", "sexo": "F", "edad": 33, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "ESTAMPADO Y SUBLIMACION", "recinto_cat": "Habitable", "recinto_sug": "Taller Artesanal / Espacio Productivo Interior"}, {"id": 46, "nombre": "CÓRDOVA NAVARRETE RODRIGO IVÁN", "rut": "14.034.062-6", "sexo": "M", "edad": 45, "habitantes": 5, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "INDEPENDIENTE", "recinto_cat": "No Habitable", "recinto_sug": "Bodega de Herramientas y Equipos"}, {"id": 90, "nombre": "MEZA BUSTOS MARLENE DEL CARMEN", "rut": "10.922.226-7", "sexo": "F", "edad": 63, "habitantes": 4, "tipo_familia": "Monoparental Femenino", "tiene_am": "Sí", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 130, "nombre": "SALGADO TRONCOSO LUIS ALFONSO", "rut": "12.737.714-6", "sexo": "M", "edad": 51, "habitantes": 2, "tipo_familia": "Monoparental Masculino", "tiene_am": "No", "actividad": "AUXILIAR", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 85, "nombre": "LUENGO PARRA PAULINA ALEJANDRA", "rut": "16.915.821-5", "sexo": "F", "edad": 37, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 116, "nombre": "POO RIQUELME JAVIER NICOLÁS", "rut": "17.847.921-0", "sexo": "M", "edad": 35, "habitantes": 4, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "AGRICULTURA", "recinto_cat": "No Habitable", "recinto_sug": "Bodega de Insumos y Aperos Agrícolas"}, {"id": 114, "nombre": "PEDRAZA GUTIÉRREZ LUISA ANGÉLICA", "rut": "12.012.855-8", "sexo": "F", "edad": 62, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "Sí", "actividad": "INDEPENDIENTE", "recinto_cat": "No Habitable", "recinto_sug": "Bodega de Mercadería"}, {"id": 83, "nombre": "LLANCAQUEO LLANCAQUEO DEVORA VALENTINA", "rut": "19.464.811-1", "sexo": "F", "edad": 29, "habitantes": 5, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 78, "nombre": "LARA RODRIGUEZ DANIELA ANDREA", "rut": "19.127.118-1", "sexo": "F", "edad": 30, "habitantes": 5, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "PERSONAL A CONTRATA", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 89, "nombre": "MELGAREJO LOPEZ FERNANDO RODRIGO", "rut": "18.182.082-9", "sexo": "M", "edad": 34, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "No", "actividad": "PERSONAL A CONTRATA", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 60, "nombre": "GALLEGOS LINCOPI CECILIA DEL CARMEN", "rut": "12.986.479-6", "sexo": "F", "edad": 50, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 45, "nombre": "CORDOVA CORDOVA NINOSKA ALEJANDRA", "rut": "11.584.806-2", "sexo": "F", "edad": 56, "habitantes": 2, "tipo_familia": "Familia Extensa", "tiene_am": "No", "actividad": "PERSONAL A CONTRATA", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 18, "nombre": "CANIO NAVARRETE JACQUELINE DEL ROSARIO", "rut": "15.235.618-8", "sexo": "F", "edad": 44, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "VENTA DE PLANTAS", "recinto_cat": "No Habitable", "recinto_sug": "Invernadero / Bodega de Plantas"}, {"id": 52, "nombre": "FIGUEROA BURGOS MARÍA OLGA", "rut": "16.824.944-6", "sexo": "F", "edad": 38, "habitantes": 4, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "VENTA DE GALLINAS Y HUEVOS", "recinto_cat": "No Habitable", "recinto_sug": "Bodega / Galpón Avícola"}, {"id": 108, "nombre": "OPAZO HUAIQUILAO JAVIERA FERNANDA", "rut": "19.479.805-9", "sexo": "F", "edad": 29, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "ASISTENTE DE PARVULO", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 53, "nombre": "FIGUEROA BURGOS MARIBEL DEL CARMEN", "rut": "18.774.652-3", "sexo": "M", "edad": 32, "habitantes": 2, "tipo_familia": "Monoparental Masculino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 39, "nombre": "CONCHA ASENCIO ALEJANDRA ANDREA", "rut": "16.822.465-6", "sexo": "F", "edad": 39, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 56, "nombre": "FUENZALIDA DELGADILLO EVELYN VANESSA", "rut": "16.496.572-4", "sexo": "F", "edad": 40, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 102, "nombre": "NAVARRETE ORTIZ SOLANGE DEL CARMEN", "rut": "19.763.986-5", "sexo": "F", "edad": 28, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 26, "nombre": "CARTAGENA BENAVENTE PABLO GUILLERMO ANTONIO", "rut": "8.631.653-6", "sexo": "M", "edad": 50, "habitantes": 2, "tipo_familia": "Nuclear Biparental sin Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 41, "nombre": "CONEJEROS GONZALEZ PAMELA ISABEL", "rut": "17.585.387-1", "sexo": "F", "edad": 35, "habitantes": 4, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "AUXILIAR DE ASEO", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 33, "nombre": "CAYUL COLICOY TOMAS GUILLERMO", "rut": "19.791.605-2", "sexo": "M", "edad": 29, "habitantes": 3, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 43, "nombre": "CONTRERAS MELIÑIR CAROLINA DEL CARMEN", "rut": "17.220.518-6", "sexo": "F", "edad": 37, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "HORTALIZADORA", "recinto_cat": "No Habitable", "recinto_sug": "Bodega de Insumos y Aperos Agrícolas"}, {"id": 93, "nombre": "MONROY CÓRDOVA MEDELIN ALEJANDRA", "rut": "16.499.214-4", "sexo": "F", "edad": 37, "habitantes": 2, "tipo_familia": "Familia Extensa", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 131, "nombre": "SAN MARTIN RODRIGUEZ JEIMY LYNET", "rut": "16.824.560-2", "sexo": "F", "edad": 39, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 101, "nombre": "NAVARRETE CARRASCO SILVANA ALEJANDRA", "rut": "15.987.714-0", "sexo": "F", "edad": 41, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 79, "nombre": "LEVIPAN LONCOMIL SUSANA DEL CARMEN", "rut": "15.849.242-3", "sexo": "F", "edad": 41, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 84, "nombre": "LLAULÉN ANTILAO PATRICIA KARINA", "rut": "15.807.807-4", "sexo": "F", "edad": 42, "habitantes": 4, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "ARTESANIA EN MADERA", "recinto_cat": "Habitable", "recinto_sug": "Taller Artesanal / Espacio Productivo Interior"}, {"id": 133, "nombre": "SANDOVAL LEYTON REGINA DEL CARMEN", "rut": "16.530.161-7", "sexo": "F", "edad": 39, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 111, "nombre": "PAINEMIL MAÑIL DAVID JAVIER", "rut": "15.646.699-9", "sexo": "M", "edad": 42, "habitantes": 3, "tipo_familia": "Monoparental Masculino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 105, "nombre": "OLIVA MUÑOZ MARIA TATIANA", "rut": "10.735.041-1", "sexo": "F", "edad": 48, "habitantes": 4, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "AGRICULTURA", "recinto_cat": "No Habitable", "recinto_sug": "Bodega de Insumos y Aperos Agrícolas"}, {"id": 40, "nombre": "CONCHA TORRES MAGDALENA DEL CARMEN", "rut": "12.986.468-0", "sexo": "F", "edad": 50, "habitantes": 3, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 24, "nombre": "CARILAO LINCHEO INÉS LIDIA", "rut": "13.808.848-0", "sexo": "F", "edad": 46, "habitantes": 2, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 91, "nombre": "MILLACOY MAÑIL ISOLDE ISABEL", "rut": "18.181.959-6", "sexo": "F", "edad": 34, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "HUERTA", "recinto_cat": "No Habitable", "recinto_sug": "Bodega de Insumos y Aperos Agrícolas"}, {"id": 55, "nombre": "FUENTES POBLETE MICHEL STEPHANE", "rut": "20.393.649-4", "sexo": "F", "edad": 26, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "VENTA DE ROPA INFORMAL", "recinto_cat": "No Habitable", "recinto_sug": "Bodega de Mercadería"}, {"id": 74, "nombre": "JARA RIVAS MARCIA MADELEIN", "rut": "16.869.901-8", "sexo": "F", "edad": 38, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "VENTA DE MERMELADA Y HARINA TOSTADA", "recinto_cat": "Habitable", "recinto_sug": "Sala de Elaboración de Alimentos / Cocina Taller"}, {"id": 138, "nombre": "SIERRA QUIROZ TANIA ELIZABETH", "rut": "17.955.379-1", "sexo": "F", "edad": 35, "habitantes": 3, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 123, "nombre": "RETAMAL HUECHO CARLOS JAVIER", "rut": "16.352.864-9", "sexo": "M", "edad": 40, "habitantes": 3, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "VENTA DE LEÑA", "recinto_cat": "No Habitable", "recinto_sug": "Leñera Techada / Cobertizo de Acopio"}, {"id": 23, "nombre": "CAÑUPAN CARILAO MARIA ANGELICA", "rut": "19.713.246-9", "sexo": "F", "edad": 29, "habitantes": 4, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 25, "nombre": "CARRASCO RAASCH  ALEXANDRA GISSELL", "rut": "16.824.650-1", "sexo": "F", "edad": 38, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "PELUQUERIA", "recinto_cat": "Habitable", "recinto_sug": "Espacio de Atención / Gabinete de Servicios Personales"}, {"id": 58, "nombre": "GALAZ TORRES RODRIGO ANDRES", "rut": "15.356.147-8", "sexo": "M", "edad": 43, "habitantes": 2, "tipo_familia": "Nuclear Biparental sin Hijos", "tiene_am": "No", "actividad": "INDEPENDIENTE", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 10, "nombre": "ASTETE ALARCON ISABEL ALEJANDRA", "rut": "18.866.987-5", "sexo": "F", "edad": 32, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "PERSONAL A CONTRATA", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 27, "nombre": "CASANOVA MORENO MARIA ELIZABETH", "rut": "16.824.971-3", "sexo": "F", "edad": 38, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 137, "nombre": "SERRANO ALARCÓN ANA MARIA", "rut": "18.182.205-8", "sexo": "F", "edad": 34, "habitantes": 4, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 48, "nombre": "CURIQUEO ANTIL MARIA CECILIA", "rut": "17.894.126-7", "sexo": "F", "edad": 42, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 50, "nombre": "DIAZ ROMERO AYLIN VALENTINA", "rut": "17.871.912-2", "sexo": "F", "edad": 35, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "EDUCADORA DIFERENCIAL", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 21, "nombre": "CANIUMIL CONTRERAS JOHANA DEL CARMEN", "rut": "16.825.050-9", "sexo": "F", "edad": 38, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "VENTA DE GALLINAS Y HUEVOS", "recinto_cat": "No Habitable", "recinto_sug": "Bodega / Galpón Avícola"}, {"id": 7, "nombre": "ANTILAO MEZA ISAMAR GISSELLE", "rut": "19.165.649-0", "sexo": "F", "edad": 31, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 151, "nombre": "VILLAGRÁN CÓRDOVA CRISTINA JANETH", "rut": "16.824.721-4", "sexo": "F", "edad": 38, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 121, "nombre": "RAASH TOLEDO ANA MARÍA", "rut": "19.224.296-7", "sexo": "F", "edad": 31, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 145, "nombre": "TRONCOSO VERDUGO JESSICA ELIZABETH", "rut": "11.798.523-7", "sexo": "F", "edad": 55, "habitantes": 5, "tipo_familia": "Familia Extensa", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 110, "nombre": "OSORIO LARA DOMINIQUE ARLINE", "rut": "20.709.180-4", "sexo": "F", "edad": 25, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 73, "nombre": "INOSTROZA PARRA KAREN MAGDALENA", "rut": "18.244.501-0", "sexo": "F", "edad": 34, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 124, "nombre": "REYES FUENTEALBA ALICIA NATALI", "rut": "18.484.583-0", "sexo": "F", "edad": 33, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 98, "nombre": "MONTRE MAYORGA TAMARA YESSENIA", "rut": "17.220.585-2", "sexo": "F", "edad": 37, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 13, "nombre": "BASTÍAS PALACIOS ELIZABETH TAMARA", "rut": "18.486.592-0", "sexo": "F", "edad": 33, "habitantes": 3, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 31, "nombre": "CASTRO MARABOLI MIGUEL ANGEL", "rut": "17.749.948-K", "sexo": "M", "edad": 35, "habitantes": 2, "tipo_familia": "Nuclear Biparental sin Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 115, "nombre": "PILQUINAO PILQUINAO VIVIANA CATALINA", "rut": "17.856.656-3", "sexo": "F", "edad": 36, "habitantes": 2, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 44, "nombre": "CORDOVA CANIUMIL MACARENA YANINA", "rut": "16.499.238-1", "sexo": "F", "edad": 36, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 63, "nombre": "GARCIA NAHUELCHEO MELANIE CONSTANZA", "rut": "20.982.947-9", "sexo": "F", "edad": 25, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "VENTA DE QUESOS", "recinto_cat": "Habitable", "recinto_sug": "Sala / Taller de Elaboración de Quesos (Lácteos)"}, {"id": 129, "nombre": "SALAZAR CURÍN MARÍA JOSÉ", "rut": "17.551.583-6", "sexo": "F", "edad": 36, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 66, "nombre": "GONZÁLEZ CONCHA LESLY ELIZABETH", "rut": "17.585.225-5", "sexo": "F", "edad": 36, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 49, "nombre": "DIAZ RODRIGUEZ ROSA DEL CARMEN", "rut": "14.216.581-3", "sexo": "F", "edad": 45, "habitantes": 4, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "VENTA DE HUEVOS", "recinto_cat": "No Habitable", "recinto_sug": "Bodega / Galpón Avícola"}, {"id": 61, "nombre": "GARCES GUTIERREZ ROSA ELENA", "rut": "16.530.017-3", "sexo": "F", "edad": 39, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 94, "nombre": "MONROY DÍAZ VIVIANA DEL CARMEN", "rut": "15.562.478-7", "sexo": "F", "edad": 42, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 132, "nombre": "SANDOVAL DURAN CATHERINE ANDREA", "rut": "18.182.171-K", "sexo": "F", "edad": 34, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 100, "nombre": "MORALES RIVEROS ZUNILDA DEL CARMEN", "rut": "12.388.071-4", "sexo": "F", "edad": 53, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "INDEPENDIENTE", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 107, "nombre": "OÑATE CONTRERAS GLENDA ELENA", "rut": "19.127.239-0", "sexo": "F", "edad": 30, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 125, "nombre": "REYES FUENTEALBA FABIANA LISSET", "rut": "19.076.190-8", "sexo": "F", "edad": 32, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "PAPELERIA CREATIVA", "recinto_cat": "Habitable", "recinto_sug": "Taller Artesanal / Espacio Productivo Interior"}, {"id": 136, "nombre": "SEPULVEDA LUENGO INGRID INES", "rut": "14.465.947-3", "sexo": "F", "edad": 52, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "PODOLOGA", "recinto_cat": "Habitable", "recinto_sug": "Espacio de Atención / Gabinete de Servicios Personales"}, {"id": 134, "nombre": "SEGUEL MILLACOY PILAR SUSANA", "rut": "18.486.198-4", "sexo": "F", "edad": 33, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "INDEPENDIENTE", "recinto_cat": "Habitable", "recinto_sug": "Sala de Elaboración de Alimentos / Cocina Taller"}, {"id": 87, "nombre": "MAZA MÉNDEZ DANIELA ALEJANDRA", "rut": "14.216.004-8", "sexo": "F", "edad": 45, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "TRABAJA A HONORARIOS", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 34, "nombre": "CAYUMIL SILVA PAMELA IVETTE", "rut": "17.551.528-3", "sexo": "F", "edad": 36, "habitantes": 3, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "PERSONAL A CONTRATA", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 155, "nombre": "ZAMBRANO LOPEZ DANIELA ANDREA", "rut": "18.775.020-2", "sexo": "F", "edad": 32, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "PRODUCCIONES FRIGORIFICO CERMANT", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 97, "nombre": "MONTRE ARRIAGADA YURI ZULEMA", "rut": "15.969.839-4", "sexo": "F", "edad": 41, "habitantes": 4, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 38, "nombre": "COLLIO VALENZUELA JONATHAN DANIEL", "rut": "18.774.756-2", "sexo": "M", "edad": 32, "habitantes": 4, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "AGRICULTURA", "recinto_cat": "No Habitable", "recinto_sug": "Bodega de Insumos y Aperos Agrícolas"}, {"id": 6, "nombre": "ANTILAO ANTILAO ORIET ELIANA", "rut": "18.182.253-8", "sexo": "F", "edad": 34, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 118, "nombre": "QUEIPO HUENUMAN ELIA ERIKA", "rut": "13.808.003-K", "sexo": "F", "edad": 46, "habitantes": 4, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 141, "nombre": "SOTO TORRES YASMINKA ALEXANDRA", "rut": "19.126.919-5", "sexo": "F", "edad": 31, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 80, "nombre": "LEYTON PACHECO MARIA ELIZABETH", "rut": "8.855.161-3", "sexo": "F", "edad": 65, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "Sí", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 62, "nombre": "GARCIA GUEVARA ELADIA ALMIDA", "rut": "11.989.478-6", "sexo": "F", "edad": 54, "habitantes": 4, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 29, "nombre": "CASTILLO ASTETE ALEXANDRA ANDREINA", "rut": "20.094.488-7", "sexo": "F", "edad": 28, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "FLORES ETERNAS", "recinto_cat": "Habitable", "recinto_sug": "Taller Artesanal / Espacio Productivo Interior"}, {"id": 86, "nombre": "MALDONADO GUIÑEZ SARA DEL CARMEN", "rut": "18.296.352-6", "sexo": "F", "edad": 34, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 82, "nombre": "LLANCAQUEO CANIO GLORIA ARACELI", "rut": "13.152.987-2", "sexo": "F", "edad": 49, "habitantes": 2, "tipo_familia": "Nuclear Biparental sin Hijos", "tiene_am": "No", "actividad": "AGRICULTURA", "recinto_cat": "No Habitable", "recinto_sug": "Bodega de Insumos y Aperos Agrícolas"}, {"id": 126, "nombre": "ROMO PUENTES ANA LUISA", "rut": "9.032.738-0", "sexo": "F", "edad": 66, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "Sí", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 47, "nombre": "CURIN CONCHA ZAFKA DE LOS ANGELES", "rut": "20.353.246-6", "sexo": "F", "edad": 27, "habitantes": 2, "tipo_familia": "Nuclear Biparental sin Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 67, "nombre": "GONZALEZ GARRIDO SIGIFREDO SEGUNDO", "rut": "6.857.852-3", "sexo": "M", "edad": 75, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "Sí", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 19, "nombre": "CANIU LLANCAQUEO CAMILA BEATRIZ", "rut": "19.127.033-9", "sexo": "F", "edad": 31, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 35, "nombre": "CEA CONTRERAS CLAUDIA ANDREA", "rut": "18.867.634-0", "sexo": "F", "edad": 32, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 117, "nombre": "PROVOSTE POLANCO CAMILA DANIELA", "rut": "18.832.001-5", "sexo": "F", "edad": 32, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "INDEPENDIENTE", "recinto_cat": "Habitable", "recinto_sug": "Espacio de Recepción / Hospedaje Rural"}, {"id": 99, "nombre": "MORA IBAÑEZ KATHERINE ALEJANDRA", "rut": "19.315.650-9", "sexo": "F", "edad": 30, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 37, "nombre": "COLICOY CARIQUEO JIMENA MARÍA", "rut": "15.235.616-1", "sexo": "F", "edad": 44, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 150, "nombre": "VAZQUEZ MARTINEZ LOURDES DEL CARMEN", "rut": "17.894.249-2", "sexo": "F", "edad": 35, "habitantes": 6, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 64, "nombre": "GARRIDO ARELLANO JUAN HERIBERTO", "rut": "7.913.179-2", "sexo": "M", "edad": 66, "habitantes": 2, "tipo_familia": "Monoparental Masculino", "tiene_am": "Sí", "actividad": "CHANCADOR", "recinto_cat": "No Habitable", "recinto_sug": "Bodega de Herramientas y Equipos"}, {"id": 119, "nombre": "QUILODRÁN REYES ROXANA DEL CARMEN", "rut": "16.613.057-3", "sexo": "F", "edad": 40, "habitantes": 3, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 30, "nombre": "CASTRO BARRIGA VIVIANA BERTA", "rut": "10.829.542-2", "sexo": "F", "edad": 61, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "Sí", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 68, "nombre": "GONZALEZ SAN MARTIN JOSE ANDRES", "rut": "8.557.558-9", "sexo": "M", "edad": 68, "habitantes": 2, "tipo_familia": "Nuclear Biparental sin Hijos", "tiene_am": "Sí", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 143, "nombre": "TOPP RIVAS MAITE FRANCHESCA", "rut": "19.462.860-9", "sexo": "F", "edad": 29, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "SECRETARIA", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 65, "nombre": "GARRIDO ARELLANO RAMÓN ANTONIO", "rut": "9.809.472-5", "sexo": "M", "edad": 63, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "Sí", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 142, "nombre": "SUAZO PEREZ MONICA DEL CARMEN", "rut": "8.501.260-6", "sexo": "F", "edad": 54, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 5, "nombre": "ANTIL ANTIL MIRIAM YOSELIN", "rut": "18.774.734-1", "sexo": "F", "edad": 36, "habitantes": 3, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "CONCEJALA", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 146, "nombre": "VALDES MOYA YESSENIA ALEJANDRA", "rut": "19.792.113-7", "sexo": "F", "edad": 28, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "REPOSTERIA", "recinto_cat": "Habitable", "recinto_sug": "Sala de Elaboración de Alimentos / Taller de Repostería"}, {"id": 70, "nombre": "GUTIERREZ ULLOA JUAN SEGUNDO", "rut": "7.978.414-1", "sexo": "M", "edad": 67, "habitantes": 2, "tipo_familia": "Nuclear Biparental sin Hijos", "tiene_am": "Sí", "actividad": "CUARTELERO", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 147, "nombre": "VALDEVENITO CARRASCO DARWIN OMAR", "rut": "20.412.822-7", "sexo": "M", "edad": 26, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "No", "actividad": "INDEPENDIENTE", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 14, "nombre": "CAAMAÑO LOPEZ LUCIA DEL CARMEN", "rut": "16.185.106-K", "sexo": "F", "edad": 40, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 15, "nombre": "CAIFUAL RODRIGUEZ YASMÍN ELIZABETH", "rut": "21.225.657-9", "sexo": "F", "edad": 23, "habitantes": 2, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 11, "nombre": "ASTETE ALARCÓN MARÍA ANGÉLICA", "rut": "17.153.373-2", "sexo": "F", "edad": 37, "habitantes": 5, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "SERVILAVADO", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 95, "nombre": "MONROY ROJAS CAMILA PAZ", "rut": "18.823.561-1", "sexo": "F", "edad": 32, "habitantes": 6, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "PRODUCTOS POR CATALOGO", "recinto_cat": "No Habitable", "recinto_sug": "Bodega de Mercadería"}, {"id": 69, "nombre": "GUEVILAO MARTINEZ ALEXIS EDUARDO", "rut": "19.462.966-4", "sexo": "M", "edad": 29, "habitantes": 1, "tipo_familia": "Unipersonal", "tiene_am": "No", "actividad": "PERSONAL A CONTRATA", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 8, "nombre": "ARANDA THALER NICOLE ESTEFANIA", "rut": "17.284.496-0", "sexo": "F", "edad": 36, "habitantes": 4, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 149, "nombre": "VÁSQUEZ MARTÍNEZ MIRELLA DEL CARMEN", "rut": "20.393.873-K", "sexo": "F", "edad": 26, "habitantes": 4, "tipo_familia": "Familia Extensa", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 9, "nombre": "ARAYA MEDINA MAITE NOEMI", "rut": "20.393.891-8", "sexo": "F", "edad": 26, "habitantes": 4, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 22, "nombre": "CANIUPAN ORTIZ WILMA CONSTANZA", "rut": "18.182.461-1", "sexo": "F", "edad": 33, "habitantes": 4, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 92, "nombre": "MILLACOY MEDINA PAMELA ANDREA", "rut": "16.148.947-6", "sexo": "F", "edad": 40, "habitantes": 3, "tipo_familia": "Monoparental Femenino", "tiene_am": "No", "actividad": "PERSONAL A CONTRATA", "recinto_cat": "No Aplica (Laboral Externa)", "recinto_sug": "No Aplica"}, {"id": 42, "nombre": "CONTRERAS CANIUMIL NATALIA LEONOR", "rut": "19.791.681-8", "sexo": "F", "edad": 29, "habitantes": 3, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}, {"id": 32, "nombre": "CATALÁN GAETE BÁRBARA BELÉN", "rut": "18.867.737-1", "sexo": "F", "edad": 38, "habitantes": 3, "tipo_familia": "Nuclear Biparental con Hijos", "tiene_am": "No", "actividad": "(Sin actividad)", "recinto_cat": "No Aplica", "recinto_sug": "No Aplica"}];
+        const recintosData = [{"id": 20, "nombre": "CANIUMIL CHEUQUEPAN LIDIA", "rut": "7.143.131-2", "categoria": "No Habitable", "subtipo": "Bodega de Insumos y Aperos Agrícolas", "actividad": "AGRICULTURA VENTA DE HUEVOS", "justificacion": "Explotación agropecuaria (AGRICULTURA). Requiere bodega para almacenamiento seguro de herramientas, fertilizantes, semillas y cosechas."}, {"id": 81, "nombre": "LINCO LINCO MARIA ISABEL", "rut": "12.081.035-9", "categoria": "No Habitable", "subtipo": "Bodega de Insumos y Aperos Agrícolas", "actividad": "HUERTA REALIZA UNA HUERTA PEQUEÑA PARA SUSTENTAR GASTOS", "justificacion": "Explotación agropecuaria (HUERTA). Requiere bodega para almacenamiento seguro de herramientas, fertilizantes, semillas y cosechas."}, {"id": 17, "nombre": "CANIO ALVEAL HERMAN RODRIGO", "rut": "15.646.677-8", "categoria": "No Habitable", "subtipo": "Bodega de Herramientas y Equipos", "actividad": "GASFITER", "justificacion": "Oficio técnico independiente (GASFITER). Requiere espacio techado para almacenaje de herramientas, repuestos y maquinarias de trabajo."}, {"id": 75, "nombre": "JEREZ LLANCAO JUAN ALEXIS", "rut": "17.990.906-5", "categoria": "No Habitable", "subtipo": "Bodega de Insumos y Aperos Agrícolas", "actividad": "AGRICULTURA REALIZA PROCESO DE SEMILLAS PARA SIEMBRA CON MAQUINARIA", "justificacion": "Explotación agropecuaria (AGRICULTURA). Requiere bodega para almacenamiento seguro de herramientas, fertilizantes, semillas y cosechas."}, {"id": 103, "nombre": "NAVARRETE SEPULVEDA SOLANGE VIVIANA", "rut": "18.867.599-9", "categoria": "Habitable", "subtipo": "Espacio de Atención / Gabinete de Servicios Personales", "actividad": "UÑAS NECESITA UN ESPACIO VENTILADO PARA LA REALIZACION", "justificacion": "Prestación de servicios personales y estética (UÑAS). Requiere confort térmico, iluminación y ventilación adecuada para atención de público."}, {"id": 76, "nombre": "LABRA PAREDES VERONICA ESTEFANIA", "rut": "18.403.159-0", "categoria": "Habitable", "subtipo": "Taller Artesanal / Espacio Productivo Interior", "actividad": "ESTAMPADO Y SUBLIMACION", "justificacion": "Actividad artesanal y de manufactura delicada (ESTAMPADO Y SUBLIMACION). Requiere recinto cerrado, protegido del clima y con condiciones de habitabilidad para resguardo de máquinas, materiales y trabajo manual continuo."}, {"id": 46, "nombre": "CÓRDOVA NAVARRETE RODRIGO IVÁN", "rut": "14.034.062-6", "categoria": "No Habitable", "subtipo": "Bodega de Herramientas y Equipos", "actividad": "INDEPENDIENTE CONSTRUCCION", "justificacion": "Oficio técnico independiente (INDEPENDIENTE). Requiere espacio techado para almacenaje de herramientas, repuestos y maquinarias de trabajo."}, {"id": 116, "nombre": "POO RIQUELME JAVIER NICOLÁS", "rut": "17.847.921-0", "categoria": "No Habitable", "subtipo": "Bodega de Insumos y Aperos Agrícolas", "actividad": "AGRICULTURA VENTA DE HUEVOS, FRUTAS, SEMILLAS, DULCES, ETC", "justificacion": "Explotación agropecuaria (AGRICULTURA). Requiere bodega para almacenamiento seguro de herramientas, fertilizantes, semillas y cosechas."}, {"id": 114, "nombre": "PEDRAZA GUTIÉRREZ LUISA ANGÉLICA", "rut": "12.012.855-8", "categoria": "No Habitable", "subtipo": "Bodega de Mercadería", "actividad": "INDEPENDIENTE COMERCIANTE AMBULANTE", "justificacion": "Venta de productos (INDEPENDIENTE). Requiere espacio para almacenamiento seco de mercadería."}, {"id": 18, "nombre": "CANIO NAVARRETE JACQUELINE DEL ROSARIO", "rut": "15.235.618-8", "categoria": "No Habitable", "subtipo": "Invernadero / Bodega de Plantas", "actividad": "VENTA DE PLANTAS VENTA DE PLANTAS EXTERIOR E INTERIOR DE FORMA INDEPENDIENTE", "justificacion": "Venta y cultivo de plantas (VENTA DE PLANTAS). Requiere recinto para resguardo de plantas y sustratos."}, {"id": 52, "nombre": "FIGUEROA BURGOS MARÍA OLGA", "rut": "16.824.944-6", "categoria": "No Habitable", "subtipo": "Bodega / Galpón Avícola", "actividad": "VENTA DE GALLINAS Y HUEVOS", "justificacion": "Producción avícola y venta de huevos (VENTA DE GALLINAS Y HUEVOS). Requiere recinto productivo no habitable para resguardo de alimentos, cajones y aves."}, {"id": 43, "nombre": "CONTRERAS MELIÑIR CAROLINA DEL CARMEN", "rut": "17.220.518-6", "categoria": "No Habitable", "subtipo": "Bodega de Insumos y Aperos Agrícolas", "actividad": "HORTALIZADORA VENDE FLORES EN LA FERIA", "justificacion": "Explotación agropecuaria (HORTALIZADORA). Requiere bodega para almacenamiento seguro de herramientas, fertilizantes, semillas y cosechas."}, {"id": 84, "nombre": "LLAULÉN ANTILAO PATRICIA KARINA", "rut": "15.807.807-4", "categoria": "Habitable", "subtipo": "Taller Artesanal / Espacio Productivo Interior", "actividad": "ARTESANIA EN MADERA", "justificacion": "Actividad artesanal y de manufactura delicada (ARTESANIA EN MADERA). Requiere recinto cerrado, protegido del clima y con condiciones de habitabilidad para resguardo de máquinas, materiales y trabajo manual continuo."}, {"id": 105, "nombre": "OLIVA MUÑOZ MARIA TATIANA", "rut": "10.735.041-1", "categoria": "No Habitable", "subtipo": "Bodega de Insumos y Aperos Agrícolas", "actividad": "AGRICULTURA VENTA DE HORTALIZAS Y HUEVOS", "justificacion": "Explotación agropecuaria (AGRICULTURA). Requiere bodega para almacenamiento seguro de herramientas, fertilizantes, semillas y cosechas."}, {"id": 91, "nombre": "MILLACOY MAÑIL ISOLDE ISABEL", "rut": "18.181.959-6", "categoria": "No Habitable", "subtipo": "Bodega de Insumos y Aperos Agrícolas", "actividad": "HUERTA HUERTA DE CONSUMO PERSONAL Y A VECES VENDE FUERA DE SU FAMILIA", "justificacion": "Explotación agropecuaria (HUERTA). Requiere bodega para almacenamiento seguro de herramientas, fertilizantes, semillas y cosechas."}, {"id": 55, "nombre": "FUENTES POBLETE MICHEL STEPHANE", "rut": "20.393.649-4", "categoria": "No Habitable", "subtipo": "Bodega de Mercadería", "actividad": "VENTA DE ROPA INFORMAL", "justificacion": "Venta de productos (VENTA DE ROPA INFORMAL). Requiere espacio para almacenamiento seco de mercadería."}, {"id": 74, "nombre": "JARA RIVAS MARCIA MADELEIN", "rut": "16.869.901-8", "categoria": "Habitable", "subtipo": "Sala de Elaboración de Alimentos / Cocina Taller", "actividad": "VENTA DE MERMELADA Y HARINA TOSTADA", "justificacion": "Elaboración de alimentos (VENTA DE MERMELADA Y HARINA TOSTADA). Requiere recinto con terminaciones lavables, higiene, ventilación y habitabilidad para manipulación de alimentos."}, {"id": 123, "nombre": "RETAMAL HUECHO CARLOS JAVIER", "rut": "16.352.864-9", "categoria": "No Habitable", "subtipo": "Leñera Techada / Cobertizo de Acopio", "actividad": "VENTA DE LEÑA", "justificacion": "Comercialización de leña (VENTA DE LEÑA). Requiere leñera techada y ventilada para acopio y secado de madera previo a la venta."}, {"id": 25, "nombre": "CARRASCO RAASCH  ALEXANDRA GISSELL", "rut": "16.824.650-1", "categoria": "Habitable", "subtipo": "Espacio de Atención / Gabinete de Servicios Personales", "actividad": "PELUQUERIA", "justificacion": "Prestación de servicios personales y estética (PELUQUERIA). Requiere confort térmico, iluminación y ventilación adecuada para atención de público."}, {"id": 21, "nombre": "CANIUMIL CONTRERAS JOHANA DEL CARMEN", "rut": "16.825.050-9", "categoria": "No Habitable", "subtipo": "Bodega / Galpón Avícola", "actividad": "VENTA DE GALLINAS Y HUEVOS VENTA DE HUEVOS Y GALLINAS EN LA FERIA", "justificacion": "Producción avícola y venta de huevos (VENTA DE GALLINAS Y HUEVOS). Requiere recinto productivo no habitable para resguardo de alimentos, cajones y aves."}, {"id": 63, "nombre": "GARCIA NAHUELCHEO MELANIE CONSTANZA", "rut": "20.982.947-9", "categoria": "Habitable", "subtipo": "Sala / Taller de Elaboración de Quesos (Lácteos)", "actividad": "Venta y elaboración de quesos", "justificacion": "Evaluación técnica EGR confirmada: Elaboración artesanal y venta de quesos en el predio. Requiere recinto cerrado, térmicamente aislado, con superficies lavables y condiciones higiénico-sanitarias."}, {"id": 49, "nombre": "DIAZ RODRIGUEZ ROSA DEL CARMEN", "rut": "14.216.581-3", "categoria": "No Habitable", "subtipo": "Bodega / Galpón Avícola", "actividad": "VENTA DE HUEVOS VENDE HUEVOS Y LOS ENTREGA A DOMICILIO", "justificacion": "Producción avícola y venta de huevos (VENTA DE HUEVOS). Requiere recinto productivo no habitable para resguardo de alimentos, cajones y aves."}, {"id": 125, "nombre": "REYES FUENTEALBA FABIANA LISSET", "rut": "19.076.190-8", "categoria": "Habitable", "subtipo": "Taller Artesanal / Espacio Productivo Interior", "actividad": "PAPELERIA CREATIVA UTILIZA PLOTER DE CORTE, SUBLIMACION", "justificacion": "Actividad artesanal y de manufactura delicada (PAPELERIA CREATIVA). Requiere recinto cerrado, protegido del clima y con condiciones de habitabilidad para resguardo de máquinas, materiales y trabajo manual continuo."}, {"id": 136, "nombre": "SEPULVEDA LUENGO INGRID INES", "rut": "14.465.947-3", "categoria": "Habitable", "subtipo": "Espacio de Atención / Gabinete de Servicios Personales", "actividad": "PODOLOGA", "justificacion": "Prestación de servicios personales y estética (PODOLOGA). Requiere confort térmico, iluminación y ventilación adecuada para atención de público."}, {"id": 134, "nombre": "SEGUEL MILLACOY PILAR SUSANA", "rut": "18.486.198-4", "categoria": "Habitable", "subtipo": "Sala de Elaboración de Alimentos / Cocina Taller", "actividad": "INDEPENDIENTE REALIZA PASTELES", "justificacion": "Elaboración de alimentos (INDEPENDIENTE). Requiere recinto con terminaciones lavables, higiene, ventilación y habitabilidad para manipulación de alimentos."}, {"id": 38, "nombre": "COLLIO VALENZUELA JONATHAN DANIEL", "rut": "18.774.756-2", "categoria": "No Habitable", "subtipo": "Bodega de Insumos y Aperos Agrícolas", "actividad": "AGRICULTURA CRIADOR DE VACUNO", "justificacion": "Explotación agropecuaria (AGRICULTURA). Requiere bodega para almacenamiento seguro de herramientas, fertilizantes, semillas y cosechas."}, {"id": 29, "nombre": "CASTILLO ASTETE ALEXANDRA ANDREINA", "rut": "20.094.488-7", "categoria": "Habitable", "subtipo": "Taller Artesanal / Espacio Productivo Interior", "actividad": "FLORES ETERNAS ELABORA FLORES ETERNAS, NECESITA ESPACIO PARA ALMACENAR LOS MATERIALES", "justificacion": "Actividad artesanal y de manufactura delicada (FLORES ETERNAS). Requiere recinto cerrado, protegido del clima y con condiciones de habitabilidad para resguardo de máquinas, materiales y trabajo manual continuo."}, {"id": 82, "nombre": "LLANCAQUEO CANIO GLORIA ARACELI", "rut": "13.152.987-2", "categoria": "No Habitable", "subtipo": "Bodega de Insumos y Aperos Agrícolas", "actividad": "AGRICULTURA SIEMBRA DE TRIGO Y CRIANZA DE ANIMALES", "justificacion": "Explotación agropecuaria (AGRICULTURA). Requiere bodega para almacenamiento seguro de herramientas, fertilizantes, semillas y cosechas."}, {"id": 117, "nombre": "PROVOSTE POLANCO CAMILA DANIELA", "rut": "18.832.001-5", "categoria": "Habitable", "subtipo": "Espacio de Recepción / Hospedaje Rural", "actividad": "INDEPENDIENTE MINI GRANJA EDUCATIVA", "justificacion": "Actividad de turismo rural (INDEPENDIENTE). Requiere recinto habitable para recepción de visitantes y actividades educativas."}, {"id": 64, "nombre": "GARRIDO ARELLANO JUAN HERIBERTO", "rut": "7.913.179-2", "categoria": "No Habitable", "subtipo": "Bodega de Herramientas y Equipos", "actividad": "CHANCADOR", "justificacion": "Oficio técnico independiente (CHANCADOR). Requiere espacio techado para almacenaje de herramientas, repuestos y maquinarias de trabajo."}, {"id": 146, "nombre": "VALDES MOYA YESSENIA ALEJANDRA", "rut": "19.792.113-7", "categoria": "Habitable", "subtipo": "Sala de Elaboración de Alimentos / Taller de Repostería", "actividad": "Repostería artesanal", "justificacion": "Evaluación técnica EGR confirmada: Emprendimiento productivo de repostería casera y pastelería en el predio. Requiere recinto habitable con aislamiento y terminaciones lavables."}, {"id": 95, "nombre": "MONROY ROJAS CAMILA PAZ", "rut": "18.823.561-1", "categoria": "No Habitable", "subtipo": "Bodega de Mercadería", "actividad": "PRODUCTOS POR CATALOGO REALIZA VENTA DE PRODUCTOS EN SU VIVIENDA Y ENTRGA A DOMICILIO", "justificacion": "Venta de productos (PRODUCTOS POR CATALOGO). Requiere espacio para almacenamiento seco de mercadería."}];
+
+        // 1. Gráfico de Núcleos Familiares
+        new Chart(document.getElementById('chartFamilias').getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Monoparental Femenino (79)', 'Nuclear con Hijos (33)', 'Unipersonal (23)', 'Nuclear sin Hijos (11)', 'Monoparental Masculino (5)', 'Familia Extensa (4)'],
+                datasets: [{
+                    data: [79, 33, 23, 11, 5, 4],
+                    backgroundColor: ['#6366F1', '#0EA5E9', '#F59E0B', '#10B981', '#EC4899', '#8B5CF6'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right', labels: { boxWidth: 12, font: { size: 10 } } }
+                }
+            }
+        });
+
+        // 2. Gráfico de Tramos de Edad AM
+        new Chart(document.getElementById('chartTramosAM').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['60 a 64 años', '65 a 69 años', '70 a 74 años', '75+ años'],
+                datasets: [{
+                    label: 'Adultos Mayores',
+                    data: [8, 8, 3, 3],
+                    backgroundColor: '#F59E0B',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 2 } } },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // 3. Gráfico de Composición Etaria (393 habitantes)
+        new Chart(document.getElementById('chartEtarios').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Menores (<18 años)', 'Adultos (18-59 años)', 'Adultos Mayores (≥60)'],
+                datasets: [{
+                    label: 'Total Personas',
+                    data: [174, 197, 22],
+                    backgroundColor: ['#10B981', '#3B82F6', '#F59E0B'],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { y: { beginAtZero: true } },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // 4. Gráfico de Estado Civil
+        new Chart(document.getElementById('chartCivil').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Solteros/as', 'Casados/as', 'Divorciados/as', 'Viudos/as'],
+                datasets: [{
+                    label: 'Postulantes',
+                    data: [113, 27, 11, 4],
+                    backgroundColor: '#64748B',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { y: { beginAtZero: true } },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // 5. Tabla de Recintos Complementarios (32 Casos)
+        let currentRecCategory = 'Todos';
+        function renderRecintosTable() {
+            const tbody = document.getElementById('recintosTableBody');
+            tbody.innerHTML = '';
+
+            const filtered = recintosData.filter(r => {
+                if (currentRecCategory === 'Todos') return true;
+                return r.categoria === currentRecCategory;
+            });
+
+            filtered.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition';
+
+                const badge = r.categoria === 'Habitable'
+                    ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">Habitable</span>'
+                    : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-300">No Habitable</span>';
+
+                tr.innerHTML = `
+                    <td class="py-2 px-3 font-semibold text-slate-500">${r.id}</td>
+                    <td class="py-2 px-3 font-bold text-slate-900">${r.nombre}</td>
+                    <td class="py-2 px-3 font-mono text-slate-500">${r.rut}</td>
+                    <td class="py-2 px-3">${badge}</td>
+                    <td class="py-2 px-3 font-semibold text-slate-800">${r.subtipo}</td>
+                    <td class="py-2 px-3 text-slate-600">${r.actividad}</td>
+                    <td class="py-2 px-3 text-slate-500 max-w-xs truncate" title="${r.justificacion}">${r.justificacion}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterRecintos(cat) {
+            currentRecCategory = cat;
+            document.querySelectorAll('.btn-rec-pill').forEach(btn => {
+                if (btn.getAttribute('data-cat') === cat) {
+                    btn.className = 'btn-rec-pill px-3 py-1 rounded-lg bg-blue-600 text-white font-medium';
+                } else {
+                    btn.className = 'btn-rec-pill px-3 py-1 rounded-lg bg-slate-200 text-slate-700 font-medium hover:bg-slate-300';
+                }
+            });
+            renderRecintosTable();
+        }
+
+        // 6. Tabla General con Filtro Dinámico
+        function renderHogaresTable() {
+            const search = document.getElementById('searchInput').value.toLowerCase().trim();
+            const famFilter = document.getElementById('filterFamType').value;
+            const recFilter = document.getElementById('filterRecintoType').value;
+
+            const tbody = document.getElementById('hogaresTableBody');
+            tbody.innerHTML = '';
+
+            let count = 0;
+            hogaresData.forEach(h => {
+                const matchSearch = h.nombre.toLowerCase().includes(search) || h.rut.toLowerCase().includes(search);
+                const matchFam = (famFilter === 'Todos') || (h.tipo_familia === famFilter);
+                const matchRec = (recFilter === 'Todos') || (h.recinto_cat === recFilter);
+
+                if (matchSearch && matchFam && matchRec) {
+                    count++;
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-50 transition';
+
+                    let recBadge = '<span class="text-slate-400">No Aplica</span>';
+                    if (h.recinto_cat === 'Habitable') {
+                        recBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">Habitable (${h.recinto_sug})</span>`;
+                    } else if (h.recinto_cat === 'No Habitable') {
+                        recBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-300">No Habitable (${h.recinto_sug})</span>`;
+                    }
+
+                    const amBadge = h.tiene_am === 'Sí'
+                        ? '<span class="font-bold text-amber-600">Sí</span>'
+                        : '<span class="text-slate-400">No</span>';
+
+                    tr.innerHTML = `
+                        <td class="py-2 px-3 font-semibold text-slate-500">${h.id}</td>
+                        <td class="py-2 px-3 font-bold text-slate-900">${h.nombre}</td>
+                        <td class="py-2 px-3 font-mono text-slate-500">${h.rut}</td>
+                        <td class="py-2 px-3 text-center text-slate-600">${h.edad} (${h.sexo})</td>
+                        <td class="py-2 px-3 text-center font-bold text-slate-800">${h.habitantes}</td>
+                        <td class="py-2 px-3 text-slate-800">${h.tipo_familia}</td>
+                        <td class="py-2 px-3 text-center">${amBadge}</td>
+                        <td class="py-2 px-3 text-slate-600">${h.actividad}</td>
+                        <td class="py-2 px-3">${recBadge}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+
+            document.getElementById('tableCounter').innerText = `Mostrando ${count} de ${hogaresData.length} postulantes`;
+        }
+
+        // Inicializar
+        renderRecintosTable();
+        renderHogaresTable();
+    </script>
+</body>
+</html>

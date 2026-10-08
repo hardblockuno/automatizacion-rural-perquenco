@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.bak
+
+# Entorno y credenciales
+.env
+.venv/
+env/
+
+# Archivos temporales de Microsoft Office
+~$*
+
+# Salidas y formularios generados por la app
+formularios_generados/
