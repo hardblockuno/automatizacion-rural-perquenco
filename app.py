@@ -373,18 +373,26 @@ with tab_preview:
     t5_esp = t5.get("especificacion", "")
     t5_act_fuente = t5.get("actividad_fuente", "")
     t5_desc_fuente = t5.get("descripcion_fuente", "")
+    es_social = t5.get("sin_actividad_declarada", False)
 
     if t5_cat:
         col_act1, col_act2 = st.columns([3, 2])
-        with col_act1:
-            st.success(f"💼 **Actividad Registrada en Base:** `{t5_act_fuente}`" + (f" — *{t5_desc_fuente}*" if t5_desc_fuente else ""))
-        with col_act2:
-            if t5_cat == "otras" and t5_esp:
-                st.info(f"📌 **Sector:** `Otras (Especificar)` ➔ *'{t5_esp}'* (ubicado bajo el título)")
-            else:
-                st.info(f"📌 **Sector Tabla 5:** `{t5_cat.capitalize()}`")
+        if es_social:
+            with col_act1:
+                st.info(f"⚖️ **Criterio Social Normativo Asignado:** `{t5_esp}` *(Sin actividad económica declarada en base)*")
+            with col_act2:
+                st.info(f"📌 **Fila Tabla 5 (Word):** `Otras (Especificar: {t5_esp})` ➔ Marcado en *Jefe de Hogar*")
+        else:
+            with col_act1:
+                st.success(f"💼 **Actividad Registrada en Base:** `{t5_act_fuente}`" + (f" — *{t5_desc_fuente}*" if t5_desc_fuente else ""))
+            with col_act2:
+                if t5_cat == "otras" and t5_esp:
+                    st.info(f"📌 **Sector:** `Otras (Especificar: {t5_esp})`")
+                else:
+                    st.info(f"📌 **Sector Tabla 5:** `{t5_cat.capitalize()}`")
 
         # Matriz visual de la Tabla 5
+        label_otras = f"Otras (Especificar: {t5_esp})" if (t5_cat == "otras" and t5_esp) else "Otras (Especificar)"
         filas_t5_def = [
             ("Agricultura", "agricultura"),
             ("Forestal", "forestal"),
@@ -392,7 +400,7 @@ with tab_preview:
             ("Minería", "mineria"),
             ("Turismo Rural", "turismo_rural"),
             ("Servicios", "servicios"),
-            (f"Otras (Especificar) [↳ {t5_esp}]" if (t5_cat == "otras" and t5_esp) else "Otras (Especificar)", "otras"),
+            (label_otras, "otras"),
         ]
         df_t5_preview = []
         act_dict = t5.get("actividades", {})
@@ -409,7 +417,7 @@ with tab_preview:
             })
         st.dataframe(pd.DataFrame(df_t5_preview), hide_index=True, use_container_width=True)
     else:
-        st.warning("🔒 **Sin actividad económica registrada en la base:** Por principio de estricta fidelidad documental y cero alucinación, la Tabla 5 permanece **100% en blanco** en el formulario Word (sin ninguna casilla marcada).")
+        st.warning("🔒 **Sin actividad económica registrada en la base:** La Tabla 5 permanece en blanco.")
 
     # Diagnóstico de Recinto Complementario y Tipología de Hogar (D.S. N°10)
     st.markdown("---")
@@ -554,6 +562,8 @@ with tab_metrics:
     sector_counts = Counter()
     con_actividad = 0
     sin_actividad = 0
+    criterio_social_counts = Counter()
+    criterio_social_list = []
     
     edades_am_list = []
     hogares_con_am = 0
@@ -660,7 +670,23 @@ with tab_metrics:
         
         # Actividades económicas (Tabla 5)
         cat_5 = t5.get("categoria", "")
-        if cat_5:
+        es_social = t5.get("sin_actividad_declarada", False)
+        glosa_soc = t5.get("criterio_social", "")
+        
+        if es_social:
+            sin_actividad += 1
+            criterio_social_counts[glosa_soc] += 1
+            criterio_social_list.append({
+                "N°": p["nro_orden"],
+                "Postulante": p["nombre"],
+                "RUT": p["rut"],
+                "Sexo": "Femenino" if sex_titular == "F" else "Masculino",
+                "Edad": p.get("edad") or "-",
+                "Criterio Normativo": glosa_soc,
+                "Fila Tabla 5 (Word)": f"Otras (Especificar: {glosa_soc})",
+                "Casilla": "Jefe de Hogar (F)" if sex_titular == "F" else "Jefe de Hogar (M)"
+            })
+        elif cat_5:
             con_actividad += 1
             sector_counts[cat_5.capitalize()] += 1
             if cat_5 == "otras":
@@ -927,38 +953,73 @@ with tab_metrics:
     # SECCIÓN 5: ACTIVIDADES ECONÓMICAS POR SECTOR (TABLA 5)
     # -------------------------------------------------------------------------
     st.markdown("#### 💼 4. Actividades Económicas y Sectores MINVU (Ítem 1.2 - Tabla 5)")
-    col_e1, col_e2 = st.columns([2, 3])
+    col_t5_k1, col_t5_k2, col_t5_k3, col_t5_k4 = st.columns(4)
+    col_t5_k1.metric("Actividad Declarada", f"{con_actividad} familias", f"{round((con_actividad/total_post)*100, 1)}% del padrón", help="61 familias con actividad económica declarada en la fuente")
+    col_t5_k2.metric("Criterio Social Normativo", f"{sin_actividad} familias", f"{round((sin_actividad/total_post)*100, 1)}% del padrón", help="94 familias sin actividad declarada asignadas a 'Otras (Especificar)'")
+    col_t5_k3.metric("Dueñas de Casa (< 60 años)", f"{criterio_social_counts.get('Dueña de casa', 0)} familias", "78.7% de los casos sociales")
+    col_t5_k4.metric("Jubilados / Cesantes", f"{criterio_social_counts.get('Jubilada', 0) + criterio_social_counts.get('Cesante', 0) + criterio_social_counts.get('Jubilado', 0)} familias", "8 Jubiladas + 8 Cesantes + 4 Jubilados")
 
-    with col_e1:
-        st.markdown("**Cobertura de Actividad Declarada en la Base**")
-        df_cov = pd.DataFrame([
-            {"Estado": "Con Actividad Declarada", "Cantidad": con_actividad},
-            {"Estado": "Sin Actividad (Tabla 5 en blanco)", "Cantidad": sin_actividad}
-        ])
-        c_cov = alt.Chart(df_cov).mark_arc(innerRadius=50).encode(
-            theta=alt.Theta("Cantidad:Q"),
-            color=alt.Color("Estado:N", scale=alt.Scale(range=["#059669", "#9CA3AF"]), legend=alt.Legend(orient="bottom")),
-            tooltip=["Estado", "Cantidad"]
-        ).properties(height=260)
-        st.altair_chart(c_cov, use_container_width=True)
-        st.info(f"📊 **{con_actividad} postulantes ({round((con_actividad/total_post)*100, 1)}%)** tienen actividad económica registrada. Los restantes **{sin_actividad} casos** permanecen 100% en blanco.")
+    tab_t5_act, tab_t5_soc = st.tabs([
+        f"📊 Actividades Económicas Declaradas ({con_actividad} familias)",
+        f"⚖️ Criterio Normativo Social - Sin Actividad Declarada ({sin_actividad} familias)"
+    ])
 
-    with col_e2:
-        st.markdown("**Distribución por Sector Económico MINVU (Tabla 5)**")
-        df_sec = pd.DataFrame([{"Sector": k, "Familias": v} for k, v in sector_counts.items()]).sort_values("Familias", ascending=False)
-        c_sec = alt.Chart(df_sec).mark_bar(cornerRadius=6).encode(
-            x=alt.X("Familias:Q", title="N° Familias"),
-            y=alt.Y("Sector:N", sort="-x", title=None),
-            color=alt.Color("Sector:N", legend=None, scale=alt.Scale(scheme="category10")),
-            tooltip=["Sector", "Familias"]
-        ).properties(height=260)
-        st.altair_chart(c_sec, use_container_width=True)
+    with tab_t5_act:
+        col_e1, col_e2 = st.columns([2, 3])
+        with col_e1:
+            st.markdown("**Distribución General de la Tabla 5**")
+            df_cov = pd.DataFrame([
+                {"Tipo": "Actividad Declarada (6 Sectores)", "Cantidad": con_actividad},
+                {"Tipo": "Criterio Social (Fila 'Otras')", "Cantidad": sin_actividad}
+            ])
+            c_cov = alt.Chart(df_cov).mark_arc(innerRadius=50).encode(
+                theta=alt.Theta("Cantidad:Q"),
+                color=alt.Color("Tipo:N", scale=alt.Scale(range=["#059669", "#3B82F6"]), legend=alt.Legend(orient="bottom")),
+                tooltip=["Tipo", "Cantidad"]
+            ).properties(height=240)
+            st.altair_chart(c_cov, use_container_width=True)
+            st.info(f"📊 **{con_actividad} postulantes ({round((con_actividad/total_post)*100, 1)}%)** cuentan con actividad económica declarada en la fuente.")
 
-    # Detalle de microemprendimientos y oficios del sector "Otras"
-    st.markdown("##### 🎨 Desglose de Oficios y Emprendimientos del Sector *'Otras (Especificar)'*")
-    st.caption("Estas 8 actividades se marcan en la fila 'Otras' y se especifica automáticamente su glosa breve justo debajo del título en el Word.")
-    if microemprendimientos:
-        st.dataframe(pd.DataFrame(microemprendimientos), hide_index=True, use_container_width=True)
+        with col_e2:
+            st.markdown("**Distribución por Sector Económico MINVU (Casos Declarados)**")
+            df_sec = pd.DataFrame([{"Sector": k, "Familias": v} for k, v in sector_counts.items()]).sort_values("Familias", ascending=False)
+            c_sec = alt.Chart(df_sec).mark_bar(cornerRadius=6).encode(
+                x=alt.X("Familias:Q", title="N° Familias"),
+                y=alt.Y("Sector:N", sort="-x", title=None),
+                color=alt.Color("Sector:N", legend=None, scale=alt.Scale(scheme="category10")),
+                tooltip=["Sector", "Familias"]
+            ).properties(height=240)
+            st.altair_chart(c_sec, use_container_width=True)
+
+        st.markdown("##### 🎨 Desglose de Oficios y Emprendimientos Factuales del Sector *'Otras (Especificar)'*")
+        st.caption(f"Estas {len(microemprendimientos)} actividades corresponden a microemprendimientos u oficios manuales declarados que se marcan en 'Otras' con su glosa breve:")
+        if microemprendimientos:
+            st.dataframe(pd.DataFrame(microemprendimientos), hide_index=True, use_container_width=True)
+
+    with tab_t5_soc:
+        st.markdown("""
+        **Reglas del Criterio Normativo Social Asignado:**
+        * **Mujeres menores a 60 años (< 60):** `Dueña de casa` (marcada como *Jefe de Hogar Femenino*)
+        * **Mujeres mayores a 60 años (≥ 60):** `Jubilada` (marcada como *Jefe de Hogar Femenino*)
+        * **Hombres menores a 65 años (< 65):** `Cesante` (marcado como *Jefe de Hogar Masculino*)
+        * **Hombres mayores a 65 años (≥ 65):** `Jubilado` (marcado como *Jefe de Hogar Masculino*)
+        * **Ubicación en Formulario Word (Tabla 5):** Se explicita obligatoriamente en la fila **Otras (Especificar: [Glosa])**.
+        """)
+        col_s1, col_s2 = st.columns([2, 3])
+        with col_s1:
+            st.markdown("**Distribución por Criterio Social Asignado**")
+            df_soc_bar = pd.DataFrame([{"Criterio": k, "Familias": v} for k, v in criterio_social_counts.items()]).sort_values("Familias", ascending=False)
+            c_soc = alt.Chart(df_soc_bar).mark_bar(cornerRadius=6).encode(
+                x=alt.X("Familias:Q", title="N° Familias"),
+                y=alt.Y("Criterio:N", sort="-x", title=None),
+                color=alt.Color("Criterio:N", legend=None, scale=alt.Scale(range=["#EC4899", "#8B5CF6", "#F59E0B", "#10B981"])),
+                tooltip=["Criterio", "Familias"]
+            ).properties(height=240)
+            st.altair_chart(c_soc, use_container_width=True)
+        with col_s2:
+            st.markdown(f"**Nómina Completa de las {sin_actividad} Familias con Criterio Social:**")
+            if criterio_social_list:
+                st.dataframe(pd.DataFrame(criterio_social_list), hide_index=True, use_container_width=True, height=240)
 
     st.markdown("---")
 

@@ -155,25 +155,10 @@ def fill_formulario_phr(
 
     # Fila 8 Celda 0: 'Otras (Especificar)'
     cell_8_0 = t5.cell(8, 0)
-    # Limpiar párrafos adicionales previos si existieran
-    while len(cell_8_0.paragraphs) > 1:
-        p_extra = cell_8_0.paragraphs[-1]._p
-        p_extra.getparent().remove(p_extra)
-    cell_8_0.paragraphs[0].text = "Otras (Especificar)"
-    if cell_8_0.paragraphs[0].runs:
-        cell_8_0.paragraphs[0].runs[0].font.name = "Gadugi"
-        cell_8_0.paragraphs[0].runs[0].font.size = Pt(9)
-        cell_8_0.paragraphs[0].runs[0].font.bold = True
-
-    # Si la actividad corresponde a 'otras' y trae especificación, agregarla justo debajo
     if categoria == "otras" and especificacion:
-        p_esp = cell_8_0.add_paragraph()
-        p_esp.paragraph_format.space_before = Pt(1)
-        p_esp.paragraph_format.space_after = Pt(1)
-        r_esp = p_esp.add_run(especificacion)
-        r_esp.font.name = "Gadugi"
-        r_esp.font.size = Pt(8.0)
-        r_esp.font.italic = True
+        set_cell_value(cell_8_0, f"Otras (Especificar: {especificacion})", font_name="Gadugi", font_size_pt=8.5, bold=True, center=False)
+    else:
+        set_cell_value(cell_8_0, "Otras (Especificar)", font_name="Gadugi", font_size_pt=9.0, bold=True, center=False)
 
     act_rows = {
         "agricultura": 2,

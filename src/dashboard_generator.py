@@ -51,6 +51,8 @@ def generate_interactive_html_dashboard(
     tipologias_counts = Counter()
     aislamiento_counts = Counter()
     sector_counts = Counter()
+    social_counts = Counter()
+    social_list = []
     con_actividad = 0
     sin_actividad = 0
 
@@ -158,12 +160,31 @@ def generate_interactive_html_dashboard(
         est_civil_counts[ec] += 1
 
         # Actividad
+        es_social = t5.get("sin_actividad_declarada", False)
+        glosa_soc = t5.get("criterio_social", "")
         cat_5 = t5.get("categoria", "")
-        if cat_5:
+
+        if es_social:
+            sin_actividad += 1
+            social_counts[glosa_soc] += 1
+            social_list.append({
+                "id": p["nro_orden"],
+                "nombre": p["nombre"],
+                "rut": p["rut"],
+                "sexo": "F" if (p.get("sexo") or "").upper() == "F" else "M",
+                "edad": p.get("edad") or "-",
+                "criterio": glosa_soc,
+                "glosa_word": f"Otras (Especificar: {glosa_soc})",
+                "casilla": "Jefe de Hogar (F)" if (p.get("sexo") or "").upper() == "F" else "Jefe de Hogar (M)"
+            })
+            act_display = f"{glosa_soc} (Criterio Social)"
+        elif cat_5:
             con_actividad += 1
             sector_counts[cat_5.capitalize()] += 1
+            act_display = t5.get("actividad_fuente", "") or cat_5.capitalize()
         else:
             sin_actividad += 1
+            act_display = "(Sin actividad)"
 
         # Tipología y aislamiento
         tip = p.get("tipologia_propuesta") or "No asignada"
@@ -193,7 +214,7 @@ def generate_interactive_html_dashboard(
             "habitantes": p.get("grupo_familiar_cant") or 1,
             "tipo_familia": tipo_fam,
             "tiene_am": "Sí" if has_am else "No",
-            "actividad": t5.get("actividad_fuente", "") or "(Sin actividad)",
+            "actividad": act_display,
             "recinto_cat": tr,
             "recinto_sug": sug if tr in ["Habitable", "No Habitable"] else "No Aplica",
             "tercer_dormitorio": "Sí" if is_3d else "No",
@@ -664,6 +685,63 @@ def generate_interactive_html_dashboard(
             </div>
         </section>
 
+        <!-- SECCIÓN 6: TABLA 5 - ACTIVIDADES ECONÓMICAS Y CRITERIOS SOCIALES (155 FAMILIAS) -->
+        <section class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <span>💼</span> 6. Actividades Económicas y Criterios Sociales (Tabla 5 D.S. N°10)
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Desglose de 61 postulantes con actividad económica declarada y 94 familias con criterio normativo social en fila 'Otras'.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-emerald-800 bg-emerald-100 border border-emerald-300 px-3 py-1 rounded-full">{con_actividad} Actividades Declaradas</span>
+                    <span class="text-xs font-bold text-blue-800 bg-blue-100 border border-blue-300 px-3 py-1 rounded-full">{sin_actividad} Criterios Sociales</span>
+                </div>
+            </div>
+
+            <!-- Balance Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div class="text-xs font-semibold text-slate-500 uppercase">Actividad Declarada</div>
+                    <div class="text-2xl font-black text-emerald-700 mt-1">{con_actividad}</div>
+                    <div class="text-[11px] text-slate-500 mt-0.5">{round((con_actividad/total_post)*100, 1)}% en 6 sectores MINVU</div>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div class="text-xs font-semibold text-slate-500 uppercase">Dueña de Casa (&lt;60)</div>
+                    <div class="text-2xl font-black text-pink-600 mt-1">{social_counts['Dueña de casa']}</div>
+                    <div class="text-[11px] text-pink-700 font-semibold mt-0.5">Mujeres &lt; 60 años</div>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div class="text-xs font-semibold text-slate-500 uppercase">Jubiladas / Jubilados</div>
+                    <div class="text-2xl font-black text-purple-700 mt-1">{social_counts['Jubilada'] + social_counts['Jubilado']}</div>
+                    <div class="text-[11px] text-purple-700 font-semibold mt-0.5">{social_counts['Jubilada']} Mujeres + {social_counts['Jubilado']} Hombres</div>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div class="text-xs font-semibold text-slate-500 uppercase">Cesantes (&lt;65)</div>
+                    <div class="text-2xl font-black text-amber-600 mt-1">{social_counts['Cesante']}</div>
+                    <div class="text-[11px] text-amber-700 font-semibold mt-0.5">Hombres &lt; 65 años</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Gráfico Sectores Declarados -->
+                <div class="border border-slate-100 rounded-xl p-4 bg-slate-50/50">
+                    <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Sectores Económicos MINVU (61 Casos Declarados)</h3>
+                    <div class="h-56">
+                        <canvas id="chartSectores"></canvas>
+                    </div>
+                </div>
+                <!-- Gráfico Criterios Sociales -->
+                <div class="border border-slate-100 rounded-xl p-4 bg-slate-50/50">
+                    <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Criterios Sociales Normativos (94 Familias en 'Otras')</h3>
+                    <div class="h-56">
+                        <canvas id="chartSocial"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- SECCIÓN 7: TABLA 6 - REQUERIMIENTOS DE HABITABILIDAD (MODALIDAD VIVIENDA NUEVA) -->
         <section class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-4">
@@ -871,6 +949,46 @@ def generate_interactive_html_dashboard(
                     label: 'Postulantes',
                     data: [{est_civil_counts['SOLTERO/A']}, {est_civil_counts['CASADO/A']}, {est_civil_counts['DIVORCIADO/A']}, {est_civil_counts['VIUDO/A']}],
                     backgroundColor: '#64748B',
+                    borderRadius: 6
+                }}]
+            }},
+            options: {{
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {{ y: {{ beginAtZero: true }} }},
+                plugins: {{ legend: {{ display: false }} }}
+            }}
+        }});
+
+        // 4b. Gráfico de Sectores Económicos MINVU (Tabla 5)
+        new Chart(document.getElementById('chartSectores').getContext('2d'), {{
+            type: 'bar',
+            data: {{
+                labels: ['Servicios', 'Agricultura', 'Otras (Oficios)', 'Forestal', 'Turismo Rural', 'Minería'],
+                datasets: [{{
+                    label: 'Familias',
+                    data: [{sector_counts.get('Servicios', 0)}, {sector_counts.get('Agricultura', 0)}, {sector_counts.get('Otras', 0)}, {sector_counts.get('Forestal', 0)}, {sector_counts.get('Turismo_rural', 0)}, {sector_counts.get('Mineria', 0)}],
+                    backgroundColor: ['#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#EC4899', '#64748B'],
+                    borderRadius: 6
+                }}]
+            }},
+            options: {{
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {{ y: {{ beginAtZero: true }} }},
+                plugins: {{ legend: {{ display: false }} }}
+            }}
+        }});
+
+        // 4c. Gráfico de Criterios Sociales Normativos (Tabla 5)
+        new Chart(document.getElementById('chartSocial').getContext('2d'), {{
+            type: 'bar',
+            data: {{
+                labels: ['Dueña de casa (<60)', 'Jubilada (≥60)', 'Cesante (<65)', 'Jubilado (≥65)'],
+                datasets: [{{
+                    label: 'Familias',
+                    data: [{social_counts.get('Dueña de casa', 0)}, {social_counts.get('Jubilada', 0)}, {social_counts.get('Cesante', 0)}, {social_counts.get('Jubilado', 0)}],
+                    backgroundColor: ['#EC4899', '#8B5CF6', '#F59E0B', '#10B981'],
                     borderRadius: 6
                 }}]
             }},

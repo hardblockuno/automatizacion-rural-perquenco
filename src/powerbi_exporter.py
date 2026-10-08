@@ -44,6 +44,7 @@ def build_powerbi_dataset(postulantes: List[Dict[str, Any]], datos_terreno: Opti
     hogares_rows = []
     habitantes_rows = []
     recintos_rows = []
+    criterios_sociales_rows = []
 
     for p in postulantes:
         c = consolidate_postulante_local(p, datos_terreno_proyecto=datos_terreno)
@@ -70,11 +71,27 @@ def build_powerbi_dataset(postulantes: List[Dict[str, Any]], datos_terreno: Opti
         disc_val = str(p.get("discapacidad") or "").strip()
         tiene_disc = "Sí" if disc_val and disc_val.upper() not in ["NO", "NONE", "NAN", ""] else "No"
 
-        # Actividad económica
-        tiene_act = "Sí" if t5.get("categoria") else "No"
-        act_nombre = t5.get("actividad_fuente", "") or "(Sin actividad)"
-        sector_t5 = (t5.get("categoria", "") or "Sin actividad").capitalize()
-        desc_act = t5.get("descripcion_fuente", "")
+        # Actividad económica (Tabla 5)
+        es_social = t5.get("sin_actividad_declarada", False)
+        glosa_soc = t5.get("criterio_social", "")
+        if es_social:
+            tiene_act = "No (Declarada)"
+            es_crit_social = "Sí"
+            act_nombre = f"Sin actividad declarada ({glosa_soc})"
+            sector_t5 = f"Otras (Especificar: {glosa_soc})"
+            desc_act = f"Criterio normativo social ({glosa_soc})"
+            glosa_t5 = glosa_soc
+        else:
+            tiene_act = "Sí" if t5.get("categoria") else "No"
+            es_crit_social = "No"
+            act_nombre = t5.get("actividad_fuente", "") or "(Sin actividad)"
+            esp_val = t5.get("especificacion", "")
+            if t5.get("categoria") == "otras" and esp_val:
+                sector_t5 = f"Otras (Especificar: {esp_val})"
+            else:
+                sector_t5 = (t5.get("categoria", "") or "Sin actividad").capitalize()
+            desc_act = t5.get("descripcion_fuente", "")
+            glosa_t5 = esp_val
 
         # Recinto complementario
         tipo_recinto = rec.get("tipo_recinto", "No Aplica")
@@ -123,8 +140,11 @@ def build_powerbi_dataset(postulantes: List[Dict[str, Any]], datos_terreno: Opti
             "Comuna": p.get("comuna", "Perquenco"),
             "Factor_Aislamiento": p.get("factor_aislamiento", "1.2"),
             "Tiene_Actividad_Economica": tiene_act,
+            "Es_Criterio_Social_Tabla5": es_crit_social,
+            "Criterio_Social_Asignado": glosa_soc if es_social else "No Aplica",
             "Actividad_Declarada": act_nombre,
             "Sector_MINVU_Tabla5": sector_t5,
+            "Glosa_Especificada_Tabla5": glosa_t5,
             "Detalle_Actividad": desc_act,
             "Procede_Recinto": procede_recinto,
             "Categoria_Recinto": tipo_recinto,
@@ -207,11 +227,26 @@ def build_powerbi_dataset(postulantes: List[Dict[str, Any]], datos_terreno: Opti
                 "Justificacion_Normativa": justif_recinto
             })
 
+        # 4. Criterios sociales Tabla 5 (Los 94 casos sin actividad declarada)
+        if es_social:
+            criterios_sociales_rows.append({
+                "ID_Postulante": id_post,
+                "Nombre_Postulante": nom_titular,
+                "RUT_Postulante": rut_titular,
+                "Sexo_Titular": sexo_tit_desc,
+                "Edad_Titular": edad_tit,
+                "Criterio_Social_Asignado": glosa_soc,
+                "Fila_Formulario_Tabla5": f"Otras (Especificar: {glosa_soc})",
+                "Casilla_Marcada": "Jefe de Hogar (F)" if sexo_titular == "F" else "Jefe de Hogar (M)",
+                "Fundamento_Normativo": f"Titular {sexo_tit_desc.lower()} con edad {edad_tit} años sin actividad declarada en base"
+            })
+
     df_hogares = pd.DataFrame(hogares_rows)
     df_habitantes = pd.DataFrame(habitantes_rows)
     df_recintos = pd.DataFrame(recintos_rows)
+    df_criterios_sociales = pd.DataFrame(criterios_sociales_rows)
 
-    # 4. Tabla de KPIs Resumen
+    # 5. Tabla de KPIs Resumen
     tot_post = len(hogares_rows)
     tot_hab = int(df_hogares["Cantidad_Habitantes"].sum())
     tot_muj = sum(1 for h in hogares_rows if h["Sexo_Titular"] == "Femenino")
@@ -229,6 +264,12 @@ def build_powerbi_dataset(postulantes: List[Dict[str, Any]], datos_terreno: Opti
         {"Indicador": "Hogares Monoparentales Femeninos", "Valor": tot_mono, "Categoria": "Vulnerabilidad"},
         {"Indicador": "% Monoparental Femenino", "Valor": f"{round((tot_mono/tot_post)*100, 1)}%", "Categoria": "Vulnerabilidad"},
         {"Indicador": "Total Adultos Mayores (≥60 años)", "Valor": tot_am, "Categoria": "Tercera Edad"},
+        {"Indicador": "Actividad Económica Declarada en Base", "Valor": sum(1 for h in hogares_rows if h["Es_Criterio_Social_Tabla5"] == "No"), "Categoria": "Tabla 5 MINVU"},
+        {"Indicador": "Criterio Social Normativo Asignado", "Valor": len(criterios_sociales_rows), "Categoria": "Tabla 5 MINVU"},
+        {"Indicador": "Criterio Social: Dueña de Casa (<60)", "Valor": sum(1 for c in criterios_sociales_rows if c["Criterio_Social_Asignado"] == "Dueña de casa"), "Categoria": "Tabla 5 MINVU"},
+        {"Indicador": "Criterio Social: Jubilada (≥60)", "Valor": sum(1 for c in criterios_sociales_rows if c["Criterio_Social_Asignado"] == "Jubilada"), "Categoria": "Tabla 5 MINVU"},
+        {"Indicador": "Criterio Social: Cesante (<65)", "Valor": sum(1 for c in criterios_sociales_rows if c["Criterio_Social_Asignado"] == "Cesante"), "Categoria": "Tabla 5 MINVU"},
+        {"Indicador": "Criterio Social: Jubilado (≥65)", "Valor": sum(1 for c in criterios_sociales_rows if c["Criterio_Social_Asignado"] == "Jubilado"), "Categoria": "Tabla 5 MINVU"},
         {"Indicador": "Total Recintos Complementarios", "Valor": tot_rec_hab + tot_rec_nohab, "Categoria": "Infraestructura"},
         {"Indicador": "Recintos Complementarios HABITABLES", "Valor": tot_rec_hab, "Categoria": "Infraestructura"},
         {"Indicador": "Recintos Complementarios NO HABITABLES", "Valor": tot_rec_nohab, "Categoria": "Infraestructura"},
@@ -244,6 +285,7 @@ def build_powerbi_dataset(postulantes: List[Dict[str, Any]], datos_terreno: Opti
         "Hogares_Postulantes": df_hogares,
         "Habitantes_Detalle": df_habitantes,
         "Recintos_Complementarios": df_recintos,
+        "Criterios_Sociales_Tabla5": df_criterios_sociales,
         "Resumen_KPIs": df_kpi
     }
 

@@ -722,6 +722,8 @@ def consolidate_postulante_local(
         "especificacion": "",
         "actividad_fuente": act_raw,
         "descripcion_fuente": desc_raw,
+        "sin_actividad_declarada": False,
+        "criterio_social": None,
         "actividades": {}
     }
 
@@ -775,6 +777,8 @@ def consolidate_postulante_local(
                 "especificacion": esp,
                 "actividad_fuente": act_raw,
                 "descripcion_fuente": desc_raw,
+                "sin_actividad_declarada": False,
+                "criterio_social": None,
                 "actividades": {
                     cat: {
                         "jefe_m": jefe_m,
@@ -786,6 +790,40 @@ def consolidate_postulante_local(
                     }
                 }
             }
+
+    # Si no tiene actividad económica declarada o no aplica justificación:
+    # Criterio normativo social según género y edad del titular:
+    # - Mujeres < 60 años: Dueña de casa (Jefe Hogar F = X)
+    # - Mujeres >= 60 años: Jubilada (Jefe Hogar F = X)
+    # - Hombres < 65 años: Cesante (Jefe Hogar M = X)
+    # - Hombres >= 65 años: Jubilado (Jefe Hogar M = X)
+    # Se explicita en la fila 'Otras (Especificar)' de la Tabla 5.
+    if not tabla_5.get("categoria"):
+        if sexo_titular == "F":
+            glosa = "Dueña de casa" if (edad_titular is None or edad_titular < 60) else "Jubilada"
+            jefe_m, jefe_f = "", "X"
+        else:
+            glosa = "Cesante" if (edad_titular is None or edad_titular < 65) else "Jubilado"
+            jefe_m, jefe_f = "X", ""
+
+        tabla_5 = {
+            "categoria": "otras",
+            "especificacion": glosa,
+            "actividad_fuente": "",
+            "descripcion_fuente": f"Criterio normativo social ({glosa})",
+            "sin_actividad_declarada": True,
+            "criterio_social": glosa,
+            "actividades": {
+                "otras": {
+                    "jefe_m": jefe_m,
+                    "jefe_f": jefe_f,
+                    "conyuge_m": "",
+                    "conyuge_f": "",
+                    "otros_m": "",
+                    "otros_f": ""
+                }
+            }
+        }
 
     return {
         "tabla_1": {
