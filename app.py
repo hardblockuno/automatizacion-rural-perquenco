@@ -214,14 +214,16 @@ if not os.path.exists(template_docx_path):
     st.stop()
 
 
-# Recargar automáticamente cuando cambie el archivo o su fecha de modificación
+# Recargar automáticamente cuando cambie el archivo Excel o el código lector
 excel_mtime = os.path.getmtime(excel_file_path)
+reader_file = os.path.join(BASE_DIR, "src", "excel_reader.py")
+code_mtime = os.path.getmtime(reader_file) if os.path.exists(reader_file) else 1.0
 
 @st.cache_data(show_spinner="Cargando base de postulantes...")
-def load_data(path: str, sheet: Optional[str], mtime: float):
+def load_data(path: str, sheet: Optional[str], mtime: float, code_v: float):
     return read_all_postulantes(path, sheet_name=sheet)
 
-postulantes = load_data(excel_file_path, selected_sheet, excel_mtime)
+postulantes = load_data(excel_file_path, selected_sheet, excel_mtime, code_mtime)
 
 col_m1, col_m2, col_m3, col_m4 = st.columns(4)
 col_m1.metric("Total Postulantes", len(postulantes))
@@ -942,11 +944,14 @@ with tab_metrics:
 
     with tab_3d_1:
         st.markdown("**Desglose Factual según Columna 'TIPO DE VIVIENDA':**")
-        df_3d_motivos = pd.DataFrame([
-            {"Criterio Oficial": k, "Familias": v, "Porcentaje": f"{round((v/total_post)*100, 1)}%"}
-            for k, v in t6_3d_motivos.items()
-        ]).sort_values("Familias", ascending=False)
-        st.dataframe(df_3d_motivos, hide_index=True, use_container_width=True)
+        if t6_3d_motivos:
+            df_3d_motivos = pd.DataFrame([
+                {"Criterio Oficial": k, "Familias": v, "Porcentaje": f"{round((v/total_post)*100, 1)}%"}
+                for k, v in t6_3d_motivos.items()
+            ]).sort_values("Familias", ascending=False)
+            st.dataframe(df_3d_motivos, hide_index=True, use_container_width=True)
+        else:
+            st.info("No se registran familias bajo los criterios de 3° dormitorio.")
 
     with tab_3d_2:
         st.markdown(f"**Nómina Completa de las {t6_3d_count} Familias con Tercer Dormitorio Acreditado:**")
