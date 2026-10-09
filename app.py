@@ -613,7 +613,7 @@ with tab_preview:
     with tab_serv_agua:
         df_agua = pd.DataFrame(t15_prev.get("agua_potable", []))
         st.dataframe(df_agua, hide_index=True, use_container_width=True)
-        st.info("ℹ️ **Fuentes habilitadas [X]:** Empresa Sanitaria, Red APR, Pozo en terreno propio, Pozo en terreno vecino.")
+        st.info("ℹ️ **Fuentes habilitadas [X]:** Pozo o noria en terreno propio, Pozo o noria en terreno vecino (Empresa Sanitaria y Red APR marcadas con 'No').")
 
     with tab_serv_alc:
         df_alc = pd.DataFrame(t15_prev.get("alcantarillado", []))
@@ -1302,7 +1302,7 @@ with tab_metrics:
     with col_info_t15:
         st.markdown("**Tabla 15: Acceso a Servicios Básicos Proyectados**")
         st.markdown("""
-        * **Agua Potable:** Empresa Sanitaria [X], Red APR [X], Pozo Propio [X], Pozo Vecino [X].
+        * **Agua Potable:** Pozo Propio [X], Pozo Vecino [X] (Empresa Sanitaria y Red APR marcadas con [No]).
         * **Alcantarillado:** Fosa y Pozo [X], y *Otro (Especificar)* [X] con Planta Lombricultivo.
         * **Electricidad:** Empresa Eléctrica [X].
         """)

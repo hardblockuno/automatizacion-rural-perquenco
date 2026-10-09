@@ -590,8 +590,8 @@ def build_tabla_15() -> Dict[str, Any]:
 
     Aplica para el 100% de los formularios de las familias del proyecto común Hijuela El Molino:
     - Agua Potable:
-      - Empresa Sanitaria: Si (X)
-      - Red APR: Si (X)
+      - Empresa Sanitaria: No (X)
+      - Red APR: No (X)
       - Pozo o Noria en Terreno Propio: Si (X)
       - Pozo o Noria en Terreno Vecino: Si (X)
       - Aguas Superficiales (Ej. Vertientes): No (X)
@@ -621,8 +621,8 @@ def build_tabla_15() -> Dict[str, Any]:
 
     return {
         "agua_potable": [
-            {"fuente": "Empresa Sanitaria", "si": "X", "no": "", "observaciones": ""},
-            {"fuente": "Red APR", "si": "X", "no": "", "observaciones": ""},
+            {"fuente": "Empresa Sanitaria", "si": "", "no": "X", "observaciones": ""},
+            {"fuente": "Red APR", "si": "", "no": "X", "observaciones": ""},
             {"fuente": "Pozo o Noria en Terreno Propio", "si": "X", "no": "", "observaciones": ""},
             {"fuente": "Pozo o Noria en Terreno Vecino", "si": "X", "no": "", "observaciones": ""},
             {"fuente": "Aguas Superficiales (Ej. Vertientes)", "si": "", "no": "X", "observaciones": ""},
