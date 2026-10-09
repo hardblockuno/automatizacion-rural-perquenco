@@ -557,6 +557,96 @@ def build_tabla_8(
     }
 
 
+def build_tabla_9() -> Dict[str, Any]:
+    """
+    Construye la estructura de datos oficial para la Tabla 9 del Formulario PHR N°6.1 DTS:
+    'REQUERIMIENTOS DE HABITABILIDAD ASOCIADOS AL EQUIPAMIENTO COMUNITARIO MODALIDAD EQUIPAMIENTO COMUNITARIO'
+
+    Aplica para el 100% de los formularios de las familias del proyecto común Hijuela El Molino:
+    - Construcción de Equipamiento Comunitario:
+      - N° de Obras a Ejecutar (*): 1
+      - Descripción de la(s) Obra(s): Recinto de acopio y de apoyo de producción agrícola sustentable
+    """
+    return {
+        "mejoramiento": {
+            "obras": "",
+            "descripcion": ""
+        },
+        "ampliacion": {
+            "obras": "",
+            "descripcion": ""
+        },
+        "construccion": {
+            "obras": "1",
+            "descripcion": "Recinto de acopio y de apoyo de producción agrícola sustentable"
+        }
+    }
+
+
+def build_tabla_15() -> Dict[str, Any]:
+    """
+    Construye la estructura de datos oficial para la Tabla 15 del Formulario PHR N°6.1 DTS:
+    'ACCESO A SERVICIOS BÁSICOS EN TERRENOS ERIAZOS ASOCIADOS A PROYECTOS DE VIVIENDAS NUEVAS...'
+
+    Aplica para el 100% de los formularios de las familias del proyecto común Hijuela El Molino:
+    - Agua Potable:
+      - Empresa Sanitaria: Si (X)
+      - Red APR: Si (X)
+      - Pozo o Noria en Terreno Propio: Si (X)
+      - Pozo o Noria en Terreno Vecino: Si (X)
+      - Aguas Superficiales (Ej. Vertientes): No (X)
+      - Camiones Aljibes: No (X)
+      - Otra (Especificar): En blanco
+    - Alcantarillado:
+      - Empresa Sanitaria: No (X)
+      - Red Pública Proyecto Particular: No (X)
+      - Fosa y Pozo: Si (X)
+      - Fosa y Dren: No (X)
+      - Otro (Especificar): Si (X)
+        Observaciones: Planta Lombricultivo: Sistema de reciclaje orgánico que utiliza lombrices para transformar los restos vegetales de los residentes en abonos naturales, como resultado, el proceso produce de forma continua humus sólido y fertilizante líquido para la aplicación en sustrato de producción agrícola.
+    - Electricidad:
+      - Empresa Eléctrica: Si (X)
+      - Sistema Fotovoltaico: No (X)
+      - Sistema Eólico: No (X)
+      - Sistema Hidráulico: No (X)
+      - Generador Eléctrico: No (X)
+      - Otra fuente (especificar): En blanco
+    """
+    obs_lombricultivo = (
+        "Planta Lombricultivo: Sistema de reciclaje orgánico que utiliza lombrices para "
+        "transformar los restos vegetales de los residentes en abonos naturales, como "
+        "resultado, el proceso produce de forma continua humus sólido y fertilizante líquido "
+        "para la aplicación en sustrato de producción agrícola."
+    )
+
+    return {
+        "agua_potable": [
+            {"fuente": "Empresa Sanitaria", "si": "X", "no": "", "observaciones": ""},
+            {"fuente": "Red APR", "si": "X", "no": "", "observaciones": ""},
+            {"fuente": "Pozo o Noria en Terreno Propio", "si": "X", "no": "", "observaciones": ""},
+            {"fuente": "Pozo o Noria en Terreno Vecino", "si": "X", "no": "", "observaciones": ""},
+            {"fuente": "Aguas Superficiales (Ej. Vertientes)", "si": "", "no": "X", "observaciones": ""},
+            {"fuente": "Camiones Aljibes", "si": "", "no": "X", "observaciones": ""},
+            {"fuente": "Otra (Especificar)", "si": "", "no": "", "observaciones": ""}
+        ],
+        "alcantarillado": [
+            {"fuente": "Empresa Sanitaria", "si": "", "no": "X", "observaciones": ""},
+            {"fuente": "Red Pública Proyecto Particular", "si": "", "no": "X", "observaciones": ""},
+            {"fuente": "Fosa y Pozo", "si": "X", "no": "", "observaciones": ""},
+            {"fuente": "Fosa y Dren", "si": "", "no": "X", "observaciones": ""},
+            {"fuente": "Otro (Especificar)", "si": "X", "no": "", "observaciones": obs_lombricultivo}
+        ],
+        "electricidad": [
+            {"fuente": "Empresa eléctrica", "si": "X", "no": "", "observaciones": ""},
+            {"fuente": "Sistema fotovoltaico", "si": "", "no": "X", "observaciones": ""},
+            {"fuente": "Sistema eólico", "si": "", "no": "X", "observaciones": ""},
+            {"fuente": "Sistema hidráulico", "si": "", "no": "X", "observaciones": ""},
+            {"fuente": "Generador eléctrico", "si": "", "no": "X", "observaciones": ""},
+            {"fuente": "Otra fuente (especificar)", "si": "", "no": "", "observaciones": ""}
+        ]
+    }
+
+
 def evaluate_tercer_dormitorio(postulante: Dict[str, Any]) -> tuple:
     """
     Determina si a la familia le corresponde marcar 'Tercer Dormitorio' en la Tabla 6.
@@ -917,6 +1007,8 @@ def consolidate_postulante_local(
             }
         },
         "tabla_8": build_tabla_8(postulante, evaluate_recinto_complementario(postulante)),
+        "tabla_9": build_tabla_9(),
+        "tabla_15": build_tabla_15(),
         "tercer_dormitorio": {
             "aplica": evaluate_tercer_dormitorio(postulante)[0],
             "motivo": evaluate_tercer_dormitorio(postulante)[1]
@@ -999,6 +1091,8 @@ Responde ÚNICAMENTE con el objeto JSON que complete los campos de tabla_1, tabl
                 gemini_json["tabla_5"] = base_data["tabla_5"]  # Preservar la clasificación fidedigna de Tabla 5
                 gemini_json["tabla_6"] = base_data["tabla_6"]  # Preservar la marcación de Modalidad Vivienda Nueva
                 gemini_json["tabla_8"] = base_data["tabla_8"]  # Preservar la marcación y justificación técnica de Tabla 8
+                gemini_json["tabla_9"] = base_data["tabla_9"]  # Preservar Tabla 9 Equipamiento Comunitario
+                gemini_json["tabla_15"] = base_data["tabla_15"]  # Preservar Tabla 15 Servicios Básicos
                 gemini_json["tercer_dormitorio"] = base_data.get("tercer_dormitorio")
                 gemini_json["tipo_familia"] = base_data.get("tipo_familia")
                 gemini_json["recinto_complementario"] = base_data.get("recinto_complementario")

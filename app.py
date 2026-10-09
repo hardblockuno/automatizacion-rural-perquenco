@@ -235,7 +235,7 @@ col_m1, col_m2, col_m3, col_m4 = st.columns(4)
 col_m1.metric("Total Postulantes", len(postulantes))
 col_m2.metric("Comuna Base", "Perquenco")
 col_m3.metric("Plantilla Detectada", "PHR N°6.1 DTS")
-col_m4.metric("Ítems Automatizados", "1 y 1.2 (Tablas 1 a 5)")
+col_m4.metric("Ítems Automatizados", "Tablas 1-6, 8, 9 y 15")
 
 st.markdown("---")
 
@@ -520,6 +520,59 @@ with tab_preview:
         st.success(f"✅ **Recinto Complementario Asignado:** `{t8_prev.get('recinto_sugerido')}` marcado con **'Sí'** en Tabla 8 con su respectiva justificación técnica normativa.")
     else:
         st.info("⚪ **Sin Recinto Complementario:** Todas las filas de la Tabla 8 se marcan con **'No'** y la justificación permanece en blanco por estricta fidelidad normativa.")
+
+    # Tabla 9: Requerimientos de Habitabilidad Asociados al Equipamiento Comunitario
+    st.markdown("---")
+    st.markdown("#### 🏛️ Tabla 9: Requerimientos de Habitabilidad Asociados al Equipamiento Comunitario")
+    st.caption("Modalidad Equipamiento Comunitario: Asignación técnica para el 100% de los formularios de las familias del proyecto común Hijuela El Molino.")
+    t9_prev = consolidated.get("tabla_9", {})
+    t9_c = t9_prev.get("construccion", {})
+    df_t9_preview = [
+        {
+            "Tipo de Proyecto": "Mejoramiento del Equipamiento Comunitario Existente",
+            "N° de Obras a Ejecutar (*)": "—",
+            "Descripción de la(s) Obra(s)": "—"
+        },
+        {
+            "Tipo de Proyecto": "Ampliación del Equipamiento Comunitario Existente",
+            "N° de Obras a Ejecutar (*)": "—",
+            "Descripción de la(s) Obra(s)": "—"
+        },
+        {
+            "Tipo de Proyecto": "Construcción de Equipamiento Comunitario",
+            "N° de Obras a Ejecutar (*)": t9_c.get("obras", "1"),
+            "Descripción de la(s) Obra(s)": t9_c.get("descripcion", "Recinto de acopio y de apoyo de producción agrícola sustentable")
+        }
+    ]
+    st.dataframe(pd.DataFrame(df_t9_preview), hide_index=True, use_container_width=True)
+    st.success(f"✅ **Construcción de Equipamiento Comunitario:** {t9_c.get('obras', '1')} obra a ejecutar — *{t9_c.get('descripcion', 'Recinto de acopio y de apoyo de producción agrícola sustentable')}*")
+
+    # Tabla 15: Acceso a Servicios Básicos en Terrenos Eriazos
+    st.markdown("---")
+    st.markdown("#### 💧⚡ Tabla 15: Acceso a Servicios Básicos en Terrenos Eriazos (D.S. N°10)")
+    st.caption("Soluciones técnicas sanitarias y energéticas proyectadas para las viviendas nuevas del proyecto común Hijuela El Molino:")
+    t15_prev = consolidated.get("tabla_15", {})
+
+    tab_serv_agua, tab_serv_alc, tab_serv_elec = st.tabs([
+        "💧 Agua Potable (7 Fuentes)",
+        "🚽 Alcantarillado y Lombricultivo (5 Fuentes)",
+        "⚡ Electricidad (6 Fuentes)"
+    ])
+
+    with tab_serv_agua:
+        df_agua = pd.DataFrame(t15_prev.get("agua_potable", []))
+        st.dataframe(df_agua, hide_index=True, use_container_width=True)
+        st.info("ℹ️ **Fuentes habilitadas [X]:** Empresa Sanitaria, Red APR, Pozo en terreno propio, Pozo en terreno vecino.")
+
+    with tab_serv_alc:
+        df_alc = pd.DataFrame(t15_prev.get("alcantarillado", []))
+        st.dataframe(df_alc, hide_index=True, use_container_width=True)
+        st.success("🌱 **Innovación Sanitaria y Productiva [X]:** Fosa y pozo habilitados + **Planta Lombricultivo** en *Otro (Especificar)* para reciclaje orgánico y producción continua de abonos naturales.")
+
+    with tab_serv_elec:
+        df_elec = pd.DataFrame(t15_prev.get("electricidad", []))
+        st.dataframe(df_elec, hide_index=True, use_container_width=True)
+        st.info("ℹ️ **Suministro Eléctrico [X]:** Empresa eléctrica habilitada.")
 
     # Botón para generar DOCX individual de prueba
     st.markdown("---")
@@ -1125,9 +1178,38 @@ with tab_metrics:
     st.markdown("---")
 
     # -------------------------------------------------------------------------
-    # SECCIÓN 7: DASHBOARD EJECUTIVO Y MODELO POWER BI
+    # SECCIÓN 8: EQUIPAMIENTO COMUNITARIO Y SERVICIOS BÁSICOS (TABLAS 9 Y 15)
     # -------------------------------------------------------------------------
-    st.markdown("#### 📊 7. Dashboard Ejecutivo y Conexión con Microsoft Power BI")
+    st.markdown("#### 🏛️ 8. Equipamiento Comunitario y Servicios Básicos (Tablas 9 y 15)")
+    st.caption("Consolidación oficial para el 100% de las 155 familias del proyecto colectivo Hijuela El Molino:")
+
+    col_t9_k1, col_t9_k2, col_t9_k3 = st.columns(3)
+    col_t9_k1.metric("Equipamiento Comunitario (Tabla 9)", "155 familias", "100% Construcción (1 Obra)", help="Recinto de acopio y de apoyo de producción agrícola sustentable")
+    col_t9_k2.metric("Servicios Básicos (Tabla 15)", "155 familias", "Agua, Alcantarillado y Electricidad", help="4 fuentes de agua, fosa/pozo + lombricultivo, y red eléctrica")
+    col_t9_k3.metric("Planta Lombricultivo", "100% de fichas", "Observación técnica oficial", help="Sistema de reciclaje orgánico para transformar restos vegetales en abono natural y biofertilizante")
+
+    col_info_t9, col_info_t15 = st.columns(2)
+    with col_info_t9:
+        st.markdown("**Tabla 9: Modalidad Equipamiento Comunitario**")
+        st.markdown("""
+        * **Tipo de Obra:** `Construcción de Equipamiento Comunitario`
+        * **N° de Obras:** `1`
+        * **Descripción:** *Recinto de acopio y de apoyo de producción agrícola sustentable*
+        """)
+    with col_info_t15:
+        st.markdown("**Tabla 15: Acceso a Servicios Básicos Proyectados**")
+        st.markdown("""
+        * **Agua Potable:** Empresa Sanitaria [X], Red APR [X], Pozo Propio [X], Pozo Vecino [X].
+        * **Alcantarillado:** Fosa y Pozo [X], y *Otro (Especificar)* [X] con Planta Lombricultivo.
+        * **Electricidad:** Empresa Eléctrica [X].
+        """)
+
+    st.markdown("---")
+
+    # -------------------------------------------------------------------------
+    # SECCIÓN 9: DASHBOARD EJECUTIVO Y MODELO POWER BI
+    # -------------------------------------------------------------------------
+    st.markdown("#### 📊 9. Dashboard Ejecutivo y Conexión con Microsoft Power BI")
     st.caption("Herramientas listas para presentar y compartir las métricas con contrapartes (SERVIU, Municipio, Consultora) sin necesidad de configurar nada manualmente.")
 
     tab_dash1, tab_dash2 = st.tabs([

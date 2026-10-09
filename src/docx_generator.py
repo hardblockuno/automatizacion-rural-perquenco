@@ -249,6 +249,71 @@ def fill_formulario_phr(
                 else:
                     set_cell_value(t8.cell(5, 0), "Otros (especificar)", font_size_pt=9.0, bold=False, center=False)
 
+    # =========================================================================
+    # TABLA 9: REQUERIMIENTOS DE HABITABILIDAD ASOCIADOS AL EQUIPAMIENTO COMUNITARIO
+    # =========================================================================
+    if len(doc.tables) > 9:
+        t9 = doc.tables[9]
+        t9_data = data.get("tabla_9")
+        if not t9_data:
+            from src.gemini_auditor import build_tabla_9
+            t9_data = build_tabla_9()
+
+        c_info = t9_data.get("construccion", {})
+        obras_val = c_info.get("obras", "1")
+        desc_val = c_info.get("descripcion", "Recinto de acopio y de apoyo de producción agrícola sustentable")
+
+        # Fila 1: Mejoramiento del Equipamiento Comunitario Existente (en blanco)
+        set_cell_value(t9.cell(1, 1), "", center=True)
+        set_cell_value(t9.cell(1, 2), "", center=False)
+
+        # Fila 2: Ampliación del Equipamiento Comunitario Existente (en blanco)
+        set_cell_value(t9.cell(2, 1), "", center=True)
+        set_cell_value(t9.cell(2, 2), "", center=False)
+
+        # Fila 3: Construcción de Equipamiento Comunitario
+        set_cell_value(t9.cell(3, 1), obras_val, font_size_pt=9.5, bold=True, center=True)
+        set_cell_value(t9.cell(3, 2), desc_val, font_size_pt=9.0, bold=False, center=False)
+
+    # =========================================================================
+    # TABLA 15: ACCESO A SERVICIOS BÁSICOS EN TERRENOS ERIAZOS (D.S. N°10)
+    # =========================================================================
+    if len(doc.tables) > 15:
+        t15 = doc.tables[15]
+        t15_data = data.get("tabla_15")
+        if not t15_data:
+            from src.gemini_auditor import build_tabla_15
+            t15_data = build_tabla_15()
+
+        # Mapeo de filas en Tabla 15 de la plantilla Word:
+        # Agua Potable (Filas 2 a 8)
+        agua_rows = t15_data.get("agua_potable", [])
+        for idx, item in enumerate(agua_rows):
+            r_idx = 2 + idx
+            if r_idx < len(t15.rows):
+                set_cell_value(t15.cell(r_idx, 1), item.get("si", ""), font_size_pt=9.5, bold=True, center=True)
+                set_cell_value(t15.cell(r_idx, 2), item.get("no", ""), font_size_pt=9.5, bold=True, center=True)
+                set_cell_value(t15.cell(r_idx, 3), item.get("observaciones", ""), font_size_pt=8.5, bold=False, center=False)
+
+        # Alcantarillado (Filas 10 a 14)
+        alc_rows = t15_data.get("alcantarillado", [])
+        for idx, item in enumerate(alc_rows):
+            r_idx = 10 + idx
+            if r_idx < len(t15.rows):
+                set_cell_value(t15.cell(r_idx, 1), item.get("si", ""), font_size_pt=9.5, bold=True, center=True)
+                set_cell_value(t15.cell(r_idx, 2), item.get("no", ""), font_size_pt=9.5, bold=True, center=True)
+                obs_txt = item.get("observaciones", "")
+                set_cell_value(t15.cell(r_idx, 3), obs_txt, font_size_pt=8.5, bold=False, center=False)
+
+        # Electricidad (Filas 16 a 21)
+        elec_rows = t15_data.get("electricidad", [])
+        for idx, item in enumerate(elec_rows):
+            r_idx = 16 + idx
+            if r_idx < len(t15.rows):
+                set_cell_value(t15.cell(r_idx, 1), item.get("si", ""), font_size_pt=9.5, bold=True, center=True)
+                set_cell_value(t15.cell(r_idx, 2), item.get("no", ""), font_size_pt=9.5, bold=True, center=True)
+                set_cell_value(t15.cell(r_idx, 3), item.get("observaciones", ""), font_size_pt=8.5, bold=False, center=False)
+
     # Crear carpeta destino si no existe
     dir_name = os.path.dirname(output_path)
     if dir_name:
