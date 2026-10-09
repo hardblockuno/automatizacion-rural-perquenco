@@ -336,7 +336,7 @@ RESOLUCIONES_TECNICAS_CONFIRMADAS: Dict[str, Dict[str, Any]] = {
         "procede": True,
         "tipo_recinto": "No Habitable",
         "recinto_sugerido": "Bodega de Insumos y Aperos Lácteos",
-        "justificacion": "Evaluación técnica EGR confirmada: Elaboración y comercialización de quesos. Recinto techado no habitable para almacenamiento y resguardo seguro de insumos, aperos, utensilios y equipamiento de trabajo.",
+        "justificacion": "Elaboración y comercialización de quesos. Recinto techado no habitable para almacenamiento y resguardo seguro de insumos, aperos, utensilios y equipamiento de trabajo.",
         "detalle_actividad": "Venta y elaboración de quesos"
     },
     # Yessenia Alejandra Valdes Moya (RUT: 19.792.113-7)
@@ -344,7 +344,7 @@ RESOLUCIONES_TECNICAS_CONFIRMADAS: Dict[str, Dict[str, Any]] = {
         "procede": True,
         "tipo_recinto": "No Habitable",
         "recinto_sugerido": "Bodega de Insumos y Equipos de Repostería",
-        "justificacion": "Evaluación técnica EGR confirmada: Emprendimiento productivo de repostería artesanal. Recinto techado no habitable para almacenamiento y resguardo seguro de insumos, aperos, utensilios y equipamiento de trabajo.",
+        "justificacion": "Emprendimiento productivo de repostería artesanal. Recinto techado no habitable para almacenamiento y resguardo seguro de insumos, aperos, utensilios y equipamiento de trabajo.",
         "detalle_actividad": "Repostería artesanal"
     },
     # María Angélica Astete Alarcón (RUT: 17.153.373-2)
@@ -352,7 +352,7 @@ RESOLUCIONES_TECNICAS_CONFIRMADAS: Dict[str, Dict[str, Any]] = {
         "procede": False,
         "tipo_recinto": "No Aplica",
         "recinto_sugerido": "Ninguno",
-        "justificacion": "Evaluación técnica EGR confirmada: Actividad de servilavado no operada como infraestructura productiva en el predio a subsidiar.",
+        "justificacion": "Actividad de servilavado no operada como infraestructura productiva en el predio a subsidiar.",
         "detalle_actividad": "Servilavado"
     },
     # Luis Guillermo Castillo Aguilera (RUT: 18.486.639-0)
@@ -360,7 +360,7 @@ RESOLUCIONES_TECNICAS_CONFIRMADAS: Dict[str, Dict[str, Any]] = {
         "procede": False,
         "tipo_recinto": "No Aplica",
         "recinto_sugerido": "Ninguno",
-        "justificacion": "Evaluación técnica EGR confirmada: Labores esporádicas particulares externas sin requerimiento de infraestructura productiva en el predio.",
+        "justificacion": "Labores esporádicas particulares externas sin requerimiento de infraestructura productiva en el predio.",
         "detalle_actividad": "Particular (trabajos esporádicos)"
     },
     # Rodrigo Andrés Galaz Torres (RUT: 15.356.147-8)
@@ -368,7 +368,7 @@ RESOLUCIONES_TECNICAS_CONFIRMADAS: Dict[str, Dict[str, Any]] = {
         "procede": False,
         "tipo_recinto": "No Aplica",
         "recinto_sugerido": "Ninguno",
-        "justificacion": "Evaluación técnica EGR confirmada: Actividad independiente sin requerimiento de recinto productivo en el predio.",
+        "justificacion": "Actividad independiente sin requerimiento de recinto productivo en el predio.",
         "detalle_actividad": "Independiente"
     },
     # Zunilda del Carmen Morales Riveros (RUT: 12.388.071-4)
@@ -376,7 +376,7 @@ RESOLUCIONES_TECNICAS_CONFIRMADAS: Dict[str, Dict[str, Any]] = {
         "procede": False,
         "tipo_recinto": "No Aplica",
         "recinto_sugerido": "Ninguno",
-        "justificacion": "Evaluación técnica EGR confirmada: Actividad independiente sin requerimiento de recinto productivo en el predio.",
+        "justificacion": "Actividad independiente sin requerimiento de recinto productivo en el predio.",
         "detalle_actividad": "Independiente"
     },
     # Darwin Omar Valdevenito Carrasco (RUT: 20.412.822-7)
@@ -384,7 +384,7 @@ RESOLUCIONES_TECNICAS_CONFIRMADAS: Dict[str, Dict[str, Any]] = {
         "procede": False,
         "tipo_recinto": "No Aplica",
         "recinto_sugerido": "Ninguno",
-        "justificacion": "Evaluación técnica EGR confirmada: Actividad independiente sin requerimiento de recinto productivo en el predio.",
+        "justificacion": "Actividad independiente sin requerimiento de recinto productivo en el predio.",
         "detalle_actividad": "Independiente"
     },
     # Yessenia Leonor Alarcón Quiñenao (RUT: 18.775.104-7)
@@ -392,7 +392,7 @@ RESOLUCIONES_TECNICAS_CONFIRMADAS: Dict[str, Dict[str, Any]] = {
         "procede": False,
         "tipo_recinto": "No Aplica (Laboral Externa)",
         "recinto_sugerido": "Ninguno",
-        "justificacion": "Evaluación técnica EGR confirmada: Desempeño dependiente como TENS en centro de salud externo al predio.",
+        "justificacion": "Desempeño dependiente como TENS en centro de salud externo al predio.",
         "detalle_actividad": "TENS (Salud dependiente)"
     },
     # Luis Alfonso Salgado Troncoso (RUT: 12.737.714-6)
@@ -400,7 +400,7 @@ RESOLUCIONES_TECNICAS_CONFIRMADAS: Dict[str, Dict[str, Any]] = {
         "procede": False,
         "tipo_recinto": "No Aplica (Laboral Externa)",
         "recinto_sugerido": "Ninguno",
-        "justificacion": "Evaluación técnica EGR confirmada: Empleo dependiente como auxiliar fuera del predio.",
+        "justificacion": "Empleo dependiente como auxiliar fuera del predio.",
         "detalle_actividad": "Auxiliar (Dependiente)"
     },
     # Juan Segundo Gutierrez Ulloa (RUT: 7.978.414-1)
@@ -408,7 +408,7 @@ RESOLUCIONES_TECNICAS_CONFIRMADAS: Dict[str, Dict[str, Any]] = {
         "procede": False,
         "tipo_recinto": "No Aplica (Laboral Externa)",
         "recinto_sugerido": "Ninguno",
-        "justificacion": "Evaluación técnica EGR confirmada: Función dependiente como cuartelero fuera del predio a subsidiar.",
+        "justificacion": "Función dependiente como cuartelero fuera del predio a subsidiar.",
         "detalle_actividad": "Cuartelero (Institucional)"
     }
 }
