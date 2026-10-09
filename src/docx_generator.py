@@ -7,8 +7,8 @@ Aplica estrictamente los datos consolidados en los ítems 1 y 1.2.
 import os
 import re
 import docx
-from docx.shared import Pt
-from typing import Dict, Any, Optional
+from docx.shared import Pt, Inches, RGBColor
+from typing import Dict, Any, Optional, List
 
 
 def set_cell_value(
@@ -41,7 +41,9 @@ def fill_formulario_phr(
     data: Dict[str, Any],
     output_path: str,
     egr_name: Optional[str] = "CONSULTORA PLAN SOCIAL LIMITADA",
-    profesionales_firmantes: Optional[Dict[str, Any]] = None
+    profesionales_firmantes: Optional[Dict[str, Any]] = None,
+    anexo1_image_path: Optional[str] = None,
+    anexo2_image_paths: Optional[List[str]] = None
 ) -> str:
     """
     Rellena los ítems 1 (Tablas 1, 2, 3, 4) y 1.2 (Tabla 5) en el documento Word.
@@ -325,6 +327,69 @@ def fill_formulario_phr(
                 set_cell_value(t15.cell(r_idx, 3), item.get("observaciones", ""), font_size_pt=8.5, bold=False, center=False)
 
     # =========================================================================
+    # APARTADO 9: DIAGNÓSTICO DEL LUGAR DE EMPLAZAMIENTO DE EL O LOS PROYECTOS
+    # =========================================================================
+    for p in doc.paragraphs:
+        p_txt = p.text.upper()
+        if "9. DIAGNÓSTICO DEL LUGAR DE EMPLAZAMIENTO" in p_txt or "9.\tDIAGNÓSTICO DEL LUGAR DE EMPLAZAMIENTO" in p_txt:
+            p.paragraph_format.page_break_before = True
+            p.paragraph_format.keep_with_next = True
+        elif "DESCRIBIR VARIABLES GEOGRÁFICAS" in p_txt:
+            p.paragraph_format.keep_with_next = True
+
+    t16 = None
+    if len(doc.tables) > 16 and len(doc.tables[16].rows) == 1 and len(doc.tables[16].columns) == 1:
+        t16 = doc.tables[16]
+    else:
+        for tbl in doc.tables[15:]:
+            if len(tbl.rows) == 1 and len(tbl.columns) == 1:
+                t16 = tbl
+                break
+
+    if t16:
+        trPr16 = t16.rows[0]._tr.find('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}trPr')
+        if trPr16 is not None:
+            trH = trPr16.find('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}trHeight')
+            if trH is not None:
+                trPr16.remove(trH)
+
+        cell16 = t16.cell(0, 0)
+        for p in list(cell16.paragraphs):
+            p_elem = p._p
+            if p_elem.getparent() is not None:
+                p_elem.getparent().remove(p_elem)
+
+        apartado_9_data = data.get("apartado_9")
+        if not apartado_9_data:
+            from src.gemini_auditor import build_apartado_9
+            apartado_9_data = build_apartado_9()
+
+        secciones_9 = apartado_9_data.get("secciones", [])
+        for sec in secciones_9:
+            sec_title = sec.get("titulo", "")
+            sec_pars = sec.get("parrafos", [])
+
+            p_title = cell16.add_paragraph()
+            p_title.paragraph_format.space_before = Pt(3)
+            p_title.paragraph_format.space_after = Pt(1)
+            p_title.paragraph_format.line_spacing = 1.05
+            p_title.paragraph_format.keep_with_next = True
+            run_t = p_title.add_run(sec_title)
+            run_t.font.name = "Gadugi"
+            run_t.font.size = Pt(8.5)
+            run_t.font.bold = True
+
+            for p_text in sec_pars:
+                p_body = cell16.add_paragraph()
+                p_body.paragraph_format.space_before = Pt(0)
+                p_body.paragraph_format.space_after = Pt(2.5)
+                p_body.paragraph_format.line_spacing = 1.05
+                p_body.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.JUSTIFY
+                run_b = p_body.add_run(p_text)
+                run_b.font.name = "Gadugi"
+                run_b.font.size = Pt(8.0)
+
+    # =========================================================================
     # TABLAS 17, 18, 19: PROFESIONALES SUSCRIBIENTES Y POSTULANTE
     # =========================================================================
     prof_data = profesionales_firmantes or data.get("firmantes") or {}
@@ -380,6 +445,115 @@ def fill_formulario_phr(
     if t19:
         set_cell_value(t19.cell(2, 2), nom_post, font_size_pt=9.0, bold=False, center=False)
         set_cell_value(t19.cell(3, 2), rut_post, font_size_pt=9.0, bold=False, center=False)
+
+    # =========================================================================
+    # ANEXO 1: CROQUIS DIAGNÓSTICO DEL TERRENO (Tabla 20)
+    # =========================================================================
+    final_anexo1_path = anexo1_image_path
+    if not final_anexo1_path:
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        default_a1 = os.path.join(base_dir, "assets", "anexo1_croquis_terreno.jpg")
+        if os.path.exists(default_a1):
+            final_anexo1_path = default_a1
+
+    t20 = None
+    if len(doc.tables) > 20 and len(doc.tables[20].rows) == 1 and len(doc.tables[20].columns) == 1:
+        t20 = doc.tables[20]
+    else:
+        for tbl in doc.tables[19:]:
+            if len(tbl.rows) == 1 and len(tbl.columns) == 1 and tbl != t16:
+                t20 = tbl
+                break
+
+    if t20:
+        # Remover trHeight forzado de 16185 dxa que empuja la tabla a la siguiente página
+        trPr20 = t20.rows[0]._tr.find('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}trPr')
+        if trPr20 is not None:
+            trHeight = trPr20.find('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}trHeight')
+            if trHeight is not None:
+                trPr20.remove(trHeight)
+
+        cell20 = t20.cell(0, 0)
+        cell20.vertical_alignment = docx.enum.table.WD_ALIGN_VERTICAL.CENTER
+        for p in list(cell20.paragraphs):
+            p_elem = p._p
+            if p_elem.getparent() is not None:
+                p_elem.getparent().remove(p_elem)
+
+        if final_anexo1_path and os.path.exists(final_anexo1_path):
+            p_img20 = cell20.add_paragraph()
+            p_img20.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.CENTER
+            p_img20.paragraph_format.space_before = Pt(6)
+            p_img20.paragraph_format.space_after = Pt(6)
+            p_img20.add_run().add_picture(final_anexo1_path, width=docx.shared.Inches(6.8))
+
+    # =========================================================================
+    # ANEXO 2: FOTOGRAFÍAS DEL TERRENO O VIVIENDA (Tabla 21)
+    # =========================================================================
+    for p in doc.paragraphs:
+        if "ANEXO 2 FOTOGRAFÍAS" in p.text.upper() or "ANEXO 2\tFOTOGRAFÍAS" in p.text.upper():
+            p.paragraph_format.page_break_before = True
+
+    final_fotos = anexo2_image_paths or []
+    if not final_fotos:
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        assets_dir = os.path.join(base_dir, "assets")
+        default_f1 = os.path.join(assets_dir, "anexo2_foto1_emplazamiento.jpg")
+        default_f2 = os.path.join(assets_dir, "anexo2_foto2_aerea_general.jpg")
+        default_f3 = os.path.join(assets_dir, "anexo2_foto3_entorno_parque.jpg")
+        if os.path.exists(default_f1) and os.path.exists(default_f2) and os.path.exists(default_f3):
+            final_fotos = [default_f1, default_f2, default_f3]
+
+    epigrafes_fotos = [
+        "Fotografía 1: Emplazamiento satelital y acceso por servidumbre predio Perquenco",
+        "Fotografía 2: Vista aérea perspectiva general del conjunto y áreas productivas",
+        "Fotografía 3: Vista aérea nivel de calle, parque y viviendas proyectadas"
+    ]
+
+    t21 = None
+    if len(doc.tables) > 21 and len(doc.tables[21].rows) == 3 and len(doc.tables[21].columns) == 1:
+        t21 = doc.tables[21]
+    else:
+        for tbl in doc.tables[20:]:
+            if len(tbl.rows) == 3 and len(tbl.columns) == 1:
+                t21 = tbl
+                break
+
+    if t21 and len(final_fotos) >= 3:
+        for row_idx in range(3):
+            f_path = final_fotos[row_idx]
+            caption = epigrafes_fotos[row_idx]
+            row = t21.rows[row_idx]
+
+            trPr21 = row._tr.find('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}trPr')
+            if trPr21 is not None:
+                trH = trPr21.find('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}trHeight')
+                if trH is not None:
+                    trPr21.remove(trH)
+
+            c = row.cells[0]
+            c.vertical_alignment = docx.enum.table.WD_ALIGN_VERTICAL.CENTER
+            for p in list(c.paragraphs):
+                p_elem = p._p
+                if p_elem.getparent() is not None:
+                    p_elem.getparent().remove(p_elem)
+
+            if os.path.exists(f_path):
+                p_f = c.add_paragraph()
+                p_f.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.CENTER
+                p_f.paragraph_format.space_before = Pt(4)
+                p_f.paragraph_format.space_after = Pt(2)
+                p_f.add_run().add_picture(f_path, width=docx.shared.Inches(5.8))
+
+                p_cap = c.add_paragraph()
+                p_cap.alignment = docx.enum.text.WD_ALIGN_PARAGRAPH.CENTER
+                p_cap.paragraph_format.space_before = Pt(0)
+                p_cap.paragraph_format.space_after = Pt(4)
+                run_cap = p_cap.add_run(caption)
+                run_cap.font.name = "Gadugi"
+                run_cap.font.size = Pt(8.0)
+                run_cap.font.italic = True
+                run_cap.font.color.rgb = docx.shared.RGBColor(80, 80, 80)
 
     # Crear carpeta destino si no existe
     dir_name = os.path.dirname(output_path)

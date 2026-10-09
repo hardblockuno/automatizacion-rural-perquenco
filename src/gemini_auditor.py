@@ -647,6 +647,126 @@ def build_tabla_15() -> Dict[str, Any]:
     }
 
 
+def build_apartado_9() -> Dict[str, Any]:
+    """
+    Construye la narrativa técnica y territorial oficial para el Apartado 9:
+    'DIAGNÓSTICO DEL LUGAR DE EMPLAZAMIENTO DE EL O LOS PROYECTOS'
+    (Comuna de Perquenco, Región de La Araucanía).
+    """
+    return {
+        "titulo": "DIAGNÓSTICO DEL LUGAR DE EMPLAZAMIENTO DE EL O LOS PROYECTOS",
+        "subtitulo": "Describir variables geográficas y técnicas relevantes que inciden en el diseño de los proyectos.",
+        "secciones": [
+            {
+                "titulo": "Emplazamiento y características generales",
+                "parrafos": [
+                    (
+                        "El proyecto Ecobarrio Rural Perquenco se desarrolla en una fracción de terreno "
+                        "de aproximadamente 15 hectáreas, ubicada en la comuna de Perquenco, Región de La "
+                        "Araucanía. Si bien el predio posee condición rural, presenta una localización "
+                        "privilegiada, prácticamente colindante con la trama urbana consolidada de la localidad, "
+                        "lo que permite proyectar un conjunto habitacional integrado territorialmente al poblado, "
+                        "conservando las características y oportunidades propias del entorno rural."
+                    ),
+                    (
+                        "El terreno presenta condiciones topográficas favorables, con pendientes predominantemente "
+                        "inferiores al 3%, facilitando el desarrollo de la urbanización, la vialidad interior y "
+                        "el emplazamiento de las viviendas, con menores requerimientos de movimientos de tierra."
+                    ),
+                    (
+                        "La propuesta contempla 155 lotes habitacionales, con una superficie promedio superior "
+                        "a 400 m², organizados mediante una vialidad interior que articula las viviendas con "
+                        "áreas verdes, espacios de encuentro comunitario, equipamiento y sectores productivos. "
+                        "Esta configuración busca consolidar un modelo habitacional que combine vivienda, "
+                        "desarrollo comunitario y actividades productivas, incorporando una superficie aproximada "
+                        "de 2,9 hectáreas destinada a producción comunitaria."
+                    )
+                ]
+            },
+            {
+                "titulo": "Infraestructura sanitaria autónoma",
+                "parrafos": [
+                    (
+                        "Uno de los principales atributos del proyecto corresponde a su propuesta de autosuficiencia "
+                        "sanitaria, particularmente relevante ante las limitaciones de infraestructura que presenta "
+                        "actualmente la localidad de Perquenco para la incorporación de nuevos conjuntos habitacionales."
+                    ),
+                    (
+                        "Para el abastecimiento de agua potable de las 155 familias, se encuentra en proceso la "
+                        "perforación de un pozo profundo dentro del predio. Esta captación formará parte de un "
+                        "sistema autónomo de producción y tratamiento de agua potable, destinado a abastecer la "
+                        "totalidad del conjunto sin depender de la capacidad de suministro de la cooperativa sanitaria local."
+                    ),
+                    (
+                        "Complementariamente, el proyecto considera un sistema propio de alcantarillado y tratamiento "
+                        "de aguas servidas, incorporando una planta de tratamiento mediante tecnología de lombricultura "
+                        "o lombrifiltro, dimensionada para atender a las 155 viviendas. El loteo contempla sectores "
+                        "específicos para emplazar esta infraestructura, separados de las áreas habitacionales y "
+                        "articulados mediante las servidumbres e instalaciones correspondientes."
+                    ),
+                    (
+                        "De esta manera, el Ecobarrio Perquenco busca resolver integralmente sus requerimientos "
+                        "sanitarios, evitando depender de una eventual ampliación de las redes locales de alcantarillado "
+                        "y aportando una solución ambientalmente sostenible, sujeta a los estudios y autorizaciones "
+                        "sectoriales respectivos."
+                    )
+                ]
+            },
+            {
+                "titulo": "Integración territorial y pertinencia habitacional",
+                "parrafos": [
+                    (
+                        "La localidad de Perquenco cuenta con una población inferior a 5.000 habitantes, condición "
+                        "compatible con el ámbito territorial del Programa de Habitabilidad Rural DS10 y con el llamado "
+                        "especial de Ecobarrios Rurales."
+                    ),
+                    (
+                        "El proyecto reúne atributos especialmente favorables para esta modalidad: proximidad a los "
+                        "servicios urbanos, disponibilidad de suelo rural, topografía apropiada, lotes habitacionales "
+                        "de superficie generosa, espacios comunitarios y productivos, y una estrategia integral de "
+                        "abastecimiento de agua potable y saneamiento."
+                    ),
+                    (
+                        "El Ecobarrio Perquenco se plantea así como una alternativa de crecimiento habitacional planificado, "
+                        "capaz de integrar las ventajas de la cercanía urbana con la autonomía sanitaria, la producción "
+                        "comunitaria y la calidad de vida del territorio rural."
+                    )
+                ]
+            }
+        ]
+    }
+
+
+def build_anexos_info() -> Dict[str, Any]:
+    """
+    Construye la información y metadatos de los Anexos 1 y 2 del Formulario PHR N°6.1 DTS.
+    """
+    return {
+        "anexo_1": {
+            "titulo": "Croquis Diagnóstico del terreno, emplazamiento de el o los proyectos y antecedentes relevantes.",
+            "archivo": "anexo1_croquis_terreno.jpg",
+            "descripcion": "Plano Loteo DFL-2 Perquenco Escala 1:1.500 con servidumbre y división predial."
+        },
+        "anexo_2": {
+            "titulo": "FOTOGRAFÍAS DEL TERRENO O VIVIENDA EN QUE SE APLICARÁ EL SUBSIDIO HABITACIONAL (Mínimo 3 imágenes).",
+            "imagenes": [
+                {
+                    "archivo": "anexo2_foto1_emplazamiento.jpg",
+                    "epigrafe": "Fotografía 1: Emplazamiento satelital y acceso por servidumbre predio Perquenco"
+                },
+                {
+                    "archivo": "anexo2_foto2_aerea_general.jpg",
+                    "epigrafe": "Fotografía 2: Vista aérea perspectiva general del conjunto y áreas productivas"
+                },
+                {
+                    "archivo": "anexo2_foto3_entorno_parque.jpg",
+                    "epigrafe": "Fotografía 3: Vista aérea nivel de calle, parque y viviendas proyectadas"
+                }
+            ]
+        }
+    }
+
+
 DEFAULT_PROFESIONALES: Dict[str, Any] = {
     "tecnico": {
         "egr": "CONSULTORA PLAN SOCIAL LIMITADA",
@@ -1061,6 +1181,8 @@ def consolidate_postulante_local(
         "tabla_9": build_tabla_9(),
         "tabla_15": build_tabla_15(),
         "firmantes": build_firmantes(postulante, profesionales_firmantes),
+        "apartado_9": build_apartado_9(),
+        "anexos": build_anexos_info(),
         "tercer_dormitorio": {
             "aplica": evaluate_tercer_dormitorio(postulante)[0],
             "motivo": evaluate_tercer_dormitorio(postulante)[1]
@@ -1148,6 +1270,8 @@ Responde ÚNICAMENTE con el objeto JSON que complete los campos de tabla_1, tabl
                 gemini_json["tabla_9"] = base_data["tabla_9"]  # Preservar Tabla 9 Equipamiento Comunitario
                 gemini_json["tabla_15"] = base_data["tabla_15"]  # Preservar Tabla 15 Servicios Básicos
                 gemini_json["firmantes"] = base_data["firmantes"]  # Preservar Profesionales Suscribientes
+                gemini_json["apartado_9"] = base_data["apartado_9"]  # Preservar Apartado 9 Emplazamiento
+                gemini_json["anexos"] = base_data.get("anexos")  # Preservar Anexos 1 y 2
                 gemini_json["tercer_dormitorio"] = base_data.get("tercer_dormitorio")
                 gemini_json["tipo_familia"] = base_data.get("tipo_familia")
                 gemini_json["recinto_complementario"] = base_data.get("recinto_complementario")

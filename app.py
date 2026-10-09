@@ -625,7 +625,23 @@ with tab_preview:
         st.dataframe(df_elec, hide_index=True, use_container_width=True)
         st.info("ℹ️ **Suministro Eléctrico [X]:** Empresa eléctrica habilitada.")
 
-    # Tablas 17, 18, 19: Profesionales Suscribientes y Postulante
+    # -------------------------------------------------------------------------
+    # APARTADO 9: DIAGNÓSTICO DEL LUGAR DE EMPLAZAMIENTO
+    # -------------------------------------------------------------------------
+    st.markdown("---")
+    st.markdown("#### 🗺️ 9. Diagnóstico del Lugar de Emplazamiento de el o los Proyectos")
+    st.caption("Variables geográficas, urbanísticas y técnicas relevantes que inciden en el diseño del Ecobarrio Rural Perquenco:")
+
+    ap9_data = consolidated.get("apartado_9", {})
+    with st.expander("📖 Ver Diagnóstico Técnico y Territorial Completo (Apartado 9)", expanded=False):
+        for sec in ap9_data.get("secciones", []):
+            st.markdown(f"##### **{sec.get('titulo')}**")
+            for par in sec.get("parrafos", []):
+                st.write(par)
+
+    # -------------------------------------------------------------------------
+    # TABLAS 17, 18, 19: CERTIFICACIÓN Y PROFESIONALES SUSCRIBIENTES
+    # -------------------------------------------------------------------------
     st.markdown("---")
     st.markdown("#### ✍️ Certificación y Profesionales Suscribientes (Tablas 17, 18 y 19)")
     st.caption("Los profesionales que suscriben el presente diagnóstico técnico y social certifican haber realizado la visita correspondiente y la veracidad de la información:")
@@ -667,6 +683,39 @@ with tab_preview:
             {"Campo": "Firma", "Valor": "*(Firma física requerida)*"}
         ])
         st.dataframe(df_pos, hide_index=True, use_container_width=True)
+
+    # -------------------------------------------------------------------------
+    # ANEXOS 1 Y 2: CROQUIS Y FOTOGRAFÍAS OFICIALES
+    # -------------------------------------------------------------------------
+    st.markdown("---")
+    st.markdown("#### 📐 Anexos Técnicos y Fotográficos Oficiales (Anexos 1 y 2)")
+
+    col_anx1, col_anx2 = st.columns(2)
+    with col_anx1:
+        st.markdown("**ANEXO 1: Croquis Diagnóstico del Terreno**")
+        st.caption("Plano Loteo DFL-2 Perquenco (Escala 1:1.500) con servidumbre y división predial.")
+        a1_img = os.path.join("assets", "anexo1_croquis_terreno.jpg")
+        if os.path.exists(a1_img):
+            st.image(a1_img, caption="Croquis diagnóstico del terreno y emplazamiento general", use_container_width=True)
+        else:
+            st.warning("⚠️ No se encontró la imagen en assets/anexo1_croquis_terreno.jpg")
+
+    with col_anx2:
+        st.markdown("**ANEXO 2: Fotografías del Terreno**")
+        st.caption("Registro fotográfico técnico de alta resolución (3 imágenes normativas).")
+        tab_f1, tab_f2, tab_f3 = st.tabs(["Foto 1: Acceso", "Foto 2: Vista General", "Foto 3: Entorno"])
+        with tab_f1:
+            f1_img = os.path.join("assets", "anexo2_foto1_emplazamiento.jpg")
+            if os.path.exists(f1_img):
+                st.image(f1_img, caption="Foto 1: Emplazamiento satelital y acceso por servidumbre", use_container_width=True)
+        with tab_f2:
+            f2_img = os.path.join("assets", "anexo2_foto2_aerea_general.jpg")
+            if os.path.exists(f2_img):
+                st.image(f2_img, caption="Foto 2: Vista aérea perspectiva general del conjunto", use_container_width=True)
+        with tab_f3:
+            f3_img = os.path.join("assets", "anexo2_foto3_entorno_parque.jpg")
+            if os.path.exists(f3_img):
+                st.image(f3_img, caption="Foto 3: Vista aérea nivel de calle, parque y viviendas", use_container_width=True)
 
     # Botón para generar DOCX individual de prueba
     st.markdown("---")
