@@ -334,17 +334,17 @@ RESOLUCIONES_TECNICAS_CONFIRMADAS: Dict[str, Dict[str, Any]] = {
     # Melanie Garcia Nahuelcheo (RUT: 20.982.947-9)
     "209829479": {
         "procede": True,
-        "tipo_recinto": "Habitable",
-        "recinto_sugerido": "Sala / Taller de Elaboración de Quesos (Lácteos)",
-        "justificacion": "Evaluación técnica EGR confirmada: Elaboración artesanal y venta de quesos en el predio. Requiere recinto cerrado, térmicamente aislado, con superficies lavables y condiciones higiénico-sanitarias.",
+        "tipo_recinto": "No Habitable",
+        "recinto_sugerido": "Bodega de Insumos y Aperos Lácteos",
+        "justificacion": "Evaluación técnica EGR confirmada: Elaboración y comercialización de quesos. Al no contar con acreditación técnica y sanitaria formal para recinto habitable en el predio, califica para bodega techada no habitable para almacenamiento y resguardo seguro de insumos, aperos, utensilios y equipamiento de trabajo.",
         "detalle_actividad": "Venta y elaboración de quesos"
     },
     # Yessenia Alejandra Valdes Moya (RUT: 19.792.113-7)
     "197921137": {
         "procede": True,
-        "tipo_recinto": "Habitable",
-        "recinto_sugerido": "Sala de Elaboración de Alimentos / Taller de Repostería",
-        "justificacion": "Evaluación técnica EGR confirmada: Emprendimiento productivo de repostería casera y pastelería en el predio. Requiere recinto habitable con aislamiento y terminaciones lavables.",
+        "tipo_recinto": "No Habitable",
+        "recinto_sugerido": "Bodega de Insumos y Equipos de Repostería",
+        "justificacion": "Evaluación técnica EGR confirmada: Emprendimiento productivo de repostería artesanal. Al no contar con acreditación técnica y sanitaria formal para recinto habitable en el predio, califica para bodega techada no habitable para almacenamiento y resguardo seguro de materias primas secas, moldes, utensilios y equipamiento de trabajo.",
         "detalle_actividad": "Repostería artesanal"
     },
     # María Angélica Astete Alarcón (RUT: 17.153.373-2)
@@ -468,40 +468,40 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
             "detalle_actividad": act_display
         }
 
-    # 3. Recintos Complementarios HABITABLES (requieren condiciones de habitabilidad térmica, higiene o atención interior)
+    # 3. Recintos Complementarios NO HABITABLES derivados de actividades de manufactura, alimentos o servicios sin acreditación habitable formal
     if any(k in full for k in ["PAPELERIA", "PAPELERÍA", "FLORES ETERNAS", "ARTESANIA", "ARTESANÍA", "ESTAMPADO", "SUBLIMACION"]):
         return {
             "procede": True,
-            "tipo_recinto": "Habitable",
-            "recinto_sugerido": "Taller Artesanal / Espacio Productivo Interior",
-            "justificacion": f"Actividad artesanal y de manufactura ({act_display}). Requiere recinto cerrado, protegido del clima y con condiciones de habitabilidad para resguardo de máquinas, herramientas y trabajo manual continuo.",
+            "tipo_recinto": "No Habitable",
+            "recinto_sugerido": "Bodega de Insumos y Materiales de Manufactura",
+            "justificacion": f"Actividad artesanal y de manufactura ({act_display}). Al no contar con acreditación técnica formal para recinto habitable, califica para bodega techada no habitable destinada al almacenamiento y resguardo seguro de materias primas, herramientas, maquinarias e insumos de trabajo.",
             "detalle_actividad": act_display
         }
 
     if any(k in full for k in ["PASTEL", "REPOSTER", "MERMELADA"]):
         return {
             "procede": True,
-            "tipo_recinto": "Habitable",
-            "recinto_sugerido": "Sala de Elaboración de Alimentos / Cocina Taller",
-            "justificacion": f"Elaboración de alimentos ({act_display}). Requiere recinto habitable con terminaciones lavables, higiene, ventilación y habitabilidad para manipulación sanitaria de alimentos.",
+            "tipo_recinto": "No Habitable",
+            "recinto_sugerido": "Bodega de Insumos y Almacenamiento de Alimentos",
+            "justificacion": f"Elaboración de alimentos y conservas ({act_display}). Al no contar con acreditación técnica y sanitaria formal para recinto habitable, califica para bodega techada no habitable para almacenamiento y resguardo seguro de insumos secos, frascos, herramientas y equipamiento de trabajo.",
             "detalle_actividad": act_display
         }
 
     if any(k in full for k in ["UÑA", "UÑAS", "MANICURE", "PELUQUERIA", "PODOLOGA"]):
         return {
             "procede": True,
-            "tipo_recinto": "Habitable",
-            "recinto_sugerido": "Espacio de Atención / Gabinete de Servicios Personales",
-            "justificacion": f"Prestación de servicios personales y estética ({act_display}). Requiere confort térmico, iluminación y ventilación adecuada para atención de público en condiciones sanitarias óptimas.",
+            "tipo_recinto": "No Habitable",
+            "recinto_sugerido": "Bodega de Insumos y Equipamiento de Servicios",
+            "justificacion": f"Prestación de servicios personales y estética ({act_display}). Al no contar con acreditación técnica formal para recinto de atención habitable en el predio, califica para bodega techada no habitable destinada al almacenamiento y resguardo seguro de insumos, instrumental y equipamiento de trabajo.",
             "detalle_actividad": act_display
         }
 
     if any(k in full for k in ["TURISMO", "GRANJA EDUCATIVA"]):
         return {
             "procede": True,
-            "tipo_recinto": "Habitable",
-            "recinto_sugerido": "Espacio de Recepción / Hospedaje Rural",
-            "justificacion": f"Actividad de turismo rural y recreación ({act_display}). Requiere recinto habitable para recepción de visitantes y actividades formativas.",
+            "tipo_recinto": "No Habitable",
+            "recinto_sugerido": "Bodega de Insumos / Resguardo de Granja",
+            "justificacion": f"Actividad de granja y recreación rural ({act_display}). Al no contar con acreditación técnica formal para recinto de atención habitable, califica para bodega techada no habitable destinada al resguardo seguro de alimentos para animales, insumos y herramientas de granja.",
             "detalle_actividad": act_display
         }
 

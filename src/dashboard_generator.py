@@ -588,13 +588,13 @@ def generate_interactive_html_dashboard(
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div class="bg-emerald-50/60 p-4 rounded-xl border border-emerald-200">
                     <div class="text-xs font-semibold text-emerald-800 uppercase">Recintos HABITABLES</div>
-                    <div class="text-2xl font-extrabold text-emerald-700 mt-1">12 familias</div>
-                    <div class="text-xs text-emerald-700 mt-1">7.7% del padrón (37.5% de recintos)</div>
+                    <div class="text-2xl font-extrabold text-emerald-700 mt-1">0 familias</div>
+                    <div class="text-xs text-emerald-700 mt-1">0.0% del padrón (0.0% de recintos)</div>
                 </div>
                 <div class="bg-blue-50/60 p-4 rounded-xl border border-blue-200">
                     <div class="text-xs font-semibold text-blue-800 uppercase">Recintos NO HABITABLES</div>
-                    <div class="text-2xl font-extrabold text-blue-700 mt-1">20 familias</div>
-                    <div class="text-xs text-blue-700 mt-1">12.9% del padrón (62.5% de recintos)</div>
+                    <div class="text-2xl font-extrabold text-blue-700 mt-1">32 familias</div>
+                    <div class="text-xs text-blue-700 mt-1">20.6% del padrón (100% de recintos)</div>
                 </div>
                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                     <div class="text-xs font-semibold text-slate-600 uppercase">No Aplica Recinto</div>
@@ -616,7 +616,22 @@ def generate_interactive_html_dashboard(
                     <div class="text-[10px] text-blue-600">No Habitable</div>
                 </div>
                 <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl">
+                    <div class="text-blue-700 font-semibold">Bod. Manufactura</div>
+                    <div class="text-lg font-bold text-blue-900 mt-0.5">4</div>
+                    <div class="text-[10px] text-blue-600">No Habitable</div>
+                </div>
+                <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl">
+                    <div class="text-blue-700 font-semibold">Bod. Alimentos/Rep.</div>
+                    <div class="text-lg font-bold text-blue-900 mt-0.5">4</div>
+                    <div class="text-[10px] text-blue-600">No Habitable</div>
+                </div>
+                <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl">
                     <div class="text-blue-700 font-semibold">Bod. Herramientas</div>
+                    <div class="text-lg font-bold text-blue-900 mt-0.5">3</div>
+                    <div class="text-[10px] text-blue-600">No Habitable</div>
+                </div>
+                <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl">
+                    <div class="text-blue-700 font-semibold">Bod. Servicios/Est.</div>
                     <div class="text-lg font-bold text-blue-900 mt-0.5">3</div>
                     <div class="text-[10px] text-blue-600">No Habitable</div>
                 </div>
@@ -631,24 +646,9 @@ def generate_interactive_html_dashboard(
                     <div class="text-[10px] text-blue-600">No Habitable</div>
                 </div>
                 <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl">
-                    <div class="text-blue-700 font-semibold">Leñera Techada</div>
-                    <div class="text-lg font-bold text-blue-900 mt-0.5">1</div>
+                    <div class="text-blue-700 font-semibold">Leñera / Inv. / Granja</div>
+                    <div class="text-lg font-bold text-blue-900 mt-0.5">3</div>
                     <div class="text-[10px] text-blue-600">No Habitable</div>
-                </div>
-                <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl">
-                    <div class="text-blue-700 font-semibold">Invernadero</div>
-                    <div class="text-lg font-bold text-blue-900 mt-0.5">1</div>
-                    <div class="text-[10px] text-blue-600">No Habitable</div>
-                </div>
-                <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl">
-                    <div class="text-emerald-700 font-semibold">Talleres / Alimentos</div>
-                    <div class="text-lg font-bold text-emerald-900 mt-0.5">8</div>
-                    <div class="text-[10px] text-emerald-600">Habitable</div>
-                </div>
-                <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl">
-                    <div class="text-emerald-700 font-semibold">Estética / Turismo</div>
-                    <div class="text-lg font-bold text-emerald-900 mt-0.5">4</div>
-                    <div class="text-[10px] text-emerald-600">Habitable</div>
                 </div>
             </div>
 
@@ -658,8 +658,8 @@ def generate_interactive_html_dashboard(
                     <h3 class="font-bold text-slate-800 text-sm">Nómina Detallada de los 32 Recintos Aprobados:</h3>
                     <div class="flex items-center gap-2 text-xs">
                         <button onclick="filterRecintos('Todos')" class="btn-rec-pill px-3 py-1 rounded-lg bg-blue-600 text-white font-medium" data-cat="Todos">Todos (32)</button>
-                        <button onclick="filterRecintos('Habitable')" class="btn-rec-pill px-3 py-1 rounded-lg bg-slate-200 text-slate-700 font-medium hover:bg-slate-300" data-cat="Habitable">Habitables (12)</button>
-                        <button onclick="filterRecintos('No Habitable')" class="btn-rec-pill px-3 py-1 rounded-lg bg-slate-200 text-slate-700 font-medium hover:bg-slate-300" data-cat="No Habitable">No Habitables (20)</button>
+                        <button onclick="filterRecintos('Habitable')" class="btn-rec-pill px-3 py-1 rounded-lg bg-slate-200 text-slate-700 font-medium hover:bg-slate-300" data-cat="Habitable">Habitables (0)</button>
+                        <button onclick="filterRecintos('No Habitable')" class="btn-rec-pill px-3 py-1 rounded-lg bg-slate-200 text-slate-700 font-medium hover:bg-slate-300" data-cat="No Habitable">No Habitables (32)</button>
                     </div>
                 </div>
 

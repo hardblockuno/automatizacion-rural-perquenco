@@ -907,27 +907,21 @@ with tab_metrics:
     ])
 
     with tab_rec_hab:
-        st.markdown("**Familias que califican para Recinto Complementario HABITABLE (12 familias):**")
-        st.caption("Actividades de manufactura delicada, alimentos, salud/estética o turismo que requieren estar protegidas del clima, con aislamiento térmico y condiciones sanitarias interiores.")
-        
-        c_h1, c_h2, c_h3, c_h4 = st.columns(4)
-        c_h1.metric("Talleres Artesanales", "4 familias", "Artesanía, papelería, sublimación, flores")
-        c_h2.metric("Salas de Alimentos", "4 familias", "Repostería, pastelería, mermeladas, quesos")
-        c_h3.metric("Gabinetes Estética/Salud", "3 familias", "Peluquería, podología, manicure")
-        c_h4.metric("Turismo Rural", "1 familia", "Mini granja educativa")
+        st.markdown(f"**Familias que califican para Recinto Complementario HABITABLE ({len(recintos_hab)} familias):**")
+        st.info("ℹ️ **Reclasificación Normativa Aplicada:** Al constatarse que las personas con actividades de manufactura, alimentos o servicios no cuentan con la acreditación técnica y sanitaria sectorial formal en el predio para operar un recinto habitable bajo D.S. N°10, **ninguna califica para recinto habitable (0 casos)**. Todas han sido reasignadas a **Recinto Complementario No Habitable (Bodega techada)** para el resguardo seguro de insumos, materiales y herramientas.")
 
         if recintos_hab:
             st.dataframe(pd.DataFrame(recintos_hab), hide_index=True, use_container_width=True)
 
     with tab_rec_nohab:
-        st.markdown("**Familias que califican para Recinto Complementario NO HABITABLE (20 familias):**")
-        st.caption("Actividades agropecuarias, forestales o técnicas exteriores que requieren almacenamiento, acopio, aperos o resguardo de animales/madera/herramientas.")
+        st.markdown(f"**Familias que califican para Recinto Complementario NO HABITABLE ({len(recintos_nohab)} familias):**")
+        st.caption("Actividades que requieren almacenamiento, acopio, insumos, herramientas, mercadería o resguardo de animales y leña.")
         
         c_nh1, c_nh2, c_nh3, c_nh4 = st.columns(4)
-        c_nh1.metric("Bodegas (Total)", "15 familias", "9 agrícolas + 3 herramientas + 3 mercadería")
-        c_nh2.metric("Gallineros / Avícolas", "3 familias", "Crianza de aves y venta de huevos")
-        c_nh3.metric("Leñera Techada", "1 familia", "Acopio y secado de leña")
-        c_nh4.metric("Invernadero", "1 familia", "Cultivo y venta de plantas")
+        c_nh1.metric("Bodegas Techadas (Total)", "27 familias", "Fila 1 Tabla 8 (Agrícolas, manufactura, alimentos, herramientas, etc.)")
+        c_nh2.metric("Gallineros / Avícolas", "3 familias", "Fila 5 Tabla 8 (Crianza de aves y venta de huevos)")
+        c_nh3.metric("Leñera Techada", "1 familia", "Fila 4 Tabla 8 (Acopio y secado de leña)")
+        c_nh4.metric("Invernadero", "1 familia", "Fila 5 Tabla 8 (Cultivo y venta de plantas)")
 
         if recintos_nohab:
             st.dataframe(pd.DataFrame(recintos_nohab), hide_index=True, use_container_width=True)
@@ -937,11 +931,11 @@ with tab_metrics:
         st.caption("Estructura de llenado en el documento Word: Columna 1 marcada con 'Sí' o 'No', y Columna 2 con justificación técnica fidedigna basada en la actividad previa.")
 
         c_t8_1, c_t8_2, c_t8_3, c_t8_4, c_t8_5 = st.columns(5)
-        c_t8_1.metric("Fila 1: Bodega", "15 familias", "9 agrícolas + 3 herramientas + 3 mercadería")
-        c_t8_2.metric("Fila 2: Recinto Productivo", "12 familias", "4 talleres + 4 alimentos + 3 salud + 1 turismo")
-        c_t8_3.metric("Fila 3: Otros Techados", "0 familias", "100% No Aplica")
-        c_t8_4.metric("Fila 4: Leñera", "1 familia", "Acopio y secado de leña")
-        c_t8_5.metric("Fila 5: Otros (especificar)", "4 familias", "1 Invernadero + 3 Galpones Avícolas")
+        c_t8_1.metric("Fila 1: Bodega", "27 familias", "Marcadas 'Sí' con justificación técnica")
+        c_t8_2.metric("Fila 2: Recinto Productivo", "0 familias", "100% 'No' (Sin acreditación habitable)")
+        c_t8_3.metric("Fila 3: Otros Techados", "0 familias", "100% 'No'")
+        c_t8_4.metric("Fila 4: Leñera", "1 familia", "Marcada 'Sí' (Acopio y secado)")
+        c_t8_5.metric("Fila 5: Otros (especificar)", "4 familias", "Marcadas 'Sí' (1 Invernadero + 3 Avícolas)")
 
         if t8_list:
             st.dataframe(pd.DataFrame(t8_list), hide_index=True, use_container_width=True)
@@ -1424,12 +1418,12 @@ with tab_informe:
     with col_inf_right:
         st.markdown("#### 3. Recintos Complementarios por Tipo (Tabla 8)")
         df_rec_rep = pd.DataFrame([
-            {"Tipo de Recinto": "Bodega de Insumos y Aperos Agrícolas", "Familias": inf_rec["bodega"]},
-            {"Tipo de Recinto": "Recinto Productivo (Lácteos, Repostería, etc.)", "Familias": inf_rec["productivo"]},
-            {"Tipo de Recinto": "Leñera", "Familias": inf_rec["lenera"]},
-            {"Tipo de Recinto": "Otros (Invernadero de plantas, Galpón avícola)", "Familias": inf_rec["otros"]},
-            {"Tipo de Recinto": "Otros Recintos Techados Contiguos", "Familias": inf_rec["otros_contiguos"]},
-            {"Tipo de Recinto": "TOTAL RECINTOS COMPLEMENTARIOS", "Familias": sum(inf_rec.values())}
+            {"Tipo de Recinto": "Bodega (Fila 1: Insumos, aperos, manufactura, alimentos, etc.)", "Familias": inf_rec["bodega"]},
+            {"Tipo de Recinto": "Recinto para realizar actividades productivas (Fila 2)", "Familias": inf_rec["productivo"]},
+            {"Tipo de Recinto": "Otros Recintos Techados Contiguos (Fila 3)", "Familias": inf_rec["otros_contiguos"]},
+            {"Tipo de Recinto": "Leñera (Fila 4: Acopio y secado)", "Familias": inf_rec["lenera"]},
+            {"Tipo de Recinto": "Otros especificar (Fila 5: Invernadero, Galpón avícola)", "Familias": inf_rec["otros"]},
+            {"Tipo de Recinto": "TOTAL RECINTOS COMPLEMENTARIOS (100% No Habitables)", "Familias": sum(inf_rec.values())}
         ])
         st.dataframe(df_rec_rep, hide_index=True, use_container_width=True)
 
