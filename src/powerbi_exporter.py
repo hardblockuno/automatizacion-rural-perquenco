@@ -135,7 +135,7 @@ def build_powerbi_dataset(postulantes: List[Dict[str, Any]], datos_terreno: Opti
             "Tiene_Adulto_Mayor": "Sí" if n_mayores > 0 else "No",
             "Pueblo_Originario_Mapuche": es_mapuche,
             "Tiene_Discapacidad": tiene_disc,
-            "Detalle_Discapacidad": disc_val if tiene_disc == "Sí" else "",
+            "Detalle_Discapacidad": t4.get("discapacidad", {}).get("observaciones", "") if tiene_disc == "Sí" else "",
             "Direccion_RSH": p.get("direccion_rsh", ""),
             "Comuna": p.get("comuna", "Perquenco"),
             "Factor_Aislamiento": p.get("factor_aislamiento", "1.2"),

@@ -130,6 +130,111 @@ def format_parentesco(parentesco_raw: str, sexo: Optional[str]) -> str:
     return parentesco_raw.lower().capitalize() if parentesco_raw else "Integrante"
 
 
+def format_person_short_name(raw_name: str) -> str:
+    """
+    Formatea un nombre chileno al estándar formal 'Nombre Apellido'.
+    Primera letra de nombre en mayúscula y primera letra de apellido en mayúscula.
+    Preserva acentos y descarta mayúsculas o minúsculas indebidas.
+    Ejemplo: 'SALINAS PEÑAILILLO ALBERTO MARCELINO' -> 'Alberto Salinas'
+             'SALINAS ASTETE ANTONELLA BELÉN' -> 'Antonella Salinas'
+             'ACEITON ESPINOZA LUCIA MARGARITA' -> 'Lucia Aceiton'
+    """
+    if not raw_name:
+        return ""
+    words = raw_name.strip().split()
+    if len(words) >= 3:
+        nom1 = words[2].capitalize()
+        ap1 = words[0].capitalize()
+        return f"{nom1} {ap1}"
+    elif len(words) == 2:
+        return f"{words[0].capitalize()} {words[1].capitalize()}"
+    return words[0].capitalize()
+
+
+def extract_condition_for_person(raw_text: str, person_identifier: str = "") -> str:
+    """
+    Extrae la condición técnica de discapacidad (ej. 'Movilidad reducida', 'Discapacidad parcial')
+    desde el texto de origen para la persona correspondiente.
+    """
+    txt = (raw_text or "").upper()
+    
+    # Si la celda contiene múltiples integrantes separados por ' Y '
+    if "  Y  " in txt or " Y HIJ" in txt:
+        parts = [p.strip() for p in txt.replace("  Y  ", " Y ").split(" Y ")]
+        for p in parts:
+            if person_identifier and person_identifier.upper() in p:
+                return extract_condition_for_person(p)
+                
+    if "EN TRAMITE" in txt and "MOVILIDAD REDUCIDA" in txt:
+        return "Movilidad reducida en trámite"
+    if "MOVILIDAD REDUCIDA" in txt:
+        return "Movilidad reducida"
+    if "DISCAPACIDAD PARCIAL" in txt:
+        return "Discapacidad parcial"
+    if "DISCAPACIDAD TOTAL" in txt:
+        return "Discapacidad total"
+    if "DISCAPACIDAD" in txt:
+        return "Discapacidad acreditada"
+    return "Condición acreditada"
+
+
+def build_discapacidad_observations(postulante: Dict[str, Any]) -> tuple[List[str], int]:
+    """
+    Construye las observaciones de discapacidad para Tabla 4 con formato formal:
+    [Rol] [Nombre Apellido] ([Condición])
+    Ejemplo: 'Conyuge Alberto Salinas (Movilidad reducida) / Hija Antonella Salinas (Discapacidad parcial)'
+             'Titular Lucia Aceiton (Discapacidad parcial)'
+    Retorna (items_list, cantidad_total).
+    """
+    obs_items = []
+    disc_titular_raw = (postulante.get("discapacidad") or "").strip()
+    upper_disc = disc_titular_raw.upper()
+    
+    # 1. Determinar si parientes tienen discapacidad acreditada
+    parientes_con_disc = []
+    for par in postulante.get("parientes", []):
+        p_disc = str(par.get("discapacidad") or "").strip().upper()
+        if p_disc and p_disc != "NO":
+            parientes_con_disc.append(par)
+            
+    # 2. Revisar si la celda titular describe a un familiar o a la/el postulante titular
+    menciona_parientes = any(w in upper_disc for w in ["HIJO", "HIJA", "CONYUGE", "CÓNYUGE", "PAREJA", "CARGA"])
+    
+    # Caso Titular con discapacidad:
+    if upper_disc and upper_disc != "NO" and not menciona_parientes:
+        nom_tit = format_person_short_name(postulante.get("nombre", ""))
+        cond_tit = extract_condition_for_person(disc_titular_raw)
+        obs_items.append(f"Titular {nom_tit} ({cond_tit})")
+        
+    # Caso Parientes con discapacidad:
+    if parientes_con_disc:
+        for par in parientes_con_disc:
+            p_nom_raw = par.get("nombre", "")
+            p_nom = format_person_short_name(p_nom_raw)
+            p_par = par.get("parentesco", "")
+            p_sex = infer_gender_from_name(p_nom_raw)
+            rol = format_parentesco(p_par, p_sex)
+            if rol == "Cónyuge":
+                rol = "Conyuge"
+                
+            primer_nom = p_nom.split()[0] if p_nom else ""
+            primer_ap = p_nom.split()[1] if len(p_nom.split()) > 1 else ""
+            
+            identifier = primer_nom if primer_nom.upper() in upper_disc else (primer_ap if primer_ap.upper() in upper_disc else "")
+            if not identifier and rol.upper() in upper_disc:
+                identifier = rol.upper()
+                
+            cond = extract_condition_for_person(disc_titular_raw, identifier)
+            obs_items.append(f"{rol} {p_nom} ({cond})")
+            
+    elif menciona_parientes and upper_disc and upper_disc != "NO":
+        cond = extract_condition_for_person(disc_titular_raw)
+        clean_obs = disc_titular_raw.replace("SI, ", "").replace("Si, ", "").strip().title()
+        obs_items.append(f"{clean_obs} ({cond})")
+        
+    return obs_items, len(obs_items)
+
+
 def classify_economic_activity(act_raw: str, desc_raw: str) -> tuple[str, str]:
     """
     Clasifica la actividad económica en una de las categorías normadas de la Tabla 5:
@@ -608,7 +713,6 @@ def consolidate_postulante_local(
     mujeres_desc = []
     menores_desc = []
     mayores_desc = []
-    disc_desc = []
 
     # Titular
     if sexo_titular == "M":
@@ -625,25 +729,11 @@ def consolidate_postulante_local(
             desc_m = f"Titular ({edad_titular} años)"
             mayores_desc.append(desc_m)
 
-    # Revisar discapacidad en titular
-    disc_titular_raw = postulante.get("discapacidad", "").strip()
-    titular_tiene_disc = False
-    if disc_titular_raw and disc_titular_raw.upper() != "NO":
-        # Verificar si la nota describe a un pariente (ej. 'SI, HIJO...') o al titular
-        upper_disc = disc_titular_raw.upper()
-        if any(w in upper_disc for w in ["HIJO", "HIJA", "CARGA", "PARIENTE"]):
-            # La nota describe la condición de un familiar, no del titular directamente
-            disc_desc.append(disc_titular_raw.replace("SI, ", "").capitalize())
-        else:
-            titular_tiene_disc = True
-            disc_desc.append(f"Titular: {disc_titular_raw.replace('SI, ', '').capitalize()}")
-
     # Parientes
     for p in postulante.get("parientes", []):
         p_nom = p.get("nombre", "")
         p_edad = p.get("edad")
         p_par = p.get("parentesco", "")
-        p_disc = p.get("discapacidad", "")
 
         # Determinar sexo
         p_sexo = infer_gender_from_name(p_nom)
@@ -672,18 +762,13 @@ def consolidate_postulante_local(
             elif p_edad >= 60:
                 mayores_desc.append(desc_p)
 
-        if p_disc and p_disc.upper() != "NO":
-            # Si ya se agregó una nota que menciona a este pariente, no duplicar
-            primer_nombre = p_nom.split()[0].upper() if p_nom else ""
-            ya_mencionado = any(primer_nombre in d.upper() for d in disc_desc if primer_nombre)
-            if not ya_mencionado:
-                disc_desc.append(f"{p_nom} ({label_par}) con condición acreditada")
-
     cant_hombres = len(hombres_desc)
     cant_mujeres = len(mujeres_desc)
     cant_menores = len(menores_desc)
     cant_mayores = len(mayores_desc)
-    cant_disc = len(disc_desc)
+
+    # Discapacidad formal según criterios técnicos y rol acreditado
+    disc_desc, cant_disc = build_discapacidad_observations(postulante)
 
     # Indígena
     etnia_raw = postulante.get("etnia", "").strip().upper()
@@ -887,7 +972,7 @@ def consolidate_postulante_local(
                 "si": "X" if cant_disc > 0 else "",
                 "no": "X" if cant_disc == 0 else "",
                 "cuantos": str(cant_disc) if cant_disc > 0 else "0",
-                "observaciones": "; ".join(disc_desc)
+                "observaciones": " / ".join(disc_desc)
             },
             "indigena": {
                 "si": "X" if es_indigena else "",
