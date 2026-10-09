@@ -49,6 +49,15 @@ def fill_formulario_phr(
     """
     doc = docx.Document(template_path)
 
+    # Validar que la plantilla corresponde al Formulario PHR N°6.1 DTS
+    if len(doc.tables) < 17 or len(doc.tables[3].rows) < 4 or len(doc.tables[3].columns) < 4:
+        nombre_archivo = os.path.basename(template_path)
+        raise ValueError(
+            f"El archivo '{nombre_archivo}' no corresponde a la plantilla oficial del Formulario PHR N°6.1 DTS "
+            f"(se detectó otra estructura de documento Word, posiblemente un informe consolidado). "
+            f"Por favor asegúrese de seleccionar 'Formulario PHR N°6.1 DTS Diagnóstico Familia V2026.docx' en el panel lateral."
+        )
+
     # Actualizar Nombre de EGR en el encabezado del documento
     final_egr = (egr_name or "CONSULTORA PLAN SOCIAL LIMITADA").strip()
     for p in doc.paragraphs[:15]:

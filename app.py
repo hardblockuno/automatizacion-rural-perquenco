@@ -103,7 +103,16 @@ default_docx_files = [
     f for f in glob.glob(os.path.join(BASE_DIR, "*.docx"))
     if not os.path.basename(f).startswith("~$")
 ]
-DEFAULT_TEMPLATE = default_docx_files[0] if default_docx_files else ""
+# Buscar específicamente la plantilla oficial de Formulario PHR 6.1 DTS
+phr_candidates = [
+    f for f in default_docx_files
+    if "PHR" in os.path.basename(f).upper() or "DIAGNÓSTICO FAMILIA" in os.path.basename(f).upper() or "DIAGNOSTICO FAMILIA" in os.path.basename(f).upper()
+]
+if phr_candidates:
+    DEFAULT_TEMPLATE = phr_candidates[0]
+else:
+    cand = [f for f in default_docx_files if "INFORME" not in os.path.basename(f).upper()]
+    DEFAULT_TEMPLATE = cand[0] if cand else (default_docx_files[0] if default_docx_files else "")
 DEFAULT_OUTPUT_DIR = os.path.join(BASE_DIR, "formularios_generados")
 
 
@@ -178,7 +187,19 @@ with st.sidebar:
 
     st.markdown("---")
     st.subheader("📄 Plantilla y Destino")
-    template_docx_path = st.text_input("Ruta Plantilla Word (.docx):", value=DEFAULT_TEMPLATE)
+    if default_docx_files:
+        docx_options = {os.path.basename(f): f for f in default_docx_files}
+        default_name = os.path.basename(DEFAULT_TEMPLATE) if DEFAULT_TEMPLATE in default_docx_files else list(docx_options.keys())[0]
+        sel_idx = list(docx_options.keys()).index(default_name) if default_name in docx_options else 0
+        selected_docx_name = st.selectbox(
+            "Plantilla Word Oficial (PHR 6.1 DTS):",
+            list(docx_options.keys()),
+            index=sel_idx,
+            help="Seleccione la plantilla oficial Formulario PHR N°6.1 DTS Diagnóstico Familia V2026.docx"
+        )
+        template_docx_path = docx_options[selected_docx_name]
+    else:
+        template_docx_path = st.text_input("Ruta Plantilla Word (.docx):", value=DEFAULT_TEMPLATE)
     output_directory = st.text_input("Carpeta de salida:", value=DEFAULT_OUTPUT_DIR)
 
     st.markdown("---")
@@ -656,21 +677,24 @@ with tab_preview:
     if st.button(f"📥 Generar Formulario Word para {current_postulante['nombre']}", type="primary"):
         with st.spinner("Generando documento Word..."):
             os.makedirs(output_directory, exist_ok=True)
-            res_path = fill_formulario_phr(
-                template_docx_path,
-                consolidated,
-                single_out_path,
-                egr_name=egr_name,
-                profesionales_firmantes=profesionales_firmantes
-            )
-            st.success(f"✅ Formulario generado con éxito: `{res_path}`")
-            with open(res_path, "rb") as f:
-                st.download_button(
-                    label="💾 Descargar Archivo DOCX",
-                    data=f,
-                    file_name=single_out_name,
-                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            try:
+                res_path = fill_formulario_phr(
+                    template_docx_path,
+                    consolidated,
+                    single_out_path,
+                    egr_name=egr_name,
+                    profesionales_firmantes=profesionales_firmantes
                 )
+                st.success(f"✅ Formulario generado con éxito: `{res_path}`")
+                with open(res_path, "rb") as f:
+                    st.download_button(
+                        label="💾 Descargar Archivo DOCX",
+                        data=f,
+                        file_name=single_out_name,
+                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    )
+            except Exception as e:
+                st.error(f"❌ Error al generar formulario: {e}")
 
 
 
