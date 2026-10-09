@@ -336,7 +336,7 @@ RESOLUCIONES_TECNICAS_CONFIRMADAS: Dict[str, Dict[str, Any]] = {
         "procede": True,
         "tipo_recinto": "No Habitable",
         "recinto_sugerido": "Bodega de Insumos y Aperos Lácteos",
-        "justificacion": "Evaluación técnica EGR confirmada: Elaboración y comercialización de quesos. Al no contar con acreditación técnica y sanitaria formal para recinto habitable en el predio, califica para bodega techada no habitable para almacenamiento y resguardo seguro de insumos, aperos, utensilios y equipamiento de trabajo.",
+        "justificacion": "Evaluación técnica EGR confirmada: Elaboración y comercialización de quesos. Recinto techado no habitable para almacenamiento y resguardo seguro de insumos, aperos, utensilios y equipamiento de trabajo.",
         "detalle_actividad": "Venta y elaboración de quesos"
     },
     # Yessenia Alejandra Valdes Moya (RUT: 19.792.113-7)
@@ -344,7 +344,7 @@ RESOLUCIONES_TECNICAS_CONFIRMADAS: Dict[str, Dict[str, Any]] = {
         "procede": True,
         "tipo_recinto": "No Habitable",
         "recinto_sugerido": "Bodega de Insumos y Equipos de Repostería",
-        "justificacion": "Evaluación técnica EGR confirmada: Emprendimiento productivo de repostería artesanal. Al no contar con acreditación técnica y sanitaria formal para recinto habitable en el predio, califica para bodega techada no habitable para almacenamiento y resguardo seguro de materias primas secas, moldes, utensilios y equipamiento de trabajo.",
+        "justificacion": "Evaluación técnica EGR confirmada: Emprendimiento productivo de repostería artesanal. Recinto techado no habitable para almacenamiento y resguardo seguro de insumos, aperos, utensilios y equipamiento de trabajo.",
         "detalle_actividad": "Repostería artesanal"
     },
     # María Angélica Astete Alarcón (RUT: 17.153.373-2)
@@ -474,7 +474,7 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
             "procede": True,
             "tipo_recinto": "No Habitable",
             "recinto_sugerido": "Bodega de Insumos y Materiales de Manufactura",
-            "justificacion": f"Actividad artesanal y de manufactura ({act_display}). Al no contar con acreditación técnica formal para recinto habitable, califica para bodega techada no habitable destinada al almacenamiento y resguardo seguro de materias primas, herramientas, maquinarias e insumos de trabajo.",
+            "justificacion": f"Actividad artesanal y de manufactura ({act_display}). Recinto techado no habitable para almacenamiento y resguardo seguro de insumos, aperos, utensilios y equipamiento de trabajo.",
             "detalle_actividad": act_display
         }
 
@@ -483,7 +483,7 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
             "procede": True,
             "tipo_recinto": "No Habitable",
             "recinto_sugerido": "Bodega de Insumos y Almacenamiento de Alimentos",
-            "justificacion": f"Elaboración de alimentos y conservas ({act_display}). Al no contar con acreditación técnica y sanitaria formal para recinto habitable, califica para bodega techada no habitable para almacenamiento y resguardo seguro de insumos secos, frascos, herramientas y equipamiento de trabajo.",
+            "justificacion": f"Elaboración de alimentos y conservas ({act_display}). Recinto techado no habitable para almacenamiento y resguardo seguro de insumos, aperos, utensilios y equipamiento de trabajo.",
             "detalle_actividad": act_display
         }
 
@@ -492,7 +492,7 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
             "procede": True,
             "tipo_recinto": "No Habitable",
             "recinto_sugerido": "Bodega de Insumos y Equipamiento de Servicios",
-            "justificacion": f"Prestación de servicios personales y estética ({act_display}). Al no contar con acreditación técnica formal para recinto de atención habitable en el predio, califica para bodega techada no habitable destinada al almacenamiento y resguardo seguro de insumos, instrumental y equipamiento de trabajo.",
+            "justificacion": f"Prestación de servicios personales y estética ({act_display}). Recinto techado no habitable para almacenamiento y resguardo seguro de insumos, aperos, utensilios y equipamiento de trabajo.",
             "detalle_actividad": act_display
         }
 
@@ -501,7 +501,7 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
             "procede": True,
             "tipo_recinto": "No Habitable",
             "recinto_sugerido": "Bodega de Insumos / Resguardo de Granja",
-            "justificacion": f"Actividad de granja y recreación rural ({act_display}). Al no contar con acreditación técnica formal para recinto de atención habitable, califica para bodega techada no habitable destinada al resguardo seguro de alimentos para animales, insumos y herramientas de granja.",
+            "justificacion": f"Actividad de granja y recreación rural ({act_display}). Recinto techado no habitable para almacenamiento y resguardo seguro de insumos, aperos, utensilios y equipamiento de trabajo.",
             "detalle_actividad": act_display
         }
 

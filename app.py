@@ -908,7 +908,7 @@ with tab_metrics:
 
     with tab_rec_hab:
         st.markdown(f"**Familias que califican para Recinto Complementario HABITABLE ({len(recintos_hab)} familias):**")
-        st.info("ℹ️ **Reclasificación Normativa Aplicada:** Al constatarse que las personas con actividades de manufactura, alimentos o servicios no cuentan con la acreditación técnica y sanitaria sectorial formal en el predio para operar un recinto habitable bajo D.S. N°10, **ninguna califica para recinto habitable (0 casos)**. Todas han sido reasignadas a **Recinto Complementario No Habitable (Bodega techada)** para el resguardo seguro de insumos, materiales y herramientas.")
+        st.info("ℹ️ **Criterio Técnico Aplicado:** Todas las actividades de manufactura, alimentos o servicios operan bajo la justificación normativa de: *Recinto techado no habitable para almacenamiento y resguardo seguro de insumos, aperos, utensilios y equipamiento de trabajo* (0 casos habitables, 32 casos no habitables en Fila 1 Bodega / Fila 4 / Fila 5).")
 
         if recintos_hab:
             st.dataframe(pd.DataFrame(recintos_hab), hide_index=True, use_container_width=True)
