@@ -647,6 +647,56 @@ def build_tabla_15() -> Dict[str, Any]:
     }
 
 
+DEFAULT_PROFESIONALES: Dict[str, Any] = {
+    "tecnico": {
+        "egr": "CONSULTORA PLAN SOCIAL LIMITADA",
+        "nombre": "Vanessa Schneider Martínez",
+        "rut": "13.730.440-6",
+        "profesion": "Arquitecta"
+    },
+    "social": {
+        "egr": "CONSULTORA PLAN SOCIAL",
+        "nombre": "Erica Reyes Peña",
+        "rut": "20.402.240-2",
+        "profesion": "TRABAJADORA SOCIAL"
+    }
+}
+
+
+def build_firmantes(
+    postulante: Dict[str, Any],
+    profesionales: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
+    """
+    Construye la estructura de datos para la sección de firmas y certificación del formulario:
+    - Tabla 17: Profesional Área Técnica EGR (Vanessa Schneider Martínez)
+    - Tabla 18: Profesional Área Social EGR (Erica Reyes Peña)
+    - Tabla 19: Postulante Titular (Nombre y RUT extraídos de la identificación del postulante)
+    """
+    profs = profesionales or DEFAULT_PROFESIONALES
+    tec = profs.get("tecnico", DEFAULT_PROFESIONALES["tecnico"])
+    soc = profs.get("social", DEFAULT_PROFESIONALES["social"])
+
+    return {
+        "tecnico": {
+            "egr": tec.get("egr", "CONSULTORA PLAN SOCIAL LIMITADA"),
+            "nombre": tec.get("nombre", "Vanessa Schneider Martínez"),
+            "rut": tec.get("rut", "13.730.440-6"),
+            "profesion": tec.get("profesion", "Arquitecta")
+        },
+        "social": {
+            "egr": soc.get("egr", "CONSULTORA PLAN SOCIAL"),
+            "nombre": soc.get("nombre", "Erica Reyes Peña"),
+            "rut": soc.get("rut", "20.402.240-2"),
+            "profesion": soc.get("profesion", "TRABAJADORA SOCIAL")
+        },
+        "postulante": {
+            "nombre": postulante.get("nombre", ""),
+            "rut": postulante.get("rut", "")
+        }
+    }
+
+
 def evaluate_tercer_dormitorio(postulante: Dict[str, Any]) -> tuple:
     """
     Determina si a la familia le corresponde marcar 'Tercer Dormitorio' en la Tabla 6.
@@ -693,7 +743,8 @@ TERRENO_PROYECTO_CONSOLIDADO: Dict[str, str] = {
 def consolidate_postulante_local(
     postulante: Dict[str, Any],
     usar_rsh_en_terreno: bool = False,
-    datos_terreno_proyecto: Optional[Dict[str, str]] = None
+    datos_terreno_proyecto: Optional[Dict[str, str]] = None,
+    profesionales_firmantes: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
     Consolida la ficha del postulante de forma 100% determinista basada en la fuente.
@@ -1009,6 +1060,7 @@ def consolidate_postulante_local(
         "tabla_8": build_tabla_8(postulante, evaluate_recinto_complementario(postulante)),
         "tabla_9": build_tabla_9(),
         "tabla_15": build_tabla_15(),
+        "firmantes": build_firmantes(postulante, profesionales_firmantes),
         "tercer_dormitorio": {
             "aplica": evaluate_tercer_dormitorio(postulante)[0],
             "motivo": evaluate_tercer_dormitorio(postulante)[1]
@@ -1022,7 +1074,9 @@ def audit_with_gemini(
     postulante: Dict[str, Any],
     api_key: str,
     usar_rsh_en_terreno: bool = False,
-    model_name: str = "gemini-2.5-flash"
+    model_name: str = "gemini-2.5-flash",
+    datos_terreno_proyecto: Optional[Dict[str, str]] = None,
+    profesionales_firmantes: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
     Utiliza Gemini como auditor ('ojos' del sistema) para refinar la extracción de datos
@@ -1031,10 +1085,10 @@ def audit_with_gemini(
     """
     # Si no hay API key, usar directamente el motor determinista local
     if not api_key or not str(api_key).strip():
-        return consolidate_postulante_local(postulante, usar_rsh_en_terreno)
+        return consolidate_postulante_local(postulante, usar_rsh_en_terreno, datos_terreno_proyecto, profesionales_firmantes)
 
     # Base consolidada previa
-    base_data = consolidate_postulante_local(postulante, usar_rsh_en_terreno)
+    base_data = consolidate_postulante_local(postulante, usar_rsh_en_terreno, datos_terreno_proyecto, profesionales_firmantes)
 
     prompt = f"""
 Eres el auditor estricto de datos ("los ojos del sistema") para el llenado oficial del formulario MINVU D.S. N°10 Habitabilidad Rural.
@@ -1093,6 +1147,7 @@ Responde ÚNICAMENTE con el objeto JSON que complete los campos de tabla_1, tabl
                 gemini_json["tabla_8"] = base_data["tabla_8"]  # Preservar la marcación y justificación técnica de Tabla 8
                 gemini_json["tabla_9"] = base_data["tabla_9"]  # Preservar Tabla 9 Equipamiento Comunitario
                 gemini_json["tabla_15"] = base_data["tabla_15"]  # Preservar Tabla 15 Servicios Básicos
+                gemini_json["firmantes"] = base_data["firmantes"]  # Preservar Profesionales Suscribientes
                 gemini_json["tercer_dormitorio"] = base_data.get("tercer_dormitorio")
                 gemini_json["tipo_familia"] = base_data.get("tipo_familia")
                 gemini_json["recinto_complementario"] = base_data.get("recinto_complementario")

@@ -40,7 +40,8 @@ def fill_formulario_phr(
     template_path: str,
     data: Dict[str, Any],
     output_path: str,
-    egr_name: Optional[str] = "CONSULTORA PLAN SOCIAL LIMITADA"
+    egr_name: Optional[str] = "CONSULTORA PLAN SOCIAL LIMITADA",
+    profesionales_firmantes: Optional[Dict[str, Any]] = None
 ) -> str:
     """
     Rellena los ítems 1 (Tablas 1, 2, 3, 4) y 1.2 (Tabla 5) en el documento Word.
@@ -313,6 +314,63 @@ def fill_formulario_phr(
                 set_cell_value(t15.cell(r_idx, 1), item.get("si", ""), font_size_pt=9.5, bold=True, center=True)
                 set_cell_value(t15.cell(r_idx, 2), item.get("no", ""), font_size_pt=9.5, bold=True, center=True)
                 set_cell_value(t15.cell(r_idx, 3), item.get("observaciones", ""), font_size_pt=8.5, bold=False, center=False)
+
+    # =========================================================================
+    # TABLAS 17, 18, 19: PROFESIONALES SUSCRIBIENTES Y POSTULANTE
+    # =========================================================================
+    prof_data = profesionales_firmantes or data.get("firmantes") or {}
+    tec = prof_data.get("tecnico", {})
+    soc = prof_data.get("social", {})
+    post = prof_data.get("postulante", {})
+
+    egr_tec = tec.get("egr", "CONSULTORA PLAN SOCIAL LIMITADA")
+    nom_tec = tec.get("nombre", "Vanessa Schneider Martínez")
+    rut_tec = tec.get("rut", "13.730.440-6")
+    prof_tec = tec.get("profesion", "Arquitecta")
+
+    egr_soc = soc.get("egr", "CONSULTORA PLAN SOCIAL")
+    nom_soc = soc.get("nombre", "Erica Reyes Peña")
+    rut_soc = soc.get("rut", "20.402.240-2")
+    prof_soc = soc.get("profesion", "TRABAJADORA SOCIAL")
+
+    t1_data = data.get("tabla_1", {})
+    nom_post = post.get("nombre") or t1_data.get("titular_nombre", "")
+    rut_post = post.get("rut") or t1_data.get("titular_rut", "")
+
+    # Búsqueda dinámica de tablas por texto o por índice de respaldo (17, 18, 19)
+    t17, t18, t19 = None, None, None
+    for tbl in doc.tables:
+        if len(tbl.rows) >= 5:
+            r1_txt = tbl.cell(1, 0).text.upper() if len(tbl.rows) > 1 and len(tbl.columns) > 0 else ""
+            if "PROFESIONAL" in r1_txt and ("TÉCNICA" in r1_txt or "TECNICA" in r1_txt):
+                t17 = tbl
+            elif "PROFESIONAL" in r1_txt and "SOCIAL" in r1_txt:
+                t18 = tbl
+            elif "POSTULANTE" in r1_txt and len(tbl.rows) >= 4:
+                t19 = tbl
+
+    if t17 is None and len(doc.tables) > 17:
+        t17 = doc.tables[17]
+    if t18 is None and len(doc.tables) > 18:
+        t18 = doc.tables[18]
+    if t19 is None and len(doc.tables) > 19:
+        t19 = doc.tables[19]
+
+    if t17:
+        set_cell_value(t17.cell(1, 2), egr_tec, font_size_pt=9.0, bold=False, center=False)
+        set_cell_value(t17.cell(2, 2), nom_tec, font_size_pt=9.0, bold=False, center=False)
+        set_cell_value(t17.cell(3, 2), rut_tec, font_size_pt=9.0, bold=False, center=False)
+        set_cell_value(t17.cell(4, 2), prof_tec, font_size_pt=9.0, bold=False, center=False)
+
+    if t18:
+        set_cell_value(t18.cell(1, 2), egr_soc, font_size_pt=9.0, bold=False, center=False)
+        set_cell_value(t18.cell(2, 2), nom_soc, font_size_pt=9.0, bold=False, center=False)
+        set_cell_value(t18.cell(3, 2), rut_soc, font_size_pt=9.0, bold=False, center=False)
+        set_cell_value(t18.cell(4, 2), prof_soc, font_size_pt=9.0, bold=False, center=False)
+
+    if t19:
+        set_cell_value(t19.cell(2, 2), nom_post, font_size_pt=9.0, bold=False, center=False)
+        set_cell_value(t19.cell(3, 2), rut_post, font_size_pt=9.0, bold=False, center=False)
 
     # Crear carpeta destino si no existe
     dir_name = os.path.dirname(output_path)

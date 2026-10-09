@@ -204,6 +204,34 @@ with st.sidebar:
         "localidad": "Perquenco"
     }
 
+    with st.expander("✍️ Profesionales Suscribientes (Tablas 17 y 18)", expanded=False):
+        st.markdown("**Área Técnica (Tabla 17):**")
+        prof_tec_nom = st.text_input("Nombre Completo (Técnico):", value="Vanessa Schneider Martínez")
+        prof_tec_rut = st.text_input("RUT (Técnico):", value="13.730.440-6")
+        prof_tec_prof = st.text_input("Profesión (Técnico):", value="Arquitecta")
+        prof_tec_egr = st.text_input("EGR (Técnico):", value="CONSULTORA PLAN SOCIAL LIMITADA")
+
+        st.markdown("**Área Social (Tabla 18):**")
+        prof_soc_nom = st.text_input("Nombre Completo (Social):", value="Erica Reyes Peña")
+        prof_soc_rut = st.text_input("RUT (Social):", value="20.402.240-2")
+        prof_soc_prof = st.text_input("Profesión (Social):", value="TRABAJADORA SOCIAL")
+        prof_soc_egr = st.text_input("EGR (Social):", value="CONSULTORA PLAN SOCIAL")
+
+    profesionales_firmantes = {
+        "tecnico": {
+            "egr": prof_tec_egr.strip(),
+            "nombre": prof_tec_nom.strip(),
+            "rut": prof_tec_rut.strip(),
+            "profesion": prof_tec_prof.strip()
+        },
+        "social": {
+            "egr": prof_soc_egr.strip(),
+            "nombre": prof_soc_nom.strip(),
+            "rut": prof_soc_rut.strip(),
+            "profesion": prof_soc_prof.strip()
+        }
+    }
+
 
 # =============================================================================
 # CARGA DE DATOS
@@ -235,7 +263,7 @@ col_m1, col_m2, col_m3, col_m4 = st.columns(4)
 col_m1.metric("Total Postulantes", len(postulantes))
 col_m2.metric("Comuna Base", "Perquenco")
 col_m3.metric("Plantilla Detectada", "PHR N°6.1 DTS")
-col_m4.metric("Ítems Automatizados", "Tablas 1-6, 8, 9 y 15")
+col_m4.metric("Ítems Automatizados", "Tablas 1-6, 8, 9, 15, 17-19")
 
 st.markdown("---")
 
@@ -275,13 +303,15 @@ with tab_preview:
                 api_key=gemini_key.strip(),
                 usar_rsh_en_terreno=False,
                 model_name=selected_model,
-                datos_terreno_proyecto=datos_terreno_proyecto
+                datos_terreno_proyecto=datos_terreno_proyecto,
+                profesionales_firmantes=profesionales_firmantes
             )
         else:
             consolidated = consolidate_postulante_local(
                 current_postulante,
                 usar_rsh_en_terreno=False,
-                datos_terreno_proyecto=datos_terreno_proyecto
+                datos_terreno_proyecto=datos_terreno_proyecto,
+                profesionales_firmantes=profesionales_firmantes
             )
 
     t1 = consolidated.get("tabla_1", {})
@@ -574,6 +604,49 @@ with tab_preview:
         st.dataframe(df_elec, hide_index=True, use_container_width=True)
         st.info("ℹ️ **Suministro Eléctrico [X]:** Empresa eléctrica habilitada.")
 
+    # Tablas 17, 18, 19: Profesionales Suscribientes y Postulante
+    st.markdown("---")
+    st.markdown("#### ✍️ Certificación y Profesionales Suscribientes (Tablas 17, 18 y 19)")
+    st.caption("Los profesionales que suscriben el presente diagnóstico técnico y social certifican haber realizado la visita correspondiente y la veracidad de la información:")
+
+    firm_data = consolidated.get("firmantes", {})
+    t_tec = firm_data.get("tecnico", {})
+    t_soc = firm_data.get("social", {})
+    t_pos = firm_data.get("postulante", {})
+
+    col_f1, col_f2, col_f3 = st.columns(3)
+    with col_f1:
+        st.markdown("**Tabla 17: Profesional Área Técnica EGR**")
+        df_tec = pd.DataFrame([
+            {"Campo": "EGR", "Valor": t_tec.get("egr", "")},
+            {"Campo": "Nombre Completo", "Valor": t_tec.get("nombre", "")},
+            {"Campo": "RUT", "Valor": t_tec.get("rut", "")},
+            {"Campo": "Profesión", "Valor": t_tec.get("profesion", "")},
+            {"Campo": "Firma", "Valor": "*(Firma física requerida)*"}
+        ])
+        st.dataframe(df_tec, hide_index=True, use_container_width=True)
+
+    with col_f2:
+        st.markdown("**Tabla 18: Profesional Área Social EGR**")
+        df_soc = pd.DataFrame([
+            {"Campo": "EGR", "Valor": t_soc.get("egr", "")},
+            {"Campo": "Nombre Completo", "Valor": t_soc.get("nombre", "")},
+            {"Campo": "RUT", "Valor": t_soc.get("rut", "")},
+            {"Campo": "Profesión", "Valor": t_soc.get("profesion", "")},
+            {"Campo": "Firma", "Valor": "*(Firma física requerida)*"}
+        ])
+        st.dataframe(df_soc, hide_index=True, use_container_width=True)
+
+    with col_f3:
+        st.markdown("**Tabla 19: Postulante**")
+        df_pos = pd.DataFrame([
+            {"Campo": "Rol", "Valor": "Titular de la Postulación"},
+            {"Campo": "Nombre Completo", "Valor": t_pos.get("nombre", "")},
+            {"Campo": "RUT", "Valor": t_pos.get("rut", "")},
+            {"Campo": "Firma", "Valor": "*(Firma física requerida)*"}
+        ])
+        st.dataframe(df_pos, hide_index=True, use_container_width=True)
+
     # Botón para generar DOCX individual de prueba
     st.markdown("---")
     test_clean_name = "".join(x for x in current_postulante["nombre"] if x.isalnum() or x in " _-").strip().replace(" ", "_")
@@ -583,7 +656,13 @@ with tab_preview:
     if st.button(f"📥 Generar Formulario Word para {current_postulante['nombre']}", type="primary"):
         with st.spinner("Generando documento Word..."):
             os.makedirs(output_directory, exist_ok=True)
-            res_path = fill_formulario_phr(template_docx_path, consolidated, single_out_path, egr_name=egr_name)
+            res_path = fill_formulario_phr(
+                template_docx_path,
+                consolidated,
+                single_out_path,
+                egr_name=egr_name,
+                profesionales_firmantes=profesionales_firmantes
+            )
             st.success(f"✅ Formulario generado con éxito: `{res_path}`")
             with open(res_path, "rb") as f:
                 st.download_button(
@@ -1345,21 +1424,24 @@ with tab_batch:
                         api_key=gemini_key.strip(),
                         usar_rsh_en_terreno=False,
                         model_name=selected_model,
-                        datos_terreno_proyecto=datos_terreno_proyecto
+                        datos_terreno_proyecto=datos_terreno_proyecto,
+                        profesionales_firmantes=profesionales_firmantes
                     )
                     time.sleep(4.0)  # Pacing seguro para 15 RPM
                 else:
                     consolidated = consolidate_postulante_local(
                         post,
                         usar_rsh_en_terreno=False,
-                        datos_terreno_proyecto=datos_terreno_proyecto
+                        datos_terreno_proyecto=datos_terreno_proyecto,
+                        profesionales_firmantes=profesionales_firmantes
                     )
 
                 fill_formulario_phr(
                     template_docx_path,
                     consolidated,
                     doc_filepath,
-                    egr_name=egr_name
+                    egr_name=egr_name,
+                    profesionales_firmantes=profesionales_firmantes
                 )
                 generados.append(doc_filename)
             except Exception as e:
