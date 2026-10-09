@@ -40,6 +40,12 @@ from src.gemini_auditor import (
 from src.docx_generator import fill_formulario_phr
 from src.powerbi_exporter import export_to_powerbi_excel
 from src.dashboard_generator import generate_interactive_html_dashboard
+import src.informe_social_generator
+importlib.reload(src.informe_social_generator)
+from src.informe_social_generator import (
+    calculate_informe_social_aggregates,
+    fill_informe_social_docx
+)
 
 
 # Configuración de página Streamlit
@@ -237,11 +243,12 @@ st.markdown("---")
 # =============================================================================
 # PESTAÑAS PRINCIPALES
 # =============================================================================
-tab_preview, tab_metrics, tab_batch, tab_data = st.tabs([
+tab_preview, tab_metrics, tab_batch, tab_data, tab_informe = st.tabs([
     "👁️ 1. Auditoría Individual",
     "📈 2. Métricas y Análisis del Padrón",
     "⚡ 3. Generación Masiva (155 Fichas)",
-    "📊 4. Explorador de Base de Datos"
+    "📊 4. Explorador de Base de Datos",
+    "📑 5. Informe Diagnóstico Social (Res. 3131)"
 ])
 
 
@@ -1352,3 +1359,130 @@ with tab_data:
 
     df_all = pd.DataFrame(table_records)
     st.dataframe(df_all, use_container_width=True, height=500)
+
+
+# -----------------------------------------------------------------------------
+# TAB 5: INFORME DIAGNÓSTICO SOCIAL CONSOLIDADO (RES. 3131 / D.S. 10)
+# -----------------------------------------------------------------------------
+with tab_informe:
+    st.subheader("📑 Informe Diagnóstico Social Consolidado de las Familias")
+    st.caption("Resolución Exenta N° 3131 (V. y U.) de 2016 — D.S. N° 10 (V. y U.) de 2015 | Título I y II Habitabilidad Rural")
+
+    st.info(
+        "💡 **Documento Matriz de Síntesis del Proyecto:** Este informe cuantifica y consolida las respuestas "
+        "de las **155 familias** evaluadas en el Formulario N° 6.1 DTS para su presentación ante SERVIU / MINVU, "
+        "integrando antecedentes sociodemográficos, matriz de actividades productivas, requerimientos de vivienda nueva "
+        "y la nómina oficial completa."
+    )
+
+    # Cálculo determinista de agregados
+    inf_data = calculate_informe_social_aggregates(
+        postulantes,
+        datos_terreno=datos_terreno_proyecto,
+        egr_nombre=egr_name
+    )
+    inf_demo = inf_data["demografia"]
+    inf_req = inf_data["requerimientos_vivienda"]
+    inf_rec = inf_data["recintos_complementarios"]
+
+    # Fila de métricas clave consolidadas
+    m_col1, m_col2, m_col3, m_col4, m_col5, m_col6 = st.columns(6)
+    m_col1.metric("Familias", inf_demo["tot_personas"] and len(postulantes))
+    m_col2.metric("Habitantes", inf_demo["tot_personas"])
+    m_col3.metric("Discapacidad", f"{inf_demo['tot_discapacidad']} pers.", f"{inf_demo['familias_con_discapacidad']} familias")
+    m_col4.metric("Pueblo Mapuche", f"{inf_demo['tot_mapuche']} pers.", f"{inf_demo['familias_mapuche']} familias")
+    m_col5.metric("3° Dormitorio", f"{inf_req['d3_conjunto']} viv.")
+    m_col6.metric("Recinto Comp.", f"{inf_req['rec_conjunto']} viv.")
+
+    st.markdown("---")
+
+    col_inf_left, col_inf_right = st.columns(2)
+
+    with col_inf_left:
+        st.markdown("#### 1. Antecedentes Familiares Cuantificados (Tabla 2)")
+        df_demo_rep = pd.DataFrame([
+            {"Variable": "N° Personas Totales", "Cantidad": inf_demo["tot_personas"]},
+            {"Variable": "Hombres", "Cantidad": inf_demo["tot_hombres"]},
+            {"Variable": "Mujeres", "Cantidad": inf_demo["tot_mujeres"]},
+            {"Variable": "Menores de 18 años", "Cantidad": inf_demo["tot_menores"]},
+            {"Variable": "Adultos Mayores (≥60 años)", "Cantidad": inf_demo["tot_mayores"]},
+            {"Variable": "Personas con Discapacidad / Movilidad Reducida", "Cantidad": inf_demo["tot_discapacidad"]},
+            {"Variable": "Personas con ascendencia Indígena (Mapuche)", "Cantidad": inf_demo["tot_mapuche"]},
+            {"Variable": "Personas extranjeras", "Cantidad": inf_demo["tot_extranjeros"]}
+        ])
+        st.dataframe(df_demo_rep, hide_index=True, use_container_width=True)
+
+        st.markdown("#### 2. Requerimientos de Vivienda Nueva (Tabla 5)")
+        df_req_rep = pd.DataFrame([
+            {"Tipología / Requerimiento": "Vivienda Nueva (Conjunto Habitacional)", "Cantidad": inf_req["vn_conjunto"]},
+            {"Tipología / Requerimiento": "Dormitorio Adicional (3° Dormitorio)", "Cantidad": inf_req["d3_conjunto"]},
+            {"Tipología / Requerimiento": "Recinto Complementario Productivo/Almacenamiento", "Cantidad": inf_req["rec_conjunto"]},
+            {"Tipología / Requerimiento": "Mejoramiento del Entorno Inmediato", "Cantidad": 0}
+        ])
+        st.dataframe(df_req_rep, hide_index=True, use_container_width=True)
+
+    with col_inf_right:
+        st.markdown("#### 3. Recintos Complementarios por Tipo (Tabla 8)")
+        df_rec_rep = pd.DataFrame([
+            {"Tipo de Recinto": "Bodega de Insumos y Aperos Agrícolas", "Familias": inf_rec["bodega"]},
+            {"Tipo de Recinto": "Recinto Productivo (Lácteos, Repostería, etc.)", "Familias": inf_rec["productivo"]},
+            {"Tipo de Recinto": "Leñera", "Familias": inf_rec["lenera"]},
+            {"Tipo de Recinto": "Otros (Invernadero de plantas, Galpón avícola)", "Familias": inf_rec["otros"]},
+            {"Tipo de Recinto": "Otros Recintos Techados Contiguos", "Familias": inf_rec["otros_contiguos"]},
+            {"Tipo de Recinto": "TOTAL RECINTOS COMPLEMENTARIOS", "Familias": sum(inf_rec.values())}
+        ])
+        st.dataframe(df_rec_rep, hide_index=True, use_container_width=True)
+
+        st.markdown("#### 4. Topografía y Emplazamiento del Predio (Tabla 28)")
+        df_topo_rep = pd.DataFrame([
+            {"Pendiente del Terreno": "Terreno Plano (0 a 3%) — Apto Conjunto Habitacional", "Familias": len(postulantes)},
+            {"Pendiente del Terreno": "Pendiente Suave (>3% - <5%)", "Familias": 0},
+            {"Pendiente del Terreno": "Pendiente Moderada (>5% - <15%)", "Familias": 0},
+            {"Pendiente del Terreno": "Pendiente Abrupta (>15%)", "Familias": 0}
+        ])
+        st.dataframe(df_topo_rep, hide_index=True, use_container_width=True)
+
+    st.markdown("---")
+    st.markdown("#### 🖨️ Generación Oficial del Documento Word (.docx)")
+
+    col_cfg1, col_cfg2, col_cfg3 = st.columns(3)
+    with col_cfg1:
+        nom_grupo_in = st.text_input("Nombre del Grupo / Comité:", value="Comité Habitacional Perquenco")
+    with col_cfg2:
+        egr_nombre_in = st.text_input("Entidad de Gestión Rural (EGR):", value=egr_name)
+    with col_cfg3:
+        egr_rut_in = st.text_input("RUT de la EGR:", value="76.543.210-K")
+
+    btn_gen_inf = st.button("🚀 Generar Informe Diagnóstico Social Consolidado (.docx)", type="primary", use_container_width=True)
+
+    tpl_inf_path = os.path.join(BASE_DIR, "Formato Informe Diagnostico Social Consolidado.docx")
+    out_inf_path = os.path.join(BASE_DIR, "INFORME_DIAGNOSTICO_SOCIAL_CONSOLIDADO_PERQUENCO.docx")
+
+    if btn_gen_inf:
+        if not os.path.exists(tpl_inf_path):
+            st.error(f"❌ No se encontró la plantilla del informe consolidado: `{tpl_inf_path}`")
+        else:
+            with st.spinner("Generando Informe Diagnóstico Social Consolidado y nómina de 155 postulantes..."):
+                t_ini = time.time()
+                data_calculada = calculate_informe_social_aggregates(
+                    postulantes,
+                    datos_terreno=datos_terreno_proyecto,
+                    nombre_grupo=nom_grupo_in.strip(),
+                    egr_nombre=egr_nombre_in.strip(),
+                    egr_rut=egr_rut_in.strip()
+                )
+                fill_informe_social_docx(tpl_inf_path, data_calculada, out_inf_path)
+                t_dur = round(time.time() - t_ini, 1)
+
+            st.success(f"🎉 **¡Informe generado exitosamente en {t_dur} segundos!** Se completaron las 35 tablas y la nómina oficial de {len(postulantes)} postulantes.")
+
+            with open(out_inf_path, "rb") as f_inf:
+                st.download_button(
+                    label="📥 Descargar INFORME_DIAGNOSTICO_SOCIAL_CONSOLIDADO_PERQUENCO.docx",
+                    data=f_inf,
+                    file_name="INFORME_DIAGNOSTICO_SOCIAL_CONSOLIDADO_PERQUENCO.docx",
+                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    type="primary",
+                    use_container_width=True
+                )
+
