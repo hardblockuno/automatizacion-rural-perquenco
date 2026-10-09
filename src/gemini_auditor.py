@@ -346,70 +346,6 @@ RESOLUCIONES_TECNICAS_CONFIRMADAS: Dict[str, Dict[str, Any]] = {
         "recinto_sugerido": "Bodega de Insumos y Equipos de Repostería",
         "justificacion": "Emprendimiento productivo de repostería artesanal. Recinto techado no habitable para almacenamiento y resguardo seguro de insumos, aperos, utensilios y equipamiento de trabajo.",
         "detalle_actividad": "Repostería artesanal"
-    },
-    # María Angélica Astete Alarcón (RUT: 17.153.373-2)
-    "171533732": {
-        "procede": False,
-        "tipo_recinto": "No Aplica",
-        "recinto_sugerido": "Ninguno",
-        "justificacion": "Actividad de servilavado no operada como infraestructura productiva en el predio a subsidiar.",
-        "detalle_actividad": "Servilavado"
-    },
-    # Luis Guillermo Castillo Aguilera (RUT: 18.486.639-0)
-    "184866390": {
-        "procede": False,
-        "tipo_recinto": "No Aplica",
-        "recinto_sugerido": "Ninguno",
-        "justificacion": "Labores esporádicas particulares externas sin requerimiento de infraestructura productiva en el predio.",
-        "detalle_actividad": "Particular (trabajos esporádicos)"
-    },
-    # Rodrigo Andrés Galaz Torres (RUT: 15.356.147-8)
-    "153561478": {
-        "procede": False,
-        "tipo_recinto": "No Aplica",
-        "recinto_sugerido": "Ninguno",
-        "justificacion": "Actividad independiente sin requerimiento de recinto productivo en el predio.",
-        "detalle_actividad": "Independiente"
-    },
-    # Zunilda del Carmen Morales Riveros (RUT: 12.388.071-4)
-    "123880714": {
-        "procede": False,
-        "tipo_recinto": "No Aplica",
-        "recinto_sugerido": "Ninguno",
-        "justificacion": "Actividad independiente sin requerimiento de recinto productivo en el predio.",
-        "detalle_actividad": "Independiente"
-    },
-    # Darwin Omar Valdevenito Carrasco (RUT: 20.412.822-7)
-    "204128227": {
-        "procede": False,
-        "tipo_recinto": "No Aplica",
-        "recinto_sugerido": "Ninguno",
-        "justificacion": "Actividad independiente sin requerimiento de recinto productivo en el predio.",
-        "detalle_actividad": "Independiente"
-    },
-    # Yessenia Leonor Alarcón Quiñenao (RUT: 18.775.104-7)
-    "187751047": {
-        "procede": False,
-        "tipo_recinto": "No Aplica (Laboral Externa)",
-        "recinto_sugerido": "Ninguno",
-        "justificacion": "Desempeño dependiente como TENS en centro de salud externo al predio.",
-        "detalle_actividad": "TENS (Salud dependiente)"
-    },
-    # Luis Alfonso Salgado Troncoso (RUT: 12.737.714-6)
-    "127377146": {
-        "procede": False,
-        "tipo_recinto": "No Aplica (Laboral Externa)",
-        "recinto_sugerido": "Ninguno",
-        "justificacion": "Empleo dependiente como auxiliar fuera del predio.",
-        "detalle_actividad": "Auxiliar (Dependiente)"
-    },
-    # Juan Segundo Gutierrez Ulloa (RUT: 7.978.414-1)
-    "79784141": {
-        "procede": False,
-        "tipo_recinto": "No Aplica (Laboral Externa)",
-        "recinto_sugerido": "Ninguno",
-        "justificacion": "Función dependiente como cuartelero fuera del predio a subsidiar.",
-        "detalle_actividad": "Cuartelero (Institucional)"
     }
 }
 
@@ -443,32 +379,7 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
     else:
         act_display = desc.title()
 
-    # 1. Sin actividad económica registrada
-    if not tiene_act or not full:
-        return {
-            "procede": False,
-            "tipo_recinto": "No Aplica",
-            "recinto_sugerido": "Ninguno",
-            "justificacion": "No se registra actividad económica productiva previa en la base que justifique la asignación de un recinto complementario.",
-            "detalle_actividad": "(Sin actividad registrada)"
-        }
-
-    # 2. Empleos dependientes o desarrollados fuera del predio (No generan recinto complementario)
-    actividades_externas = [
-        "A CONTRATA", "CONCEJAL", "CESFAM", "BOMBEROS", "PARVULO", "GARZONA",
-        "ASESORA DE HOGAR", "EDUCADORA", "AUXILIAR DE ASEO", "AUXILIAR DE SERVICIO",
-        "SECRETARIA", "FRIGORIFICO", "HONORARIOS"
-    ]
-    if any(k in full for k in actividades_externas) and not any(k in full for k in ["TALLER", "PRODUCCION EN CASA", "PLANTAS"]):
-        return {
-            "procede": False,
-            "tipo_recinto": "No Aplica (Laboral Externa)",
-            "recinto_sugerido": "Ninguno",
-            "justificacion": f"Actividad laboral dependiente desarrollada fuera del predio ({act_display}). No requiere infraestructura productiva predial.",
-            "detalle_actividad": act_display
-        }
-
-    # 3. Recintos Complementarios NO HABITABLES derivados de actividades de manufactura, alimentos o servicios sin acreditación habitable formal
+    # 1. Recintos Complementarios específicos según rubro (Manufactura, Alimentos, Servicios, etc.)
     if any(k in full for k in ["PAPELERIA", "PAPELERÍA", "FLORES ETERNAS", "ARTESANIA", "ARTESANÍA", "ESTAMPADO", "SUBLIMACION"]):
         return {
             "procede": True,
@@ -560,12 +471,15 @@ def evaluate_recinto_complementario(postulante: Dict[str, Any]) -> Dict[str, Any
             "detalle_actividad": act_display
         }
 
+    # 2. Asignación técnica por defecto EGR para las 123 familias base del proyecto
+    # Todo postulante sin recinto complementario específico lleva por defecto marcado:
+    # "Recinto complementario" (Tabla 6) / "Bodega" / "Sí" (Tabla 8) con la justificación oficial:
     return {
-        "procede": False,
-        "tipo_recinto": "En Evaluación",
-        "recinto_sugerido": "A determinar según visita técnica",
-        "justificacion": f"Actividad registrada ({act_display}). Requiere inspección en terreno para validar procedencia de recinto.",
-        "detalle_actividad": act_display
+        "procede": True,
+        "tipo_recinto": "No Habitable",
+        "recinto_sugerido": "Bodega",
+        "justificacion": "Recinto techado no habitable para almacenamiento y resguardo seguro de insumos, aperos, utensilios y equipamiento de trabajo.",
+        "detalle_actividad": act_display if (tiene_act and full) else "(Sin actividad económica declarada)"
     }
 
 

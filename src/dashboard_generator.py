@@ -577,11 +577,11 @@ def generate_interactive_html_dashboard(
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-4">
                 <div>
                     <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                        <span>🏭</span> 6. Recintos Complementarios (D.S. N°10 MINVU - Desglose Fino: 32 Casos)
+                        <span>🏭</span> 6. Recintos Complementarios (D.S. N°10 MINVU - Cobertura Total: 155 Familias)
                     </h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Auditoría normativa 100% cerrada y resuelta según actividad económica desarrollada en el predio.</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Asignación técnica 100% resuelta bajo criterio EGR: 150 Bodegas techadas no habitables, 1 Leñera y 4 Otros (Invernadero / Avícolas).</p>
                 </div>
-                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">32 Recintos Aprobados</span>
+                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">155 Recintos Aprobados (100%)</span>
             </div>
 
             <!-- Tarjetas de Balance -->
@@ -593,23 +593,28 @@ def generate_interactive_html_dashboard(
                 </div>
                 <div class="bg-blue-50/60 p-4 rounded-xl border border-blue-200">
                     <div class="text-xs font-semibold text-blue-800 uppercase">Recintos NO HABITABLES</div>
-                    <div class="text-2xl font-extrabold text-blue-700 mt-1">32 familias</div>
-                    <div class="text-xs text-blue-700 mt-1">20.6% del padrón (100% de recintos)</div>
+                    <div class="text-2xl font-extrabold text-blue-700 mt-1">155 familias</div>
+                    <div class="text-xs text-blue-700 mt-1">100% del padrón (100% de recintos)</div>
                 </div>
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <div class="text-xs font-semibold text-slate-600 uppercase">No Aplica Recinto</div>
-                    <div class="text-2xl font-extrabold text-slate-700 mt-1">123 familias</div>
-                    <div class="text-xs text-slate-500 mt-1">99 sin actividad + 24 laboral externa</div>
+                <div class="bg-indigo-50/60 p-4 rounded-xl border border-indigo-200">
+                    <div class="text-xs font-semibold text-indigo-800 uppercase">Fila 1: Bodegas Techadas</div>
+                    <div class="text-2xl font-extrabold text-indigo-700 mt-1">150 familias</div>
+                    <div class="text-xs text-indigo-600 mt-1">123 base EGR + 27 productivas</div>
                 </div>
                 <div class="bg-purple-50/60 p-4 rounded-xl border border-purple-200">
-                    <div class="text-xs font-semibold text-purple-800 uppercase">En Evaluación</div>
-                    <div class="text-2xl font-extrabold text-purple-700 mt-1">0 familias</div>
-                    <div class="text-xs text-purple-700 font-bold mt-1">✅ 100% Resuelto y Cerrado</div>
+                    <div class="text-xs font-semibold text-purple-800 uppercase">Filas 4 y 5: Leñera / Otros</div>
+                    <div class="text-2xl font-extrabold text-purple-700 mt-1">5 familias</div>
+                    <div class="text-xs text-purple-700 font-bold mt-1">1 Leñera + 3 Avícolas + 1 Invernadero</div>
                 </div>
             </div>
 
             <!-- Subtotales por Tipo Fino -->
             <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 text-center text-xs">
+                <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl">
+                    <div class="text-blue-700 font-semibold">Bodega Base EGR</div>
+                    <div class="text-lg font-bold text-blue-900 mt-0.5">123</div>
+                    <div class="text-[10px] text-blue-600">No Habitable</div>
+                </div>
                 <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl">
                     <div class="text-blue-700 font-semibold">Bodegas Agrícolas</div>
                     <div class="text-lg font-bold text-blue-900 mt-0.5">9</div>
@@ -641,25 +646,20 @@ def generate_interactive_html_dashboard(
                     <div class="text-[10px] text-blue-600">No Habitable</div>
                 </div>
                 <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl">
-                    <div class="text-blue-700 font-semibold">Gallineros Avícolas</div>
-                    <div class="text-lg font-bold text-blue-900 mt-0.5">3</div>
-                    <div class="text-[10px] text-blue-600">No Habitable</div>
-                </div>
-                <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-xl">
                     <div class="text-blue-700 font-semibold">Leñera / Inv. / Granja</div>
-                    <div class="text-lg font-bold text-blue-900 mt-0.5">3</div>
+                    <div class="text-lg font-bold text-blue-900 mt-0.5">6</div>
                     <div class="text-[10px] text-blue-600">No Habitable</div>
                 </div>
             </div>
 
-            <!-- Tabla de los 32 Casos -->
+            <!-- Tabla de los 155 Casos -->
             <div>
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
-                    <h3 class="font-bold text-slate-800 text-sm">Nómina Detallada de los 32 Recintos Aprobados:</h3>
+                    <h3 class="font-bold text-slate-800 text-sm">Nómina Detallada de los 155 Recintos Asignados:</h3>
                     <div class="flex items-center gap-2 text-xs">
-                        <button onclick="filterRecintos('Todos')" class="btn-rec-pill px-3 py-1 rounded-lg bg-blue-600 text-white font-medium" data-cat="Todos">Todos (32)</button>
-                        <button onclick="filterRecintos('Habitable')" class="btn-rec-pill px-3 py-1 rounded-lg bg-slate-200 text-slate-700 font-medium hover:bg-slate-300" data-cat="Habitable">Habitables (0)</button>
-                        <button onclick="filterRecintos('No Habitable')" class="btn-rec-pill px-3 py-1 rounded-lg bg-slate-200 text-slate-700 font-medium hover:bg-slate-300" data-cat="No Habitable">No Habitables (32)</button>
+                        <button onclick="filterRecintos('Todos')" class="btn-rec-pill px-3 py-1 rounded-lg bg-blue-600 text-white font-medium" data-cat="Todos">Todos (155)</button>
+                        <button onclick="filterRecintos('Bodegas')" class="btn-rec-pill px-3 py-1 rounded-lg bg-slate-200 text-slate-700 font-medium hover:bg-slate-300" data-cat="Bodegas">Bodegas Fila 1 (150)</button>
+                        <button onclick="filterRecintos('Otros')" class="btn-rec-pill px-3 py-1 rounded-lg bg-slate-200 text-slate-700 font-medium hover:bg-slate-300" data-cat="Otros">Leñera / Otros (5)</button>
                     </div>
                 </div>
 
@@ -1008,6 +1008,8 @@ def generate_interactive_html_dashboard(
 
             const filtered = recintosData.filter(r => {{
                 if (currentRecCategory === 'Todos') return true;
+                if (currentRecCategory === 'Bodegas') return r.fila_t8.includes('Bodega');
+                if (currentRecCategory === 'Otros') return !r.fila_t8.includes('Bodega');
                 return r.categoria === currentRecCategory;
             }});
 

@@ -894,31 +894,24 @@ with tab_metrics:
     st.caption("Revisión normativa: Se analiza si la actividad económica declarada por la familia amerita la asignación de un **Recinto Complementario Habitable** o **No Habitable**.")
 
     col_rc1, col_rc2, col_rc3, col_rc4 = st.columns(4)
-    col_rc1.metric("Procede Recinto HABITABLE", f"{len(recintos_hab)} familias", f"{round((len(recintos_hab)/total_post)*100, 1)}% del padrón", help="Talleres artesanales, repostería, gabinetes de estética y turismo rural que requieren condiciones de habitabilidad interior")
-    col_rc2.metric("Procede Recinto NO HABITABLE", f"{len(recintos_nohab)} familias", f"{round((len(recintos_nohab)/total_post)*100, 1)}% del padrón", help="Bodegas agropecuarias, leñeras, galpones avícolas, invernaderos y bodegas de herramientas")
-    col_rc3.metric("No Aplica Recinto", f"{recintos_counts['No Aplica'] + len(recintos_externos)} familias", f"{round(((recintos_counts['No Aplica'] + len(recintos_externos))/total_post)*100, 1)}% del padrón", help="Postulantes sin actividad declarada o con empleo dependiente fuera del predio")
-    col_rc4.metric("En Evaluación Técnica", f"{len(recintos_eval)} familias", "✅ 100% Resuelto" if len(recintos_eval) == 0 else f"{round((len(recintos_eval)/total_post)*100, 1)}% del padrón", help="Todas las evaluaciones prediales han sido confirmadas")
+    col_rc1.metric("Procede Recinto HABITABLE", f"{len(recintos_hab)} familias", "0.0% del padrón", help="Ningún postulante requiere recinto habitable")
+    col_rc2.metric("Procede Recinto NO HABITABLE", f"{len(recintos_nohab)} familias", "100% del padrón", help="100% de los postulantes cuentan con recinto complementario no habitable")
+    col_rc3.metric("Fila 1: Bodegas Techadas", "150 familias", "96.8% del padrón (123 base EGR + 27 específicas)", help="123 base EGR + 27 actividades productivas")
+    col_rc4.metric("Filas 4 y 5: Leñera / Otros", "5 familias", "3.2% del padrón (1 Leñera + 4 Otros)", help="1 Leñera techada + 3 Galpones avícolas + 1 Invernadero")
 
-    tab_rec_hab, tab_rec_nohab, tab_rec_t8, tab_rec_norm = st.tabs([
-        f"🟢 1. Recintos Complementarios HABITABLES ({len(recintos_hab)} casos)",
-        f"🔵 2. Recintos Complementarios NO HABITABLES ({len(recintos_nohab)} casos)",
-        f"📐 3. Mapeo Oficial Formulario Word (Tabla 8 - {len(t8_list)} casos)",
+    tab_rec_nohab, tab_rec_t8, tab_rec_hab, tab_rec_norm = st.tabs([
+        f"🔵 1. Recintos Complementarios NO HABITABLES ({len(recintos_nohab)} casos - 100%)",
+        f"📐 2. Mapeo Oficial Formulario Word (Tabla 8 - {len(t8_list)} casos)",
+        f"🟢 3. Recintos Complementarios HABITABLES ({len(recintos_hab)} casos)",
         "📋 4. Fundamento y Criterios Normativos D.S. N°10"
     ])
 
-    with tab_rec_hab:
-        st.markdown(f"**Familias que califican para Recinto Complementario HABITABLE ({len(recintos_hab)} familias):**")
-        st.info("ℹ️ **Criterio Técnico Aplicado:** Todas las actividades de manufactura, alimentos o servicios operan bajo la justificación normativa de: *Recinto techado no habitable para almacenamiento y resguardo seguro de insumos, aperos, utensilios y equipamiento de trabajo* (0 casos habitables, 32 casos no habitables en Fila 1 Bodega / Fila 4 / Fila 5).")
-
-        if recintos_hab:
-            st.dataframe(pd.DataFrame(recintos_hab), hide_index=True, use_container_width=True)
-
     with tab_rec_nohab:
-        st.markdown(f"**Familias que califican para Recinto Complementario NO HABITABLE ({len(recintos_nohab)} familias):**")
-        st.caption("Actividades que requieren almacenamiento, acopio, insumos, herramientas, mercadería o resguardo de animales y leña.")
+        st.markdown(f"**Familias que califican para Recinto Complementario NO HABITABLE ({len(recintos_nohab)} familias - 100%):**")
+        st.caption("Asignación técnica 100% resuelta bajo criterio EGR: 150 Bodegas techadas no habitables, 1 Leñera y 4 Otros (Invernadero / Avícolas).")
         
         c_nh1, c_nh2, c_nh3, c_nh4 = st.columns(4)
-        c_nh1.metric("Bodegas Techadas (Total)", "27 familias", "Fila 1 Tabla 8 (Agrícolas, manufactura, alimentos, herramientas, etc.)")
+        c_nh1.metric("Bodegas Techadas (Total)", "150 familias", "Fila 1 Tabla 8 (123 base EGR + 27 específicas)")
         c_nh2.metric("Gallineros / Avícolas", "3 familias", "Fila 5 Tabla 8 (Crianza de aves y venta de huevos)")
         c_nh3.metric("Leñera Techada", "1 familia", "Fila 4 Tabla 8 (Acopio y secado de leña)")
         c_nh4.metric("Invernadero", "1 familia", "Fila 5 Tabla 8 (Cultivo y venta de plantas)")
@@ -931,8 +924,8 @@ with tab_metrics:
         st.caption("Estructura de llenado en el documento Word: Columna 1 marcada con 'Sí' o 'No', y Columna 2 con justificación técnica fidedigna basada en la actividad previa.")
 
         c_t8_1, c_t8_2, c_t8_3, c_t8_4, c_t8_5 = st.columns(5)
-        c_t8_1.metric("Fila 1: Bodega", "27 familias", "Marcadas 'Sí' con justificación técnica")
-        c_t8_2.metric("Fila 2: Recinto Productivo", "0 familias", "100% 'No' (Sin acreditación habitable)")
+        c_t8_1.metric("Fila 1: Bodega", "150 familias", "123 base EGR + 27 específicas (Marcadas 'Sí')")
+        c_t8_2.metric("Fila 2: Recinto Productivo", "0 familias", "100% 'No'")
         c_t8_3.metric("Fila 3: Otros Techados", "0 familias", "100% 'No'")
         c_t8_4.metric("Fila 4: Leñera", "1 familia", "Marcada 'Sí' (Acopio y secado)")
         c_t8_5.metric("Fila 5: Otros (especificar)", "4 familias", "Marcadas 'Sí' (1 Invernadero + 3 Avícolas)")
@@ -940,12 +933,17 @@ with tab_metrics:
         if t8_list:
             st.dataframe(pd.DataFrame(t8_list), hide_index=True, use_container_width=True)
 
+    with tab_rec_hab:
+        st.markdown(f"**Familias que califican para Recinto Complementario HABITABLE ({len(recintos_hab)} familias):**")
+        st.info("ℹ️ **Criterio Técnico Aplicado:** Todas las familias del proyecto operan bajo modalidad de recinto no habitable para almacenamiento y resguardo (0 casos habitables, 155 casos no habitables: 150 Bodegas en Fila 1, 1 Leñera en Fila 4 y 4 en Fila 5 Otros).")
+
     with tab_rec_norm:
         st.markdown("""
         **Marco Normativo MINVU D.S. N°10 (Habitabilidad Rural - Art. 10 y Ficha PHR 6.1):**
-        * **Recinto Complementario Habitable:** Procede exclusivamente para actividades productivas o de servicios que se desarrollan al interior de la vivienda o requieren atención de personas / manipulación de alimentos (ej. *talleres de artesanía/papelería/costura*, *salas de repostería*, *gabinetes de peluquería/podología/manicure*, *hospedajes rurales*). Debe cumplir con normas de habitabilidad OGUC.
-        * **Recinto Complementario No Habitable:** Procede para actividades productivas agrarias o de acopio que no requieren calefacción ni permanencia humana prolongada (ej. *bodega de insumos agrícolas*, *leñera ventilada*, *galpón avícola*, *bodega de herramientas de construcción/gasfitería*).
-        * **Criterio de Exclusión:** Trabajadores dependientes que ejercen su función en locales externos (hospitales, escuelas, municipalidades, etc.) y postulantes sin actividad declarada **no pueden justificar legalmente un subsidio de recinto complementario**.
+        * **Criterio Técnico EGR de Cobertura Integral:** Se establece que la totalidad de los 155 postulantes del conjunto habitacional cuentan con asignación de **Recinto Complementario No Habitable**.
+        * **150 Familias en Fila 1 (Bodega):** Marcadas con **'Sí'** y justificación técnica: *"Recinto techado no habitable para almacenamiento y resguardo seguro de insumos, aperos, utensilios y equipamiento de trabajo."* (123 por asignación base EGR y 27 por actividades productivas específicas).
+        * **5 Familias en Filas 4 y 5:** 1 Leñera techada (Fila 4) y 4 en Otros (Fila 5: 3 Galpones avícolas + 1 Invernadero de plantas).
+        * **Fila 2 (Recinto productivo habitable):** 0 familias, al operar todos los recintos bajo estándar de almacenamiento y acopio no habitable.
         """)
 
     st.markdown("---")
@@ -1418,7 +1416,7 @@ with tab_informe:
     with col_inf_right:
         st.markdown("#### 3. Recintos Complementarios por Tipo (Tabla 8)")
         df_rec_rep = pd.DataFrame([
-            {"Tipo de Recinto": "Bodega (Fila 1: Insumos, aperos, manufactura, alimentos, etc.)", "Familias": inf_rec["bodega"]},
+            {"Tipo de Recinto": "Bodega (Fila 1: 123 base EGR + 27 específicas)", "Familias": inf_rec["bodega"]},
             {"Tipo de Recinto": "Recinto para realizar actividades productivas (Fila 2)", "Familias": inf_rec["productivo"]},
             {"Tipo de Recinto": "Otros Recintos Techados Contiguos (Fila 3)", "Familias": inf_rec["otros_contiguos"]},
             {"Tipo de Recinto": "Leñera (Fila 4: Acopio y secado)", "Familias": inf_rec["lenera"]},
